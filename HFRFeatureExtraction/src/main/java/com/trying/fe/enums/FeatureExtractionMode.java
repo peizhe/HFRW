@@ -9,13 +9,13 @@ import com.trying.fe.featureExtraction.PCA;
 import java.util.List;
 
 public enum FeatureExtractionMode {
-    PCA("Eigenface") {
+    PCA("eigenface") {
         @Override
         public FeatureExtraction getInstance(final List<Pair<String, Matrix>> data, final int numberOfComponents, final int imageAsVectorLength) {
             return new PCA(data, numberOfComponents, imageAsVectorLength);
         }
     },
-    LDA("Fisherface") {
+    LDA("fisherface") {
         @Override
         public FeatureExtraction getInstance(final List<Pair<String, Matrix>> data, final int numberOfComponents, final int imageAsVectorLength) {
             return new LDA(data, numberOfComponents, imageAsVectorLength);

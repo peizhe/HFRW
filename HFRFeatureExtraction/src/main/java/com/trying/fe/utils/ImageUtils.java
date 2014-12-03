@@ -23,7 +23,7 @@ public final class ImageUtils {
      */
     public static BufferedImage readImage(final String path){
         try {
-            return ImageIO.read(new File(path));
+            return ImageIO.read(Files.newInputStream(Paths.get(path)));
         } catch (IOException ignored) {
             return null;
         }
@@ -106,7 +106,7 @@ public final class ImageUtils {
 
         for (int j = 0; j < height; j++) {
             for (int k = 0; k < width; k++) {
-                raster.setSample(k, j, 0, (int) imageMatrix.get(j, k));
+                raster.setSample(k, j, 0, imageMatrix.get(j, k));
             }
         }
         return img;
@@ -122,8 +122,8 @@ public final class ImageUtils {
 
     public static void saveImagesToFiles(final List<BufferedImage> images, final String namePrefix, final String format) throws IOException {
         for (int i = 0; i < images.size(); i++) {
-            final Path path = Paths.get(namePrefix + i + "." + format);
-            if (Files.exists(path)) {
+            final Path path = Paths.get(namePrefix + "/" + i + "." + format);
+            if (!Files.exists(path)) {
                 Files.createFile(path);
             }
             ImageIO.write(images.get(i), format, Files.newOutputStream(path));
@@ -168,7 +168,6 @@ public final class ImageUtils {
     }
 
     /**
-     *
      * @param inPath - path to input PGM image
      * @param outPath - path to new image
      * @param fileName - name of input and output image
@@ -178,5 +177,21 @@ public final class ImageUtils {
     public static void convertPGMTo(final String inPath, final String outPath, final String fileName, final String format) throws IOException {
         final Matrix imageMatrix = convertPGMtoMatrix(inPath + fileName + ".pgm");
         ImageUtils.saveImageToFile(ImageUtils.convertMatrixToImage(imageMatrix, imageMatrix.getRowDimension(), imageMatrix.getColumnDimension()), outPath + fileName, format);
+    }
+
+    /**
+     * Convert a m by n matrix into a m*n by 1 matrix
+     */
+    public static Matrix toVector(final Matrix input) {
+        final int m = input.getRowDimension();
+        final int n = input.getColumnDimension();
+
+        final Matrix result = new Matrix(m * n, 1);
+        for (int p = 0; p < n; p++) {
+            for (int q = 0; q < m; q++) {
+                result.set(p * m + q, 0, input.get(q, p));
+            }
+        }
+        return result;
     }
 }
