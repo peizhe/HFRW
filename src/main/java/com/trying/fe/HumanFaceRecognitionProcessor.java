@@ -10,6 +10,7 @@ import com.trying.fe.featureExtraction.ProjectedTrainingMatrix;
 import com.trying.fe.utils.ImageUtils;
 import com.trying.fe.utils.KNN;
 import com.trying.fe.utils.Pair;
+import com.trying.web.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ public class HumanFaceRecognitionProcessor {
 
     @Autowired private com.trying.web.components.Properties properties;
     private final Cache<FeatureExtractionMode, FeatureExtraction> cache = CacheBuilder.newBuilder().build();
+    private final Map<String, List<Integer>> trainMap = new HashMap<>();
 
     public String classifyFace(final BufferedImage image, final MetricType metricType, final FeatureExtractionMode featureExtractionMode, final int componentsRetained, final int knnCount) {
         final FeatureExtraction fe = getFeatureExtraction(featureExtractionMode, componentsRetained);
@@ -46,9 +48,9 @@ public class HumanFaceRecognitionProcessor {
 
     private FeatureExtraction trainingSystem(final FeatureExtractionMode featureExtractionMode, final int componentsRetained) {
         /** set trainSet and testSet **/
-        final Map<String, List<Integer>> trainMap = new HashMap<>();
+        trainMap.clear();
         for (int i = 1; i <= properties.faceNumber; i++) {
-            trainMap.put(properties.classPrefix + i, generateTrainNumbers());
+            trainMap.put(properties.classPrefix + Utils.leadingZeros(i, properties.classLength), generateTrainNumbers());
         }
         /** set featureExtraction **/
         return featureExtractionMode.getInstance(getWorkingSetWithLabels(trainMap), componentsRetained, properties.imageAsVectorLength);
@@ -97,5 +99,9 @@ public class HumanFaceRecognitionProcessor {
             result.add(temp);
         }
         return result;
+    }
+
+    public Map<String, List<Integer>> getTrainMap() {
+        return trainMap;
     }
 }

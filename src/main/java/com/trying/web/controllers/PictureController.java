@@ -1,6 +1,7 @@
 package com.trying.web.controllers;
 
 import com.trying.web.beans.PictureCropInfo;
+import com.trying.web.utils.Utils;
 import org.imgscalr.Scalr;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -155,7 +156,7 @@ public class PictureController {
         final JSONObject images = new JSONObject();
         for (int i = 1; i <= properties.faceNumber; i++) {
             final JSONArray oneClassImages = new JSONArray();
-            final String clazz = properties.classPrefix + i;
+            final String clazz = properties.classPrefix + Utils.leadingZeros(i, properties.classLength);
             for (int j = 1; j <= properties.eachFaceNumber; j++) {
                 oneClassImages.put(properties.webTrainingImages.resolve(properties.trainingType).resolve(clazz).resolve(j + "." + properties.trainingType).toString());
             }

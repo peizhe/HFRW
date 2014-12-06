@@ -48,8 +48,9 @@ function init(){
             },
             success: function(resp) {
                 var data = $.parseJSON(resp);
+                var $res = $("#results");
+                $res.find(".each").html("");
                 if(data.status === "ok"){
-                    var $res = $("#results");
                     for(var i in data.storedImages){
                         $res.find(".each").append(img(data.storedImages[i], "stored-image"));
                     }
@@ -69,12 +70,13 @@ function getAllStoredImages(){
             var $collapse = $("#collapse");
             var $storedImages = $collapse.find("#stored-images");
             var $storedClasses = $collapse.find("#stored-classes");
-            for(var i in data){
-                var $image = $('<div/>').addClass("accordion-inner centered").attr("id", i);
-                var $class = $('<li><a href="#' + i + '">' + i + '</a></li>');
-                $image.append($('<div/>').addClass("info-text").html(i));
-                for(var j = 0; j < data[i].length; j++){
-                    $image.append(img(data[i][j], "stored-image"));
+            var ts = Object.keys(data).sort();
+            for(var i = 0; i < ts.length; i++){
+                var $image = $('<div/>').addClass("accordion-inner centered").attr("id", ts[i]);
+                var $class = $('<li><a href="#' + ts[i] + '">' + ts[i] + '</a></li>');
+                $image.append($('<div/>').addClass("info-text").html(ts[i]));
+                for(var j = 0; j < data[ts[i]].length; j++){
+                    $image.append(img(data[ts[i]][j], "stored-image"));
                 }
                 $storedImages.append($image);
                 $storedClasses.append($class);

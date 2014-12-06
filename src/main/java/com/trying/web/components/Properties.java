@@ -20,6 +20,7 @@ public class Properties {
     public int eachFaceNumber;
     public int imageAsVectorLength;
     public int numOfImagesForTraining;
+    public int classLength;
 
     public String testType;
     public String classPrefix;
@@ -43,6 +44,7 @@ public class Properties {
         eachFaceNumber = environment.getRequiredProperty("each.face.number", Integer.class);
         numOfImagesForTraining = environment.getRequiredProperty("hfr.training.images.count", Integer.class);
 
+        classLength = String.valueOf(faceNumber).length();
         imageAsVectorLength = imageHeight * imageWidth;
 
         useCache = environment.getRequiredProperty("hfr.use.cache", Boolean.class);

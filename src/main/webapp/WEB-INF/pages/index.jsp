@@ -66,11 +66,11 @@
                             </div>
                         </div>
                         <div class="row-fluid" style="margin-top: 5px;">
-                            <div id="crop" class="span6 thumbnail centered">
+                            <div id="crop" class="span6 thumbnail centered" style="min-height: 194px;">
                                 <div id="cropContainer"></div>
                             </div>
                             <div id="view" class="span6 centered">
-                                <div class="span thumbnail">
+                                <div class="span thumbnail" style="min-height: 194px;">
                                     <div class="centered">
                                         <img src="/images/face.bmp" id="cropped" class="stored-image">
                                     </div>

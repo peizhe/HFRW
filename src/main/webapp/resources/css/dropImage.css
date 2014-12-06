@@ -44,8 +44,6 @@
     display: inline-block;
 }
 
-.cropImage-container {}
-
 .info-text, .cropImage-text {
     text-align: center;
     vertical-align: middle;
@@ -76,7 +74,9 @@
     margin: 0 10px 0 !important;
 }
 
-.centered, .cropImage-buttons {
+.centered,
+.cropImage-buttons,
+.cropImage-container {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: wrap !important;

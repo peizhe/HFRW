@@ -37,9 +37,7 @@ public class HFRController {
                 final String clazz = hfr.classifyFace(ImageIO.read(Files.newInputStream(path)), metric, algorithm, pcCount, nnCount);
                 answer.put("status", "ok");
                 answer.put("class", clazz);
-
-                final JSONArray storedImages = new JSONArray();
-                answer.put("storedImages", storedImages);
+                answer.put("storedImages", getTrainingImages(clazz));
             } else {
                 answer.put("status", "error");
                 answer.put("reason", "NoSuchFileException: " + path);
@@ -50,5 +48,19 @@ public class HFRController {
         }
         return answer.toString();
 //        hfr.savePrincipalComponentImages(FeatureExtractionMode.PCA, 45);
+    }
+
+    private JSONArray getTrainingImages(final String clazz) {
+        final JSONArray storedImages = new JSONArray();
+        hfr.getTrainMap()
+                .get(clazz)
+                .forEach(c -> storedImages.put(
+                                properties.webTrainingImages
+                                        .resolve(properties.trainingType)
+                                        .resolve(clazz)
+                                        .resolve(c + "." + properties.trainingType)
+                        )
+                );
+        return storedImages;
     }
 }
