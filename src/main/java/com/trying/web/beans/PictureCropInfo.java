@@ -1,4 +1,4 @@
-package com.trying.web;
+package com.trying.web.beans;
 
 import org.json.JSONObject;
 

@@ -1,12 +1,132 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
 <html>
-<head>
-    <title></title>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Human Face Recognition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Oleksandr KOL Kucher">
+
+    <link rel="stylesheet" href="<c:url value="${pageContext.request.contextPath}/css/hfr.css"/>">
+    <link rel="stylesheet" href="<c:url value="${pageContext.request.contextPath}/css/dropImage.css"/>">
+    <link rel="stylesheet" href="<c:url value="${pageContext.request.contextPath}/bootstrap/css/bootstrap.css"/>">
+    <link rel="stylesheet" href="<c:url value="${pageContext.request.contextPath}/bootstrap/css/bootstrap-responsive.css"/>">
+    <link rel="stylesheet" href="<c:url value="${pageContext.request.contextPath}/css/cropper/imgareaselect-default.css"/>"/>
+
+    <script src="<c:url value="${pageContext.request.contextPath}/js/jquery-2.1.1.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="${pageContext.request.contextPath}/bootstrap/js/bootstrap.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="${pageContext.request.contextPath}/js/jquery.imgareaselect.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="${pageContext.request.contextPath}/js/cropImage.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="${pageContext.request.contextPath}/js/dropImage.js"/>" type="text/javascript"></script>
+    <script src="<c:url value="${pageContext.request.contextPath}/js/hfr.js"/>" type="text/javascript"></script>
 </head>
 <body>
-<h1>Test Human Face Recognition</h1>
-  <a href="./test">Test</a>
-
-<h2 style="color: green;">${clazz}</h2>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <button type="button" class="btn btn-navbar collapsed" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand">Human Face Recognition</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="mailto:olexandr.kucher@gmail.com">Contact Oleksandr Kucher</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                        <li class="nav-header">Algorithms</li>
+                        <li class="active"><a href="#" group="algorithm" enum-name="PCA" class="menu">PCA</a></li>
+                        <li><a href="#" group="algorithm" enum-name="LDA" class="menu">LDA</a></li>
+                        <li class="nav-header">Metrics</li>
+                        <li class="active"><a href="#" group="metric" enum-name="EUCLIDEAN" class="menu">Euclidean</a></li>
+                        <li><a href="#" group="metric" enum-name="COSINE" class="menu">Cosine</a></li>
+                        <li><a href="#" group="metric" enum-name="L1D" class="menu">Linear</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="span9">
+                <div class="hero-unit" style="padding-bottom: 10px; padding-top: 10px;">
+                    <h2 class="text-center">Course Work</h2>
+                    <h3 class="text-center">Human Face Recognition</h3>
+                </div>
+                <div class="row-fluid">
+                    <div class="row-fluid">
+                        <div class="row-fluid">
+                            <div id="dragAndDrop" class="span thumbnail centered">
+                                <div id="dragAndDropContainer"></div>
+                            </div>
+                        </div>
+                        <div class="row-fluid" style="margin-top: 5px;">
+                            <div id="crop" class="span6 thumbnail centered">
+                                <div id="cropContainer"></div>
+                            </div>
+                            <div id="view" class="span6 centered">
+                                <div class="span thumbnail">
+                                    <div class="centered">
+                                        <img src="/images/face.bmp" id="cropped" class="stored-image">
+                                    </div>
+                                    <div id="classify-block" style="display: none;">
+                                        <div style="margin-top: 5px;" class="info-text">If image is fine, click 'Classify' button</div>
+                                        <div class="centered">
+                                            <input type="button" value="Classify" class="btn btn-success" id="classify-button">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="span thumbnail" id="results" style="margin: 5px 0 0 0; display: none;">
+                                    <div class="info-text">Images from class, which was selected as native for your face</div>
+                                    <div class="centered each"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="row-fluid">
+            <div class="span12" style="margin-top: 5px;">
+                <div class="accordion">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle centered" data-toggle="collapse" href="#collapse">
+                                Stored Images for Testing
+                            </a>
+                        </div>
+                        <div id="collapse" class="accordion-body collapse">
+                            <div id="faces" class="navbar navbar-static">
+                                <div class="navbar-inner">
+                                    <div class="container" style="width: auto;">
+                                        <ul class="nav centered" id="stored-classes"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-spy="scroll" data-target="#faces" data-offset="0" class="scrollspy-example" id="stored-images" style="overflow-y: scroll; max-height: 500px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="container">
+            <p>Powered by <a href="http://getbootstrap.com">Twitter Bootstrap</a></p>
+            <p>Author <a href="mailto:olexandr.kucher@gmail.com">Oleksandr KOL Kucher</a></p>
+            <p>Code licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        </div>
+    </div>
+    <div id="processingLabel" style="float: left; display: none; width: 100px; margin-top: -5px; margin-bottom: -8px;">
+        <center>
+            <div class="processingLabel"><img src="${pageContext.request.contextPath}/images/loading.gif" align="absmiddle"/></div>
+        </center>
+    </div>
 </body>
 </html>

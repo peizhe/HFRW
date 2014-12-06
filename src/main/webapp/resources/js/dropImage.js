@@ -33,6 +33,7 @@
             remove: false,
             cropLink: null,
             uploadLink: null,
+            aspectRatio: '1:1',
             cropContainerId: null,
             uploadDivClass: "img-circle drop",
             processingLabelId: "processingLabel",
@@ -43,38 +44,39 @@
                 uploadError: 'Error while uploading',
                 notImageAlert : 'Please, use only image files'
             },
-
+            cropSuccess: function(data){},
             cropImageOnClick: function(data){
                 var $cropContainer = $('#' + data.cropContainerId);
                 $cropContainer.cropImage({
                     cropLink: data.cropLink,
                     removeImgAreaSelect: false,
+                    imgAreaSelectSettings: {
+                        aspectRatio: that.settings.aspectRatio
+                    },
                     image: {
+                        src: data.answer.src,
                         fileName: data.answer.fileName,
                         originalWidth: data.answer.width,
-                        originalHeight: data.answer.height,
-                        src: data.answer.src + "&algorithm=" + $cropContainer.find("#algorithm").find(".algorithm:checked").val() + "&t=" + Date.now()
-                    }
+                        originalHeight: data.answer.height
+                    },
+                    cropSuccess: that.settings.cropSuccess
                 });
 
-                $cropContainer.find("#cropImage").load(function(){
-                    $cropContainer.find("#cropImageDiv").find(".processingLabel").remove();
+                var $image = $cropContainer.data('cropImage').$image;
+                $image.load(function(){
                     $(this).show();
-                    var tmpData = $cropContainer.data('cropImage').$image.data('imgAreaSelect');
+                    var tmpData = $image.data('imgAreaSelect');
                     tmpData.setOptions({show: true});
-                    var width = $cropContainer.find('#cropImage').width();
-                    var height = $cropContainer.find('#cropImage').height();
+                    var width = $image.width();
+                    var height = $image.height();
                     var size = Math.min(width, height);
                     tmpData.setSelection(
-                        Math.max(size/2 - that.settings.okWidth, 0),
-                        Math.max(size/2 - that.settings.okHeight, 0),
-                        Math.min(size/2 + that.settings.okWidth, width),
-                        Math.min(size/2 + that.settings.okHeight, height), true
+                        Math.max(Math.ceil(size/2) - that.settings.okWidth, 0),
+                        Math.max(Math.ceil(size/2) - that.settings.okHeight, 0),
+                        Math.min(Math.ceil(size/2) + that.settings.okWidth, width),
+                        Math.min(Math.ceil(size/2) + that.settings.okHeight, height), true
                     );
                     tmpData.update();
-                    $cropContainer.find("#cropButton").off().click(function(){
-                        $cropContainer.data('cropImage').settings.crop(tmpData.getSelection(true));
-                    });
                 });
             },
             successUploadFunction: function(resp){
@@ -85,15 +87,19 @@
                 $cropContainer.cropImage({remove: true});
                 $cropContainer.cropImage({
                     removeImgAreaSelect: true,
+                    imgAreaSelectSettings: {
+                        aspectRatio: that.settings.aspectRatio
+                    },
+                    cropSuccess: that.settings.cropSuccess,
                     cropLink: that.settings.cropLink,
                     image: {
+                        src: answer.src,
                         fileName: answer.fileName,
                         originalWidth: answer.width,
-                        originalHeight: answer.height,
-                        src: answer.src + "&t=" + Date.now()
+                        originalHeight: answer.height
                     }
                 });
-                $cropContainer.find('#cropImage').click(function(){
+                $cropContainer.data('cropImage').$image.click(function(){
                     $(this).off();
                     that.settings.cropImageOnClick({
                         answer: answer,

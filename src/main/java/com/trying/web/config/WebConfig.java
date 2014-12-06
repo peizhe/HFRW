@@ -5,6 +5,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -12,8 +13,8 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc
-@PropertySource("classpath:properties/image.properties")
-@ComponentScan({"com.trying.web.config", "com.trying.web.controllers", "com.trying.fe"})
+@PropertySource({"classpath:properties/image.properties"})
+@ComponentScan({"com.trying.web.config", "com.trying.web.controllers", "com.trying.fe", "com.trying.web.components"})
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean
@@ -31,5 +32,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/js/**").addResourceLocations("/resources/js/");
         registry.addResourceHandler("/images/**").addResourceLocations("/resources/images/");
         registry.addResourceHandler("/bootstrap/**").addResourceLocations("/resources/bootstrap/");
+        registry.addResourceHandler("/hfr_resources/**").addResourceLocations("/resources/hfr_resources/");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new RequestProcessingTimeInterceptor());
     }
 }

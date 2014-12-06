@@ -40,13 +40,46 @@
     user-select: none;
 }
 
-#cropImage {
-    max-width: 570px;
-    max-height: 200px;
-    margin-left: 10px;
+#dragAndDropContainer, #cropContainer {
+    display: inline-block;
+}
+
+.cropImage-container {}
+
+.info-text, .cropImage-text {
+    text-align: center;
+    vertical-align: middle;
+    color: #5A86DE;
+    text-decoration: none;
+    font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif, italic;
+    font-weight: bold;
+    line-height: 25px;
+
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.cropImage-info {
+    margin-top: 5px;
+}
+
+.cropImage-image {
+    max-width: 100%;
+    max-height: 400px;
     border: 1px gray solid
 }
 
-#dragAndDropContainer {
-    display: inline-block;
+.cropImage-algorithm {
+    margin: 0 10px 0 !important;
+}
+
+.centered, .cropImage-buttons {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
 }

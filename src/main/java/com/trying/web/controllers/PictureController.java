@@ -1,18 +1,17 @@
 package com.trying.web.controllers;
 
-import com.trying.web.PictureCropInfo;
+import com.trying.web.beans.PictureCropInfo;
 import org.imgscalr.Scalr;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.DatatypeConverter;
@@ -23,38 +22,23 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.Date;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "picture")
 public class PictureController {
 
-    private String imageType;
-    private Integer imageWidth;
-    private Integer imageHeight;
-    private String pathToImages;
+    @Autowired private com.trying.web.components.Properties properties;
 
     public static final int BILINEAR = 0;
     private static final DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss");
 
-    @Resource private Environment environment;
-
-    @PostConstruct
-    private void init() {
-        imageWidth = environment.getRequiredProperty("face.image.width", Integer.class);
-        imageHeight = environment.getRequiredProperty("face.image.height", Integer.class);
-
-        pathToImages = environment.getRequiredProperty("path.to.uploaded.test.images", String.class);
-        imageType = environment.getRequiredProperty("type.of.saved.uploaded.test.images", String.class);
-    }
-
     @PreDestroy
     private void stop() throws IOException {
-        Files.walk(Paths.get(pathToImages)).filter(filePath -> !filePath.toString().endsWith("TEST_IMAGES")).forEach(filePath -> {
+        Files.walk(properties.pathToTestImages).filter(filePath -> !filePath.toString().endsWith("TEST_IMAGES")).forEach(filePath -> {
             try {
                 Files.delete(filePath);
             } catch (IOException ignored) {
@@ -64,14 +48,14 @@ public class PictureController {
 
     @RequestMapping(value = "getImage")
     public void getImage(@RequestParam(value = "file", required = true) String fileName, HttpServletResponse response) throws IOException {
-        final Path path = Paths.get(pathToImages).resolve(fileName);
+        final Path path = properties.pathToTestImages.resolve(fileName);
         if(Files.exists(path)) {
             final BufferedImage image = ImageIO.read(Files.newInputStream(path));
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            ImageIO.write(image, imageType, output);
+            ImageIO.write(image, properties.testType, output);
             final byte[] imageBytes = output.toByteArray();
 
-            response.setContentType("image/" + imageType);
+            response.setContentType("image/" + properties.testType);
             response.setContentLength(imageBytes.length);
             try (OutputStream os = response.getOutputStream()) {
                 os.write(imageBytes);
@@ -88,16 +72,17 @@ public class PictureController {
         final JSONObject answer = new JSONObject();
         if (null != jsonSelection && !jsonSelection.isEmpty()) {
             final PictureCropInfo pictureCropInfo = PictureCropInfo.fromJson(new JSONObject(jsonSelection));
-            final Path path = Paths.get(pathToImages).resolve(fileName);
+            final Path path = properties.pathToTestImages.resolve(fileName);
             if(Files.exists(path)) {
                 final BufferedImage src = ImageIO.read(Files.newInputStream(path));
-                final BufferedImage templateImage = resizeImage(crop(src, pictureCropInfo), imageWidth, imageHeight, algorithm);
+                final BufferedImage templateImage = resizeImage(crop(src, pictureCropInfo), properties.imageWidth, properties.imageHeight, algorithm);
 
                 final String file = saveImage(templateImage, "crop_image_");
                 answer.put("status", "ok");
-                answer.put("src", "/picture/getImage?file=" + file);
+                answer.put("fileName", file);
                 answer.put("width", templateImage.getWidth());
                 answer.put("height", templateImage.getHeight());
+                answer.put("src", "/picture/getImage?file=" + file);
             }
         } else {
             answer.put("status", "error");
@@ -151,17 +136,31 @@ public class PictureController {
     }
 
     private String saveImage(final BufferedImage image, final String name) throws IOException {
-        final String fileName = name + format(Instant.now()) + "." + imageType;
-        final Path path = Paths.get(pathToImages).resolve(fileName);
+        final String fileName = name + format(Instant.now()) + "." + properties.testType;
+        final Path path = properties.pathToTestImages.resolve(fileName);
         if(!Files.exists(path)){
             Files.createFile(path);
         }
-        ImageIO.write(image, imageType, Files.newOutputStream(path));
+        ImageIO.write(image, properties.testType, Files.newOutputStream(path));
         return fileName;
     }
 
     private String format(final Instant instant){
         final Date date = new Date(instant.toEpochMilli());
         return format.format(date);
+    }
+
+    @RequestMapping("storedImages")
+    public String getAllStoredImages(){
+        final JSONObject images = new JSONObject();
+        for (int i = 1; i <= properties.faceNumber; i++) {
+            final JSONArray oneClassImages = new JSONArray();
+            final String clazz = properties.classPrefix + i;
+            for (int j = 1; j <= properties.eachFaceNumber; j++) {
+                oneClassImages.put(properties.webTrainingImages.resolve(properties.trainingType).resolve(clazz).resolve(j + "." + properties.trainingType).toString());
+            }
+            images.put(clazz, oneClassImages);
+        }
+        return images.toString();
     }
 }
