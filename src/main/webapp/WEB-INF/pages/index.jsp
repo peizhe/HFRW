@@ -50,6 +50,32 @@
                         <li class="active"><a href="#" group="metric" enum-name="EUCLIDEAN" class="menu">Euclidean</a></li>
                         <li><a href="#" group="metric" enum-name="COSINE" class="menu">Cosine</a></li>
                         <li><a href="#" group="metric" enum-name="L1D" class="menu">Linear</a></li>
+                        <li class="nav-header">Settings [Principal Components]</li>
+                        <li class="active">
+                            <a href="#" group="spc" enum-name="ALL" class="menu" data-toggle="tooltip" data-placement="right" data-original-title="Uses all exist images with faces">Use ALL Images</a>
+                        </li>
+                        <li>
+                            <a href="#" group="spc" enum-name="FIRST" class="menu" need-number data-toggle="tooltip" data-placement="right" data-original-title="Uses first n exist images for each class">
+                                Use FIRST images
+                                <input type="text" id="FIRST" placeholder="--> 5" class="li-input" style="display: none;">
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" group="spc" enum-name="RANDOM" class="menu" need-number data-toggle="tooltip" data-placement="right" data-original-title="Uses n randomly selected images for each class">
+                                Use RANDOM images
+                                <input type="text" id="RANDOM" placeholder="--> 5" class="li-input" style="display: none;">
+                            </a>
+                        </li>
+                        <li class="nav-header">Settings [KNN]</li>
+                        <li class="active">
+                            <a href="#" group="knn" enum-name="DEFAULT" class="menu" data-toggle="tooltip" data-placement="right" data-original-title="Uses DEFAULT number of Nearest Neighbor components from .properties file">Use DEFAULT number</a>
+                        </li>
+                        <li>
+                            <a href="#" group="knn" enum-name="CUSTOM" class="menu" need-number data-toggle="tooltip" data-placement="right" data-original-title="Uses YOUR number of Nearest Neighbor components">
+                                Use CUSTOM number
+                                <input type="text" id="CUSTOM" placeholder="--> 2" class="li-input" style="display: none;">
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

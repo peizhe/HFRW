@@ -4,7 +4,6 @@ import Jama.Matrix;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.trying.fe.enums.FeatureExtractionMode;
-import com.trying.fe.enums.MetricType;
 import com.trying.fe.featureExtraction.FeatureExtraction;
 import com.trying.fe.featureExtraction.ProjectedTrainingMatrix;
 import com.trying.fe.utils.ImageUtils;
@@ -26,49 +25,49 @@ public class HumanFaceRecognitionProcessor {
     private final Cache<FeatureExtractionMode, FeatureExtraction> cache = CacheBuilder.newBuilder().build();
     private final Map<String, List<Integer>> trainMap = new HashMap<>();
 
-    public String classifyFace(final BufferedImage image, final MetricType metricType, final FeatureExtractionMode featureExtractionMode, final int componentsRetained, final int knnCount) {
-        final FeatureExtraction fe = getFeatureExtraction(featureExtractionMode, componentsRetained);
+    public String classifyFace(final BufferedImage image, final ClassifySettings settings) {
+        final FeatureExtraction fe = getFeatureExtraction(settings);
         final Matrix matrixImage = ImageUtils.convertToMatrix(image);
 
         final List<ProjectedTrainingMatrix> projectedTrainingSet = fe.getProjectedTrainingSet();
 
         final Matrix testCase = fe.getW().transpose().times(ImageUtils.toVector(matrixImage).minus(fe.getMeanMatrix()));
-        return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, knnCount, metricType.getMetric());
+        return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, settings.getKnnCount(), settings.getMetric().getMetric());
     }
 
-    public void savePrincipalComponentImages(final FeatureExtractionMode featureExtractionMode, final int componentsRetained) throws IOException {
-        final FeatureExtraction fe = getFeatureExtraction(featureExtractionMode, componentsRetained);
+    public void savePrincipalComponentImages(final ClassifySettings settings) throws IOException {
+        final FeatureExtraction fe = getFeatureExtraction(settings);
 
         ImageUtils.saveImagesToFiles(
                 ImageUtils.convertMatricesToImage(fe.getW(), properties.imageHeight, properties.imageWidth),
-                properties.pathToComponents.resolve(featureExtractionMode.getName()).toString(),
+                properties.pathToComponents.resolve(settings.getFeMode().getName()).toString(),
                 properties.trainingType
         );
     }
 
-    private FeatureExtraction trainingSystem(final FeatureExtractionMode featureExtractionMode, final int componentsRetained) {
+    private FeatureExtraction trainingSystem(final ClassifySettings settings) {
         /** set trainSet and testSet **/
         trainMap.clear();
         for (int i = 1; i <= properties.faceNumber; i++) {
-            trainMap.put(properties.classPrefix + Utils.leadingZeros(i, properties.classLength), generateTrainNumbers());
+            trainMap.put(properties.classPrefix + Utils.leadingZeros(i, properties.classLength), settings.getTraining().generateTrainNumbers(settings.getNumberOfImages(), properties.eachFaceNumber));
         }
         /** set featureExtraction **/
-        return featureExtractionMode.getInstance(getWorkingSetWithLabels(trainMap), componentsRetained, properties.imageAsVectorLength);
+        return settings.getFeMode().getInstance(getWorkingSetWithLabels(trainMap), settings.getComponents(), properties.imageAsVectorLength);
     }
 
-    private FeatureExtraction getFeatureExtraction(final FeatureExtractionMode featureExtractionMode, final int componentsRetained) {
+    private FeatureExtraction getFeatureExtraction(final ClassifySettings settings) {
         if(properties.useCache) {
-            final FeatureExtraction ifPresent = cache.getIfPresent(featureExtractionMode);
+            final FeatureExtraction ifPresent = cache.getIfPresent(settings.getFeMode());
             final FeatureExtraction fe;
             if (null == ifPresent) {
-                fe = trainingSystem(featureExtractionMode, componentsRetained);
-                cache.put(featureExtractionMode, fe);
+                fe = trainingSystem(settings);
+                cache.put(settings.getFeMode(), fe);
             } else {
                 fe = ifPresent;
             }
             return fe;
         } else {
-            return trainingSystem(featureExtractionMode, componentsRetained);
+            return trainingSystem(settings);
         }
     }
 
@@ -86,19 +85,6 @@ public class HumanFaceRecognitionProcessor {
                     .collect(Collectors.toList()));
         }
         return trainingSet;
-    }
-
-    private List<Integer> generateTrainNumbers() {
-        final Random random = new Random();
-        final List<Integer> result = new ArrayList<>();
-        while (result.size() < properties.numOfImagesForTraining) {
-            int temp = random.nextInt(properties.eachFaceNumber) + 1;
-            while (result.contains(temp)) {
-                temp = random.nextInt(properties.eachFaceNumber) + 1;
-            }
-            result.add(temp);
-        }
-        return result;
     }
 
     public Map<String, List<Integer>> getTrainMap() {

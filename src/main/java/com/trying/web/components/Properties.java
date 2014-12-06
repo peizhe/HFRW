@@ -18,8 +18,10 @@ public class Properties {
     public int imageHeight;
     public boolean useCache;
     public int eachFaceNumber;
+    public int numOfKNNComponents;
     public int imageAsVectorLength;
     public int numOfImagesForTraining;
+    public int principalComponentsCount;
     public int classLength;
 
     public String testType;
@@ -42,7 +44,9 @@ public class Properties {
         imageWidth = environment.getRequiredProperty("face.image.width", Integer.class);
         imageHeight = environment.getRequiredProperty("face.image.height", Integer.class);
         eachFaceNumber = environment.getRequiredProperty("each.face.number", Integer.class);
+        numOfKNNComponents = environment.getRequiredProperty("hfr.knn.count", Integer.class);
         numOfImagesForTraining = environment.getRequiredProperty("hfr.training.images.count", Integer.class);
+        principalComponentsCount = environment.getRequiredProperty("hfr.principal.components.count", Integer.class);
 
         classLength = String.valueOf(faceNumber).length();
         imageAsVectorLength = imageHeight * imageWidth;

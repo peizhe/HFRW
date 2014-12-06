@@ -21,12 +21,27 @@ function init(){
     $(".menu").click(function(){
         $(".menu[group='" + $(this).attr("group") + "']").each(function(){
             $(this).parent().removeClass("active");
+        }).find(".li-input").each(function(){
+            $(this).hide();
         });
         $(this).parent().addClass("active");
+        if($(this).has("need-number")){
+            $("#" + $(this).attr("enum-name")).show();
+        }
+    });
+    $(".menu[group='spc']").each(function(){
+        $(this).tooltip();
+    });
+    $(".menu[group='knn']").each(function(){
+        $(this).tooltip();
     });
     $("#classify-button").click(function(){
         var metric = null;
         var algorithm = null;
+        var trainingImage = null;
+        var trainingImageCount = null;
+        var knnComponent = null;
+        var knnCount = null;
         var fileName = $("#cropped").attr("file-name");
         $(".menu[group='algorithm']").each(function(){
             if($(this).parent().hasClass("active")){
@@ -38,13 +53,29 @@ function init(){
                 metric = $(this).attr("enum-name");
             }
         });
+        $(".menu[group='spc']").each(function(){
+            if($(this).parent().hasClass("active")) {
+                trainingImage = $(this).attr("enum-name");
+                trainingImageCount = $("#" + $(this).attr("enum-name")).val();
+            }
+        });
+        $(".menu[group='knn']").each(function(){
+            if($(this).parent().hasClass("active")) {
+                knnComponent = $(this).attr("enum-name");
+                knnCount = $("#" + $(this).attr("enum-name")).val();
+            }
+        });
         $.ajax({
             type: "POST",
             url: "/hfr/classify",
             data: {
                 metric: metric,
+                knnCount: knnCount,
                 fileName: fileName,
-                algorithm: algorithm
+                algorithm: algorithm,
+                knnComponent: knnComponent,
+                trainingImage: trainingImage,
+                trainingImageCount: trainingImageCount
             },
             success: function(resp) {
                 var data = $.parseJSON(resp);
