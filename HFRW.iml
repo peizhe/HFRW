@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.linked.project.id="HFRW" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" external.system.module.group="" external.system.module.version="1.0" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="ctx" removed="false">
+          <file>file://$MODULE_DIR$/src/com/trying/web/config/WebConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/trying/web/config/WebConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/trying/web/config/WebConfig.java</file>
+        </fileset>
+      </configuration>
+    </facet>
     <facet type="web" name="Web Gradle : HFRW-1.0.war">
       <configuration>
         <webroots>
@@ -10,16 +19,6 @@
           <root url="file://$MODULE_DIR$/src/main/java" />
           <root url="file://$MODULE_DIR$/src/main/resources" />
         </sourceRoots>
-      </configuration>
-    </facet>
-    <facet type="Spring" name="Spring">
-      <configuration>
-        <fileset id="fileset" name="ctx" removed="false">
-          <file>file://$MODULE_DIR$/src/main/java/com/trying/web/config/WebConfig.java</file>
-          <file>file://$MODULE_DIR$/src/main/java/com/trying/web/config/WebConfig.java</file>
-          <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml</file>
-          <file>file://$MODULE_DIR$/src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml</file>
-        </fileset>
       </configuration>
     </facet>
   </component>
@@ -52,5 +51,6 @@
     <orderEntry type="library" exported="" name="Gradle: org.springframework:spring-expression:4.1.0.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="Gradle: aopalliance:aopalliance:1.0" level="project" />
     <orderEntry type="library" exported="" scope="RUNTIME" name="Gradle: javax.servlet:jstl:1.2" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: org.json:json:20141113" level="project" />
   </component>
 </module>

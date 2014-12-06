@@ -21,6 +21,7 @@ dependencies {
     compile 'org.springframework:spring-web:4.1.0.RELEASE'
     compile 'org.springframework:spring-webmvc:4.1.0.RELEASE'
 
+    compile 'org.json:json:20141113'
     compile 'com.google.guava:guava:18.0'
     compile 'org.imgscalr:imgscalr-lib:4.2'
 

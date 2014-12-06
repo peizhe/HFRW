@@ -7,9 +7,14 @@
     <meta name="author" content="Oleksandr KOL Kucher">
 
     <script src="/js/jquery-2.1.1.js"></script>
+    <script src="/js/jquery.imgareaselect.js"></script>
     <script src="/bootstrap/js/bootstrap.js"></script>
+    <link rel="stylesheet" href="/css/dropImage.css">
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="/bootstrap/css/bootstrap-responsive.css">
+    <link rel="stylesheet" href="/css/cropper/imgareaselect-default.css"/>
+    <script src="${pageContext.request.contextPath}/js/logoPicture/cropImage.js" type="text/javascript"></script>
+    <script src="${pageContext.request.contextPath}/js/logoPicture/dropImage.js" type="text/javascript"></script>
 
     <style type="text/css">
         body {
@@ -18,10 +23,6 @@
         }
         .sidebar-nav {
             padding: 9px 0;
-        }
-        .docs {
-            padding-left: 5%;
-            padding-right: 15%;
         }
         p {text-indent: 20px;}
         .footer {
@@ -32,8 +33,19 @@
             background-color: #f5f5f5;
         }
     </style>
+    <script>
+        function init(){
+            $("#dragAndDropContainer").dropImage({
+                okWidth: 92,
+                okHeight: 0,
+                cropLink: "/picture/crop",
+                uploadLink: "/picture/upload",
+                cropContainerId: 'cropContainer'
+            });
+        }
+    </script>
 </head>
-<body>
+<body onload="init();">
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container-fluid">
@@ -72,17 +84,16 @@
                     <h3 class="text-center">Human Face Recognition</h3>
                 </div>
                 <div class="row-fluid">
-                    <div class="row-fluid" style="text-align: justify;">
-                        <div id="main" class="span10 thumbnail docs" style="width: 100%; margin-left: 0; min-height: 293px;">
-                            <h4 class="text-center">Черкаський національний університет імені Богдана Хмельницького</h4>
-                            <h4 class="text-center">ННІ фізики, математики та комп'ютерно-інформаційних систем</h4>
-                            <h4 class="text-center">Кафедра прикладної математики та інформатики</h4>
-                            <p><b>Дисципліна:</b> Методика та організація наукових досліджень</p>
-                            <p><b>Спеціальність:</b> Прикладна математика</p>
-                            <p><b>Група:</b> МПМ1</p>
-                            <p><b>Навчальний рік:</b> 2014-2015</p>
-                            <p><b>Лабораторні роботи виконав: </b> Олександр Кучер</p>
-                            <p><b>Викладач: </b> Красношлик Наталія Олександрівна</p>
+                    <div class="row-fluid">
+                        <div class="row-fluid">
+                            <div id="dragAndDrop" class="span thumbnail" style="padding-left: 45%;">
+                                <div id="dragAndDropContainer"></div>
+                            </div>
+                        </div>
+                        <div class="row-fluid" style="margin-top: 5px;">
+                            <div id="crop" class="span thumbnail" style="padding-left: 45%; min-height: 200px;">
+                                <div id="cropContainer"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -96,6 +107,11 @@
             <p>Author <a href="mailto:olexandr.kucher@gmail.com">Oleksandr KOL Kucher</a></p>
             <p>Code licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
         </div>
+    </div>
+    <div id="processingLabel" style="float: left; display: none; width: 100px; margin-top: -5px; margin-bottom: -8px;">
+        <center>
+            <div class="processingLabel"><img src="${pageContext.request.contextPath}/images/loading.gif" align="absmiddle"/></div>
+        </center>
     </div>
 </body>
 </html>

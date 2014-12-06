@@ -1,0 +1,52 @@
+.drop {
+    width: 100px;
+    height: 100px;
+    box-shadow: 0 0 30px #444545;
+    padding: 10px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#b7f2f4), to(#81e8eb));
+    text-align: center;
+    vertical-align: middle;
+    text-shadow: 0 1px 0 #9fd5d7;
+    border: 1px solid #87d3d5;
+    color: #437b7d;
+    text-decoration: none;
+    font: 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    line-height: 25px;
+
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.drop:hover {
+    background: -webkit-gradient(linear, left top, left bottom, from(#81e8eb), to(#b7f2f4));
+    box-shadow: 0 0 30px red;
+}
+
+.dropHover {
+    background: -webkit-gradient(linear, left top, left bottom, from(#81e8eb), to(#b7f2f4));
+    box-shadow: 0 0 30px green;
+}
+
+.dropText {
+    height: 50px; width: 100px; margin: 13px 0;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+#cropImage {
+    max-width: 570px;
+    max-height: 200px;
+    margin-left: 10px;
+    border: 1px gray solid
+}
+
+#dragAndDropContainer {
+    display: inline-block;
+}

@@ -28,24 +28,14 @@
         var that = this;
         var reader = new FileReader();
         var defaults = {
-            $block: null,           //parent div for drop and crop
-            entityId: null,         //entityId of BusinessEntity or PersonEntity
-            cropLink: null,
-            srcPrefix: null,        //prefix for image src
-            pictureId: null,        //id of picture if it already exists
-            entityType: null,       //PERSON, ENTITY
-            uploadLink: null,
-            $prototypesBlock: null,
-            processingLabelId: "processingLabel",
-            getAdditionData: function(){
-                var data = {};
-                data.entityId = that.settings.entityId;
-                data.pictureId = that.settings.pictureId;
-                data.entityType = that.settings.entityType;
-                data.pictureType = 'ORIG';
-                return data;
-            },
+            okWidth: 0,
+            okHeight: 0,
             remove: false,
+            cropLink: null,
+            uploadLink: null,
+            cropContainerId: null,
+            uploadDivClass: "img-circle drop",
+            processingLabelId: "processingLabel",
             allowedImages: "(jpeg|png|gif|jpg|bmp)",
             texts: {
                 uploadDivText: "Drag & Drop<br>Image Here<br>(or click)",
@@ -53,54 +43,62 @@
                 uploadError: 'Error while uploading',
                 notImageAlert : 'Please, use only image files'
             },
-            cssStyleUploadDiv:{
-                width: 120,
-                height: 90,
-                fontSize: 11,
-                color: "gray",
-                lineHeight: "20px",
-                paddingTop: "30px",
-                textAlign: "center",
-                verticalAlign: "middle",
-                backgroundColor: "white",
-                border: "1px grey solid",
-                "-moz-user-select": "none",
-                fontFamily: "Arial, Tahoma, Helvetica, serif"
-            },
 
-            cropImageOnClick: function(data){},
+            cropImageOnClick: function(data){
+                var $cropContainer = $('#' + data.cropContainerId);
+                $cropContainer.cropImage({
+                    cropLink: data.cropLink,
+                    removeImgAreaSelect: false,
+                    image: {
+                        fileName: data.answer.fileName,
+                        originalWidth: data.answer.width,
+                        originalHeight: data.answer.height,
+                        src: data.answer.src + "&algorithm=" + $cropContainer.find("#algorithm").find(".algorithm:checked").val() + "&t=" + Date.now()
+                    }
+                });
+
+                $cropContainer.find("#cropImage").load(function(){
+                    $cropContainer.find("#cropImageDiv").find(".processingLabel").remove();
+                    $(this).show();
+                    var tmpData = $cropContainer.data('cropImage').$image.data('imgAreaSelect');
+                    tmpData.setOptions({show: true});
+                    var width = $cropContainer.find('#cropImage').width();
+                    var height = $cropContainer.find('#cropImage').height();
+                    var size = Math.min(width, height);
+                    tmpData.setSelection(
+                        Math.max(size/2 - that.settings.okWidth, 0),
+                        Math.max(size/2 - that.settings.okHeight, 0),
+                        Math.min(size/2 + that.settings.okWidth, width),
+                        Math.min(size/2 + that.settings.okHeight, height), true
+                    );
+                    tmpData.update();
+                    $cropContainer.find("#cropButton").off().click(function(){
+                        $cropContainer.data('cropImage').settings.crop(tmpData.getSelection(true));
+                    });
+                });
+            },
             successUploadFunction: function(resp){
                 var answer = jQuery.parseJSON(resp);
-                var $cropContainer = that.settings.$block.find('#cropContainer');
-
-                that.settings.pictureId = answer.imageId;
-                that.settings.$block.find("#pictureId").val(answer.imageId);
+                var $cropContainer = $("#" + that.settings.cropContainerId);
 
                 that.$container.dropImage(that.settings);
                 $cropContainer.cropImage({remove: true});
                 $cropContainer.cropImage({
-                    pictureId: answer.imageId,
                     removeImgAreaSelect: true,
                     cropLink: that.settings.cropLink,
-                    srcPrefix: that.settings.srcPrefix,
-                    entityType: that.settings.entityType,
-                    $prototypesBlock: that.settings.$prototypesBlock,
                     image: {
+                        fileName: answer.fileName,
                         originalWidth: answer.width,
                         originalHeight: answer.height,
-                        src: that.settings.srcPrefix + answer.src + "&t=" + Date.now()
+                        src: answer.src + "&t=" + Date.now()
                     }
                 });
                 $cropContainer.find('#cropImage').click(function(){
                     $(this).off();
                     that.settings.cropImageOnClick({
                         answer: answer,
-                        imageId: answer.imageId,
                         cropLink: that.settings.cropLink,
-                        $logoBlock: that.settings.$block,
-                        srcPrefix: that.settings.srcPrefix,
-                        entityType: that.settings.entityType,
-                        $prototypesBlock: that.settings.$prototypesBlock
+                        cropContainerId: that.settings.cropContainerId
                     });
                 });
             }
@@ -130,8 +128,7 @@
                             url: that.settings.uploadLink,
                             async: false,
                             data: {
-                                image: JSON.stringify(image),
-                                additionData: JSON.stringify(that.settings.getAdditionData())
+                                image: JSON.stringify(image)
                             },
                             success: that.settings.successUploadFunction,
                             error: function(){
@@ -154,6 +151,7 @@
         this.onDrop = function(e){
             e.stopPropagation();
             e.preventDefault();
+            $(this).removeClass("dropHover");
             var image = {};
             if(e.dataTransfer && e.dataTransfer.files.length != 0){
                 var files = e.dataTransfer.files;
@@ -171,8 +169,9 @@
         this.onPaste = function(e){
             e.stopPropagation();
             e.preventDefault();
+            $(this).removeClass("dropHover");
             var image = {};
-            if(e.clipboardData && e.clipboardData.files != 0 && e.clipboardData.files.length > 0){
+            if(e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0){
                 var files = e.clipboardData.files;
                 reader.readAsDataURL(files[0]);
             } else if(e.clipboardData && e.clipboardData.getData){
@@ -200,8 +199,8 @@
             this.$container.append(file("uploadFile"));
 
             var $uploadDiv = this.$container.find("#uploadDiv");
-            $uploadDiv.append(div("text").html(that.settings.texts.uploadDivText));
-            $uploadDiv.css(that.settings.cssStyleUploadDiv).attr("contenteditable", "true");
+            $uploadDiv.append(div("text").addClass("dropText").html(that.settings.texts.uploadDivText));
+            $uploadDiv.attr("contenteditable", "true").addClass(that.settings.uploadDivClass);
             this.$container.find("#uploadFile").css({display: "none"});
             that.$container.find("#uploadFile").change(function(){
                 var $fileInput = $(this);
@@ -216,6 +215,8 @@
             });
             that.$container.find("#uploadDiv").get(0).addEventListener("drop", that.onDrop, false);
             that.$container.find("#uploadDiv").get(0).addEventListener("paste", that.onPaste, false);
+            that.$container.find("#uploadDiv").get(0).addEventListener("dragover", function(){$(this).addClass("dropHover");}, false);
+            that.$container.find("#uploadDiv").get(0).addEventListener("dragleave", function(){$(this).removeClass("dropHover");}, false);
         };
 
         this.$container = $(item);
