@@ -3,20 +3,24 @@ $(document).ready(init);
 function img(src, styleClass){
     return $('<img/>').addClass(styleClass).attr("src", src);
 }
+
 function init(){
-    $("#dragAndDropContainer").dropImage({
+    var dropParameters = {
         okWidth: 92,
         okHeight: 112,
         aspectRatio: '92:112',
         cropLink: "/picture/crop",
+        parentCropContainerId: "crop",
         uploadLink: "/picture/upload",
-        cropContainerId: 'cropContainer',
-        cropSuccess: function(resp) {
+        cropContainer: 'cropContainer',
+        cropSuccess: function (resp) {
             var data = $.parseJSON(resp);
-            $("#cropped").attr("src", data.src + "&t=" + Date.now()).attr("file-name", data.fileName);
+            $("#cropped").attr("src", data.src + "&t=" + Date.now()).attr("file-name", data.fileName).show();
             $("#classify-block").show();
         }
-    });
+    };
+    $("#dragAndDrop").find(".dragAndDropContainer").dropImage(dropParameters);
+    $("#dragAndDropDup").find(".dragAndDropContainer").dropImage(dropParameters);
 
     $("button[class='close']").each(function(){
         $(this).click(function(){
@@ -136,6 +140,7 @@ function storeData() {
         trainingImageCount: trainingImageCount
     };
 }
+
 function getAllStoredImages(){
     $.ajax({
         type: "POST",

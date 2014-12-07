@@ -34,7 +34,9 @@
             cropLink: null,
             uploadLink: null,
             aspectRatio: '1:1',
-            cropContainerId: null,
+            cropContainer: null,
+            parentDropContainerId: "",
+            parentCropContainerId: "",
             uploadDivClass: "img-circle drop",
             processingLabelId: "processingLabel",
             allowedImages: "(jpeg|png|gif|jpg|bmp)",
@@ -46,7 +48,7 @@
             },
             cropSuccess: function(data){},
             cropImageOnClick: function(data){
-                var $cropContainer = $('#' + data.cropContainerId);
+                var $cropContainer = $("#" + that.settings.parentCropContainerId).find("." + data.cropContainer);
                 $cropContainer.cropImage({
                     cropLink: data.cropLink,
                     removeImgAreaSelect: false,
@@ -81,7 +83,7 @@
             },
             successUploadFunction: function(resp){
                 var answer = jQuery.parseJSON(resp);
-                var $cropContainer = $("#" + that.settings.cropContainerId);
+                var $cropContainer = $("#" + that.settings.parentCropContainerId).find("." + that.settings.cropContainer);
 
                 that.$container.dropImage(that.settings);
                 $cropContainer.cropImage({remove: true});
@@ -104,7 +106,7 @@
                     that.settings.cropImageOnClick({
                         answer: answer,
                         cropLink: that.settings.cropLink,
-                        cropContainerId: that.settings.cropContainerId
+                        cropContainer: that.settings.cropContainer
                     });
                 });
             }

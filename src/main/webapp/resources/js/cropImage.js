@@ -55,11 +55,11 @@
                 onSelectEnd: function(containes, selections){
                     if(selections.height > 0 && selections.width > 0){
                         that.$info.find("input[type='button'].cropImage-algorithm").each(function(){
-                            $(this).removeClass("disabled").addClass("enabled").prop("disabled", false).on();
+                            $(this).removeClass("disabled").addClass("enabled").prop("disabled", false);
                         });
                     } else {
                         that.$info.find("input[type='button'].cropImage-algorithm").each(function(){
-                            $(this).removeClass("enabled").addClass("disabled").prop("disabled", true).off();
+                            $(this).removeClass("enabled").addClass("disabled").prop("disabled", true);
                         });
                     }
                 },

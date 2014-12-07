@@ -97,17 +97,17 @@
                     <div class="row-fluid">
                         <div class="row-fluid">
                             <div id="dragAndDrop" class="span thumbnail centered">
-                                <div id="dragAndDropContainer"></div>
+                                <div class="dragAndDropContainer"></div>
                             </div>
                         </div>
                         <div class="row-fluid" style="margin-top: 5px;">
                             <div id="crop" class="span6 thumbnail centered" style="min-height: 194px;">
-                                <div id="cropContainer"></div>
+                                <div class="cropContainer"></div>
                             </div>
                             <div id="view" class="span6 centered">
                                 <div class="span thumbnail" style="min-height: 194px;">
                                     <div class="centered">
-                                        <img src="/images/face.bmp" id="cropped" class="stored-image">
+                                        <img src="/images/face.bmp" id="cropped" class="stored-image" style="display: none;">
                                     </div>
                                     <div id="classify-block" style="display: none;">
                                         <div style="margin-top: 5px;" class="info-text">If image is fine, click 'Classify' button</div>
@@ -128,6 +128,11 @@
                                     <div class="centered each"></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="row-fluid" style="margin-top: 5px;">
+                        <div id="dragAndDropDup" class="span thumbnail centered">
+                            <div class="dragAndDropContainer"></div>
                         </div>
                     </div>
                 </div>

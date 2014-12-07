@@ -40,7 +40,7 @@
     user-select: none;
 }
 
-#dragAndDropContainer, #cropContainer {
+.dragAndDropContainer, .cropContainer {
     display: inline-block;
 }
 

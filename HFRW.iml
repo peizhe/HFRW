@@ -52,7 +52,5 @@
     <orderEntry type="library" exported="" name="Gradle: aopalliance:aopalliance:1.0" level="project" />
     <orderEntry type="library" exported="" scope="RUNTIME" name="Gradle: javax.servlet:jstl:1.2" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.json:json:20141113" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: org.slf4j:slf4j-simple:1.6.1" level="project" />
-    <orderEntry type="library" exported="" name="Gradle: org.slf4j:slf4j-api:1.6.1" level="project" />
   </component>
 </module>
