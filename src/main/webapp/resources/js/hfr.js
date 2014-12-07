@@ -18,6 +18,11 @@ function init(){
         }
     });
 
+    $("button[class='close']").each(function(){
+        $(this).click(function(){
+            $(this).parent().hide();
+        });
+    });
     $(".menu").click(function(){
         $(".menu[group='" + $(this).attr("group") + "']").each(function(){
             $(this).parent().removeClass("active");

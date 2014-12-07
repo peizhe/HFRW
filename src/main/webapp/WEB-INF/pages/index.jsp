@@ -118,12 +118,12 @@
                                     </div>
                                 </div>
                                 <div class="span thumbnail" id="results" style="margin: 5px 0 0 0; display: none;">
-                                    <button type="button" class="close" data-dismiss="alert">x</button>
+                                    <button type="button" class="close">x</button>
                                     <div class="info-text">Images from class, which was selected as native for your face</div>
                                     <div class="centered each"></div>
                                 </div>
                                 <div class="span thumbnail" id="eigenvectors" style="margin: 5px 0 0 0; display: none;">
-                                    <button type="button" class="close" data-dismiss="alert">x</button>
+                                    <button type="button" class="close">x</button>
                                     <div class="info-text">Eigen Vectors (EigenFaces for PCA or Fisher Faces fo LDA)</div>
                                     <div class="centered each"></div>
                                 </div>
