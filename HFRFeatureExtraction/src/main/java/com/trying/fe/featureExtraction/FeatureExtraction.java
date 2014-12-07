@@ -17,7 +17,7 @@ public abstract class FeatureExtraction {
     protected Matrix w;
     protected List<ProjectedTrainingMatrix> projectedTrainingSet;
 
-    private final int imageAsVectorLength;
+    protected final int imageAsVectorLength;
 
     protected FeatureExtraction(List<Pair<String, Matrix>> data, int numberOfComponents, int imageAsVectorLength){
         if (numberOfComponents >= data.size()) {

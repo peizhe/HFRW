@@ -31,10 +31,7 @@ public class RequestProcessingTimeInterceptor extends HandlerInterceptorAdapter 
                             request.getRequestURI() + "]. Execution Time = " + (System.currentTimeMillis() - startTime)
             );
         } else {
-            System.out.println(
-                    "[" + format.format(new Date()) + "]  ERROR  [" + ((HandlerMethod) handler).getBean().getClass().getSimpleName() + "]   -   Exception [" +
-                            request.getRequestURI() + "][" + ex.getMessage() + "]. Execution Time = " + (System.currentTimeMillis() - startTime)
-            );
+            ex.printStackTrace();
         }
     }
 }

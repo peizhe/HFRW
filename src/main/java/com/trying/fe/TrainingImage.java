@@ -9,7 +9,7 @@ public enum TrainingImage {
         @Override
         public List<Integer> generateTrainNumbers(final int numOfClassItems, final int numOfAllClassItems) {
             final List<Integer> result = new ArrayList<>();
-            for (int i = 0; i < numOfAllClassItems; i++) {
+            for (int i = 1; i <= numOfAllClassItems; i++) {
                 result.add(i);
             }
             return result;
@@ -19,7 +19,7 @@ public enum TrainingImage {
         @Override
         public List<Integer> generateTrainNumbers(final int numOfClassItems, final int numOfAllClassItems) {
             final List<Integer> result = new ArrayList<>();
-            for (int i = 0; i < numOfClassItems; i++) {
+            for (int i = 1; i <= numOfClassItems; i++) {
                 result.add(i);
             }
             return result;

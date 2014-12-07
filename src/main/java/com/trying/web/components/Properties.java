@@ -28,15 +28,10 @@ public class Properties {
     public String classPrefix;
     public String trainingType;
 
-    public Path webResources;
-    public Path webTestImages;
-    public Path webComponents;
-    public Path webTrainingImages;
-
     public Path pathToResources;
-    public Path pathToTestImages;
-    public Path pathToComponents;
-    public Path pathToTrainingImages;
+    public String testImages;
+    public String components;
+    public String trainingImages;
 
     @PostConstruct
     private void init() {
@@ -57,13 +52,8 @@ public class Properties {
         trainingType = environment.getRequiredProperty("hfr.training.images.type", String.class);
 
         pathToResources = Paths.get(environment.getRequiredProperty("hfr.path.to.resources", String.class));
-        pathToTestImages = pathToResources.resolve(environment.getRequiredProperty("hfr.test.images", String.class));
-        pathToComponents = pathToResources.resolve(environment.getRequiredProperty("hfr.component.images", String.class));
-        pathToTrainingImages = pathToResources.resolve(environment.getRequiredProperty("hfr.training.images", String.class));
-
-        webResources = Paths.get(environment.getRequiredProperty("hfr.web.resources", String.class));
-        webTestImages = webResources.resolve(environment.getRequiredProperty("hfr.test.images", String.class));
-        webComponents = webResources.resolve(environment.getRequiredProperty("hfr.component.images", String.class));
-        webTrainingImages = webResources.resolve(environment.getRequiredProperty("hfr.training.images", String.class));
+        testImages = environment.getRequiredProperty("hfr.test.images", String.class);
+        components = environment.getRequiredProperty("hfr.component.images", String.class);
+        trainingImages = environment.getRequiredProperty("hfr.training.images", String.class);
     }
 }

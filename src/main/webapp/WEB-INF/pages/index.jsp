@@ -29,7 +29,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="brand">Human Face Recognition</a>
+                <a class="brand">Course Work</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         <li><a href="mailto:olexandr.kucher@gmail.com">Contact Oleksandr Kucher</a></li>
@@ -50,20 +50,20 @@
                         <li class="active"><a href="#" group="metric" enum-name="EUCLIDEAN" class="menu">Euclidean</a></li>
                         <li><a href="#" group="metric" enum-name="COSINE" class="menu">Cosine</a></li>
                         <li><a href="#" group="metric" enum-name="L1D" class="menu">Linear</a></li>
-                        <li class="nav-header">Settings [Principal Components]</li>
+                        <li class="nav-header">Settings [Choose Training Images]</li>
                         <li class="active">
                             <a href="#" group="spc" enum-name="ALL" class="menu" data-toggle="tooltip" data-placement="right" data-original-title="Uses all exist images with faces">Use ALL Images</a>
                         </li>
                         <li>
                             <a href="#" group="spc" enum-name="FIRST" class="menu" need-number data-toggle="tooltip" data-placement="right" data-original-title="Uses first n exist images for each class">
                                 Use FIRST images
-                                <input type="text" id="FIRST" placeholder="--> 5" class="li-input" style="display: none;">
+                                <input type="text" id="FIRST-spc" placeholder="--> 5" class="li-input" style="display: none;">
                             </a>
                         </li>
                         <li>
                             <a href="#" group="spc" enum-name="RANDOM" class="menu" need-number data-toggle="tooltip" data-placement="right" data-original-title="Uses n randomly selected images for each class">
                                 Use RANDOM images
-                                <input type="text" id="RANDOM" placeholder="--> 5" class="li-input" style="display: none;">
+                                <input type="text" id="RANDOM-spc" placeholder="--> 5" class="li-input" style="display: none;">
                             </a>
                         </li>
                         <li class="nav-header">Settings [KNN]</li>
@@ -73,7 +73,17 @@
                         <li>
                             <a href="#" group="knn" enum-name="CUSTOM" class="menu" need-number data-toggle="tooltip" data-placement="right" data-original-title="Uses YOUR number of Nearest Neighbor components">
                                 Use CUSTOM number
-                                <input type="text" id="CUSTOM" placeholder="--> 2" class="li-input" style="display: none;">
+                                <input type="text" id="CUSTOM-knn" placeholder="--> 2" class="li-input" style="display: none;">
+                            </a>
+                        </li>
+                        <li class="nav-header">Settings [Principal Components]</li>
+                        <li class="active">
+                            <a href="#" group="pca" enum-name="DEFAULT" class="menu" data-toggle="tooltip" data-placement="right" data-original-title="Uses DEFAULT number of Principal Components from .properties file">Use DEFAULT number</a>
+                        </li>
+                        <li>
+                            <a href="#" group="pca" enum-name="CUSTOM" class="menu" need-number data-toggle="tooltip" data-placement="right" data-original-title="Uses YOUR number of Principal Components">
+                                Use CUSTOM number
+                                <input type="text" id="CUSTOM-pca" placeholder="--> 40" class="li-input" style="display: none;">
                             </a>
                         </li>
                     </ul>
@@ -81,7 +91,6 @@
             </div>
             <div class="span9">
                 <div class="hero-unit" style="padding-bottom: 10px; padding-top: 10px;">
-                    <h2 class="text-center">Course Work</h2>
                     <h3 class="text-center">Human Face Recognition</h3>
                 </div>
                 <div class="row-fluid">
@@ -103,12 +112,19 @@
                                     <div id="classify-block" style="display: none;">
                                         <div style="margin-top: 5px;" class="info-text">If image is fine, click 'Classify' button</div>
                                         <div class="centered">
-                                            <input type="button" value="Classify" class="btn btn-success" id="classify-button">
+                                            <input type="button" value="Classify" class="btn btn-success classify-button" id="classify-button">
+                                            <input type="button" value="Show Eigen" class="btn btn-success classify-button" id="eigen-button">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="span thumbnail" id="results" style="margin: 5px 0 0 0; display: none;">
+                                    <button type="button" class="close" data-dismiss="alert">x</button>
                                     <div class="info-text">Images from class, which was selected as native for your face</div>
+                                    <div class="centered each"></div>
+                                </div>
+                                <div class="span thumbnail" id="eigenvectors" style="margin: 5px 0 0 0; display: none;">
+                                    <button type="button" class="close" data-dismiss="alert">x</button>
+                                    <div class="info-text">Eigen Vectors (EigenFaces for PCA or Fisher Faces fo LDA)</div>
                                     <div class="centered each"></div>
                                 </div>
                             </div>

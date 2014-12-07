@@ -26,7 +26,7 @@ function init(){
         });
         $(this).parent().addClass("active");
         if($(this).has("need-number")){
-            $("#" + $(this).attr("enum-name")).show();
+            $("#" + $(this).attr("enum-name") + "-" + $(this).attr("group")).show();
         }
     });
     $(".menu[group='spc']").each(function(){
@@ -35,48 +35,14 @@ function init(){
     $(".menu[group='knn']").each(function(){
         $(this).tooltip();
     });
+    $(".menu[group='pca']").each(function(){
+        $(this).tooltip();
+    });
     $("#classify-button").click(function(){
-        var metric = null;
-        var algorithm = null;
-        var trainingImage = null;
-        var trainingImageCount = null;
-        var knnComponent = null;
-        var knnCount = null;
-        var fileName = $("#cropped").attr("file-name");
-        $(".menu[group='algorithm']").each(function(){
-            if($(this).parent().hasClass("active")){
-                algorithm = $(this).attr("enum-name");
-            }
-        });
-        $(".menu[group='metric']").each(function(){
-            if($(this).parent().hasClass("active")) {
-                metric = $(this).attr("enum-name");
-            }
-        });
-        $(".menu[group='spc']").each(function(){
-            if($(this).parent().hasClass("active")) {
-                trainingImage = $(this).attr("enum-name");
-                trainingImageCount = $("#" + $(this).attr("enum-name")).val();
-            }
-        });
-        $(".menu[group='knn']").each(function(){
-            if($(this).parent().hasClass("active")) {
-                knnComponent = $(this).attr("enum-name");
-                knnCount = $("#" + $(this).attr("enum-name")).val();
-            }
-        });
         $.ajax({
             type: "POST",
             url: "/hfr/classify",
-            data: {
-                metric: metric,
-                knnCount: knnCount,
-                fileName: fileName,
-                algorithm: algorithm,
-                knnComponent: knnComponent,
-                trainingImage: trainingImage,
-                trainingImageCount: trainingImageCount
-            },
+            data: storeData(),
             success: function(resp) {
                 var data = $.parseJSON(resp);
                 var $res = $("#results");
@@ -86,11 +52,84 @@ function init(){
                         $res.find(".each").append(img(data.storedImages[i], "stored-image"));
                     }
                     $res.show();
+                } else {
+                    $res.hide();
+                }
+            }
+        });
+    });
+    $("#eigen-button").click(function(){
+        $.ajax({
+            type: "POST",
+            url: "/hfr/eigenVectors",
+            data: storeData(),
+            success: function(resp) {
+                var data = $.parseJSON(resp);
+                var $res = $("#eigenvectors");
+                $res.find(".each").html("");
+                if(data.status === "ok"){
+                    for(var i in data.storedImages){
+                        $res.find(".each").append(img(data.storedImages[i], "stored-image"));
+                    }
+                    $res.show();
+                } else {
+                    $res.hide();
                 }
             }
         });
     });
     getAllStoredImages();
+}
+
+function storeData() {
+    var metric = null;
+    var algorithm = null;
+    var trainingImage = null;
+    var trainingImageCount = null;
+    var knnComponent = null;
+    var knnCount = null;
+    var pca = null;
+    var pcaCount = null;
+    var fileName = $("#cropped").attr("file-name");
+    $(".menu[group='algorithm']").each(function(){
+        if($(this).parent().hasClass("active")){
+            algorithm = $(this).attr("enum-name");
+        }
+    });
+    $(".menu[group='metric']").each(function(){
+        if($(this).parent().hasClass("active")) {
+            metric = $(this).attr("enum-name");
+        }
+    });
+    $(".menu[group='spc']").each(function(){
+        if($(this).parent().hasClass("active")) {
+            trainingImage = $(this).attr("enum-name");
+            trainingImageCount = $("#" + $(this).attr("enum-name") + "-" + $(this).attr("group")).val();
+        }
+    });
+    $(".menu[group='knn']").each(function(){
+        if($(this).parent().hasClass("active")) {
+            knnComponent = $(this).attr("enum-name");
+            knnCount = $("#" + $(this).attr("enum-name") + "-" + $(this).attr("group")).val();
+        }
+    });
+    $(".menu[group='pca']").each(function(){
+        if($(this).parent().hasClass("active")) {
+            pca = $(this).attr("enum-name");
+            pcaCount = $("#" + $(this).attr("enum-name") + "-" + $(this).attr("group")).val();
+        }
+    });
+    return {
+        metric: metric,
+        knnCount: knnCount,
+        fileName: fileName,
+        algorithm: algorithm,
+        principalComponents: pca,
+        knnComponent: knnComponent,
+        trainingImage: trainingImage,
+        principalComponentsCount: pcaCount,
+        trainingImageCount: trainingImageCount
+    };
 }
 function getAllStoredImages(){
     $.ajax({

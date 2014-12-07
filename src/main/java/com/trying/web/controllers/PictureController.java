@@ -1,5 +1,6 @@
 package com.trying.web.controllers;
 
+import com.trying.fe.enums.FeatureExtractionMode;
 import com.trying.web.beans.PictureCropInfo;
 import com.trying.web.utils.Utils;
 import org.imgscalr.Scalr;
@@ -39,17 +40,21 @@ public class PictureController {
 
     @PreDestroy
     private void stop() throws IOException {
-        Files.walk(properties.pathToTestImages).filter(filePath -> !filePath.toString().endsWith("TEST_IMAGES")).forEach(filePath -> {
-            try {
-                Files.delete(filePath);
-            } catch (IOException ignored) {
-            }
-        });
+        Files.walk(properties.pathToResources.resolve(properties.testImages))
+                .filter(filePath -> !filePath.toString().endsWith("TEST_IMAGES"))
+                .forEach(filePath -> {
+                    try {
+                        Files.delete(filePath);
+                    } catch (IOException ignored) {
+                    }
+                });
+        deleteImagesWithPrincipalComponents(properties.pathToResources.resolve(properties.components), FeatureExtractionMode.PCA);
+        deleteImagesWithPrincipalComponents(properties.pathToResources.resolve(properties.components), FeatureExtractionMode.LDA);
     }
 
     @RequestMapping(value = "getImage")
     public void getImage(@RequestParam(value = "file", required = true) String fileName, HttpServletResponse response) throws IOException {
-        final Path path = properties.pathToTestImages.resolve(fileName);
+        final Path path = properties.pathToResources.resolve(fileName);
         if(Files.exists(path)) {
             final BufferedImage image = ImageIO.read(Files.newInputStream(path));
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -73,7 +78,7 @@ public class PictureController {
         final JSONObject answer = new JSONObject();
         if (null != jsonSelection && !jsonSelection.isEmpty()) {
             final PictureCropInfo pictureCropInfo = PictureCropInfo.fromJson(new JSONObject(jsonSelection));
-            final Path path = properties.pathToTestImages.resolve(fileName);
+            final Path path = properties.pathToResources.resolve(fileName);
             if(Files.exists(path)) {
                 final BufferedImage src = ImageIO.read(Files.newInputStream(path));
                 final BufferedImage templateImage = resizeImage(crop(src, pictureCropInfo), properties.imageWidth, properties.imageHeight, algorithm);
@@ -138,12 +143,12 @@ public class PictureController {
 
     private String saveImage(final BufferedImage image, final String name) throws IOException {
         final String fileName = name + format(Instant.now()) + "." + properties.testType;
-        final Path path = properties.pathToTestImages.resolve(fileName);
+        final Path path = properties.pathToResources.resolve(properties.testImages + "/" + fileName);
         if(!Files.exists(path)){
             Files.createFile(path);
         }
         ImageIO.write(image, properties.testType, Files.newOutputStream(path));
-        return fileName;
+        return properties.testImages + "/" + fileName;
     }
 
     private String format(final Instant instant){
@@ -158,10 +163,20 @@ public class PictureController {
             final JSONArray oneClassImages = new JSONArray();
             final String clazz = properties.classPrefix + Utils.leadingZeros(i, properties.classLength);
             for (int j = 1; j <= properties.eachFaceNumber; j++) {
-                oneClassImages.put(properties.webTrainingImages.resolve(properties.trainingType).resolve(clazz).resolve(j + "." + properties.trainingType).toString());
+                oneClassImages.put("/picture/getImage?file=" + properties.trainingImages + "/" + properties.trainingType + "/" + clazz + "/" + j + "." + properties.trainingType);
             }
             images.put(clazz, oneClassImages);
         }
         return images.toString();
+    }
+
+    private static void deleteImagesWithPrincipalComponents(final Path path, final FeatureExtractionMode fem) throws IOException {
+        Files.walk(path.resolve(fem.getName()))
+                .filter(filePath -> !filePath.toString().endsWith(fem.getName()))
+                .forEach(filePath -> {
+                    try {
+                        Files.delete(filePath);
+                    } catch (IOException ignored) {}
+                });
     }
 }

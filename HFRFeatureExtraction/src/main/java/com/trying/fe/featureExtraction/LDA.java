@@ -25,7 +25,7 @@ public final class LDA extends FeatureExtraction {
         assert sampleSize >= 2 * classSize : "sampleSize is smaller than 2c!";
 
         // process in PCA
-        final PCA pca = new PCA(data, sampleSize - classSize, numberOfComponents);
+        final PCA pca = new PCA(data, sampleSize - classSize, imageAsVectorLength);
 
         // classify
         final Matrix meanTotal = new Matrix(sampleSize - classSize, 1);

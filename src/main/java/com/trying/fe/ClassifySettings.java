@@ -65,7 +65,7 @@ public class ClassifySettings {
 
     public static ClassifySettings getInstance(final Properties prop, final HFRForm form){
         final ClassifySettings cs = new ClassifySettings();
-        if(KNNComponent.DEFAULT.equals(form.getKnnComponent()) || null == form.getKnnCount()){
+        if(ComponentProperty.DEFAULT.equals(form.getKnnComponent()) || null == form.getKnnCount()){
             cs.setKnnCount(prop.numOfKNNComponents);
         } else {
             cs.setKnnCount(form.getKnnCount());
@@ -73,7 +73,8 @@ public class ClassifySettings {
         cs.setMetric(form.getMetric());
         cs.setFeMode(form.getAlgorithm());
         cs.setTraining(form.getTrainingImage());
-        if(null == form.getPrincipalComponentsCount()){
+
+        if(ComponentProperty.DEFAULT.equals(form.getPrincipalComponents()) || null == form.getPrincipalComponentsCount()){
             cs.setComponents(prop.principalComponentsCount);
         } else {
             cs.setComponents(form.getPrincipalComponentsCount());

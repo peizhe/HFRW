@@ -35,12 +35,12 @@ public class HumanFaceRecognitionProcessor {
         return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, settings.getKnnCount(), settings.getMetric().getMetric());
     }
 
-    public void savePrincipalComponentImages(final ClassifySettings settings) throws IOException {
+    public List<String> savePrincipalComponentImages(final ClassifySettings settings) throws IOException {
         final FeatureExtraction fe = getFeatureExtraction(settings);
 
-        ImageUtils.saveImagesToFiles(
+        return ImageUtils.saveImagesToFiles(
                 ImageUtils.convertMatricesToImage(fe.getW(), properties.imageHeight, properties.imageWidth),
-                properties.pathToComponents.resolve(settings.getFeMode().getName()).toString(),
+                properties.pathToResources.resolve(properties.components).resolve(settings.getFeMode().getName()).toString(),
                 properties.trainingType
         );
     }
@@ -78,7 +78,7 @@ public class HumanFaceRecognitionProcessor {
                             .map(i -> new Pair<>(label, ImageUtils.toVector(
                                     ImageUtils.convertToMatrix(
                                             ImageUtils.readImage(
-                                                    properties.pathToTrainingImages.resolve(properties.trainingType).resolve(label).resolve(i + "." + properties.trainingType).toString()
+                                                    properties.pathToResources.resolve(properties.trainingImages).resolve(properties.trainingType).resolve(label).resolve(i + "." + properties.trainingType).toString()
                                             )
                                     )
                             )))

@@ -70,7 +70,8 @@
     border: 1px gray solid
 }
 
-.cropImage-algorithm {
+.cropImage-algorithm,
+.classify-button {
     margin: 0 10px 0 !important;
 }
 

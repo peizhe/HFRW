@@ -1,6 +1,6 @@
 package com.trying.web.beans;
 
-import com.trying.fe.KNNComponent;
+import com.trying.fe.ComponentProperty;
 import com.trying.fe.TrainingImage;
 import com.trying.fe.enums.FeatureExtractionMode;
 import com.trying.fe.enums.MetricType;
@@ -11,7 +11,8 @@ public class HFRForm {
     private FeatureExtractionMode algorithm;
     private Integer knnCount;
     private Integer trainingImageCount;
-    private KNNComponent knnComponent;
+    private ComponentProperty knnComponent;
+    private ComponentProperty principalComponents;
     private TrainingImage trainingImage;
     private Integer principalComponentsCount;
 
@@ -55,11 +56,11 @@ public class HFRForm {
         this.trainingImageCount = trainingImageCount;
     }
 
-    public KNNComponent getKnnComponent() {
+    public ComponentProperty getKnnComponent() {
         return knnComponent;
     }
 
-    public void setKnnComponent(KNNComponent knnComponent) {
+    public void setKnnComponent(ComponentProperty knnComponent) {
         this.knnComponent = knnComponent;
     }
 
@@ -77,5 +78,13 @@ public class HFRForm {
 
     public void setPrincipalComponentsCount(Integer principalComponentsCount) {
         this.principalComponentsCount = principalComponentsCount;
+    }
+
+    public ComponentProperty getPrincipalComponents() {
+        return principalComponents;
+    }
+
+    public void setPrincipalComponents(ComponentProperty principalComponents) {
+        this.principalComponents = principalComponents;
     }
 }

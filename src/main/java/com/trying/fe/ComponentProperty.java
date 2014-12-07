@@ -1,5 +1,5 @@
 package com.trying.fe;
 
-public enum KNNComponent {
+public enum ComponentProperty {
     DEFAULT, CUSTOM
 }

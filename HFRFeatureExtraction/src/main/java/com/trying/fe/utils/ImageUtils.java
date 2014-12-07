@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -120,14 +119,17 @@ public final class ImageUtils {
         ImageIO.write(image, format, Files.newOutputStream(path));
     }
 
-    public static void saveImagesToFiles(final List<BufferedImage> images, final String namePrefix, final String format) throws IOException {
+    public static List<String> saveImagesToFiles(final List<BufferedImage> images, final String namePrefix, final String format) throws IOException {
+        final List<String> names = new ArrayList<>();
         for (int i = 0; i < images.size(); i++) {
             final Path path = Paths.get(namePrefix + "/" + i + "." + format);
             if (!Files.exists(path)) {
                 Files.createFile(path);
             }
             ImageIO.write(images.get(i), format, Files.newOutputStream(path));
+            names.add(i + "." + format);
         }
+        return names;
     }
 
     /**
