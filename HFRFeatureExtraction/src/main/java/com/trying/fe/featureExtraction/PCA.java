@@ -5,12 +5,13 @@ import Jama.Matrix;
 import com.trying.fe.utils.Pair;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class PCA extends FeatureExtraction {
 
-    public PCA(List<Pair<String, Matrix>> data, int numberOfComponents, int imageAsVectorLength) {
-        super(data, numberOfComponents, imageAsVectorLength);
+    public PCA(List<Pair<String, Matrix>> data, int numberOfComponents, int imageAsVectorLength, Map<String, List<Integer>> trainingMap) {
+        super(data, numberOfComponents, imageAsVectorLength, trainingMap);
     }
 
     @Override

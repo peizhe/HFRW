@@ -23,23 +23,19 @@ public class HumanFaceRecognitionProcessor {
 
     @Autowired private com.trying.web.components.Properties properties;
     private final Cache<FeatureExtractionMode, FeatureExtraction> cache = CacheBuilder.newBuilder().build();
-    private final Map<String, List<Integer>> trainMap = new HashMap<>();
 
-    public String classifyFace(final BufferedImage image, final ClassifySettings settings) {
-        final FeatureExtraction fe = getFeatureExtraction(settings);
+    public String classifyFace(final FeatureExtraction classifier, final BufferedImage image, final ClassifySettings settings) {
         final Matrix matrixImage = ImageUtils.convertToMatrix(image);
 
-        final List<ProjectedTrainingMatrix> projectedTrainingSet = fe.getProjectedTrainingSet();
+        final List<ProjectedTrainingMatrix> projectedTrainingSet = classifier.getProjectedTrainingSet();
 
-        final Matrix testCase = fe.getW().transpose().times(ImageUtils.toVector(matrixImage).minus(fe.getMeanMatrix()));
+        final Matrix testCase = classifier.getW().transpose().times(ImageUtils.toVector(matrixImage).minus(classifier.getMeanMatrix()));
         return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, settings.getKnnCount(), settings.getMetric().getMetric());
     }
 
-    public List<String> savePrincipalComponentImages(final ClassifySettings settings) throws IOException {
-        final FeatureExtraction fe = getFeatureExtraction(settings);
-
+    public List<String> savePrincipalComponentImages(final FeatureExtraction classifier, final ClassifySettings settings) throws IOException {
         return ImageUtils.saveImagesToFiles(
-                ImageUtils.convertMatricesToImage(fe.getW(), properties.imageHeight, properties.imageWidth),
+                ImageUtils.convertMatricesToImage(classifier.getW(), properties.imageHeight, properties.imageWidth),
                 properties.pathToResources.resolve(properties.components).resolve(settings.getFeMode().getName()).toString(),
                 properties.trainingType
         );
@@ -47,15 +43,15 @@ public class HumanFaceRecognitionProcessor {
 
     private FeatureExtraction trainingSystem(final ClassifySettings settings) {
         /** set trainSet and testSet **/
-        trainMap.clear();
+        final Map<String, List<Integer>> trainMap = new HashMap<>();
         for (int i = 1; i <= properties.faceNumber; i++) {
             trainMap.put(properties.classPrefix + Utils.leadingZeros(i, properties.classLength), settings.getTraining().generateTrainNumbers(settings.getNumberOfImages(), properties.eachFaceNumber));
         }
         /** set featureExtraction **/
-        return settings.getFeMode().getInstance(getWorkingSetWithLabels(trainMap), settings.getComponents(), properties.imageAsVectorLength);
+        return settings.getFeMode().getInstance(getWorkingSetWithLabels(trainMap), settings.getComponents(), properties.imageAsVectorLength, trainMap);
     }
 
-    private FeatureExtraction getFeatureExtraction(final ClassifySettings settings) {
+    public FeatureExtraction getFeatureExtraction(final ClassifySettings settings) {
         if(properties.useCache) {
             final FeatureExtraction ifPresent = cache.getIfPresent(settings.getFeMode());
             final FeatureExtraction fe;
@@ -85,9 +81,5 @@ public class HumanFaceRecognitionProcessor {
                     .collect(Collectors.toList()));
         }
         return trainingSet;
-    }
-
-    public Map<String, List<Integer>> getTrainMap() {
-        return trainMap;
     }
 }

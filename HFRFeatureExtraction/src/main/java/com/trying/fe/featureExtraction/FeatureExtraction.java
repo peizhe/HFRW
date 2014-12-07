@@ -4,12 +4,15 @@ import Jama.Matrix;
 import com.trying.fe.utils.Pair;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class FeatureExtraction {
 
     protected List<Pair<String, Matrix>> data;
+    protected Map<String, List<Integer>> trainMap;
 
     protected Matrix meanMatrix;
     protected int numberOfComponents;
@@ -19,11 +22,12 @@ public abstract class FeatureExtraction {
 
     protected final int imageAsVectorLength;
 
-    protected FeatureExtraction(List<Pair<String, Matrix>> data, int numberOfComponents, int imageAsVectorLength){
+    protected FeatureExtraction(List<Pair<String, Matrix>> data, int numberOfComponents, int imageAsVectorLength, Map<String, List<Integer>> trainingMap){
         if (numberOfComponents >= data.size()) {
             throw new RuntimeException("the expected dimensions could not be achieved!");
         }
         this.data = data;
+        this.trainMap = trainingMap;
         this.numberOfComponents = numberOfComponents;
         this.imageAsVectorLength = imageAsVectorLength;
 
@@ -82,5 +86,9 @@ public abstract class FeatureExtraction {
 
     public List<ProjectedTrainingMatrix> getProjectedTrainingSet() {
         return projectedTrainingSet;
+    }
+
+    public Map<String, List<Integer>> getTrainMap() {
+        return trainMap;
     }
 }

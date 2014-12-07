@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 
 public final class LDA extends FeatureExtraction {
 
-    public LDA(List<Pair<String, Matrix>> data, int numberOfComponents, int imageAsVectorLength) {
-        super(data, numberOfComponents, imageAsVectorLength);
+    public LDA(List<Pair<String, Matrix>> data, int numberOfComponents, int imageAsVectorLength, Map<String, List<Integer>> trainingMap) {
+        super(data, numberOfComponents, imageAsVectorLength, trainingMap);
     }
 
     @Override
@@ -25,7 +25,7 @@ public final class LDA extends FeatureExtraction {
         assert sampleSize >= 2 * classSize : "sampleSize is smaller than 2c!";
 
         // process in PCA
-        final PCA pca = new PCA(data, sampleSize - classSize, imageAsVectorLength);
+        final PCA pca = new PCA(data, sampleSize - classSize, imageAsVectorLength, trainMap);
 
         // classify
         final Matrix meanTotal = new Matrix(sampleSize - classSize, 1);
