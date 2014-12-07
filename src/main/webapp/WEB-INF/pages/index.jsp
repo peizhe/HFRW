@@ -49,7 +49,7 @@
                         <li class="nav-header">Metrics</li>
                         <li class="active"><a href="#" group="metric" enum-name="EUCLIDEAN" class="menu">Euclidean</a></li>
                         <li><a href="#" group="metric" enum-name="COSINE" class="menu">Cosine</a></li>
-                        <li><a href="#" group="metric" enum-name="L1D" class="menu">Linear</a></li>
+                        <li><a href="#" group="metric" enum-name="L1D" class="menu">Taxicab</a></li>
                         <li class="nav-header">Settings [Choose Training Images]</li>
                         <li class="active">
                             <a href="#" group="spc" enum-name="ALL" class="menu" data-toggle="tooltip" data-placement="right" data-original-title="Uses all exist images with faces">Use ALL Images</a>
