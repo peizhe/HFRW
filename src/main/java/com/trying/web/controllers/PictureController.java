@@ -33,35 +33,32 @@ import java.util.*;
 @RequestMapping(value = "picture")
 public class PictureController {
 
-    @Autowired private com.trying.web.components.Properties properties;
+    private static final int BILINEAR = 0;
+    private static final String BASE64_IMAGE_TYPE = "base64";
+    private static final String TEST_IMAGES_FILE_NAME = "TEST_IMAGES";
+    private static final DateFormat format = new SimpleDateFormat("yyy-MM-dd HH-mm-ss");
 
-    public static final int BILINEAR = 0;
-    private static final DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH-mm-ss");
+    @Autowired private com.trying.web.components.Properties prop;
 
     @PreDestroy
     private void stop() throws IOException {
-        Files.walk(properties.pathToResources.resolve(properties.testImages))
-                .filter(filePath -> !filePath.toString().endsWith("TEST_IMAGES"))
-                .forEach(filePath -> {
-                    try {
-                        Files.delete(filePath);
-                    } catch (IOException ignored) {
-                    }
-                });
-        deleteImagesWithPrincipalComponents(properties.pathToResources.resolve(properties.components), FeatureExtractionMode.PCA);
-        deleteImagesWithPrincipalComponents(properties.pathToResources.resolve(properties.components), FeatureExtractionMode.LDA);
+        Files.walk(prop.resources.resolve(prop.testImages))
+                .filter(filePath -> !filePath.toString().endsWith(TEST_IMAGES_FILE_NAME))
+                .forEach(filePath -> {try {Files.delete(filePath);} catch (IOException ignored) {}});
+        deleteImagesWithPrincipalComponents(prop.resources.resolve(prop.components), FeatureExtractionMode.PCA);
+        deleteImagesWithPrincipalComponents(prop.resources.resolve(prop.components), FeatureExtractionMode.LDA);
     }
 
     @RequestMapping(value = "getImage")
     public void getImage(@RequestParam(value = "file", required = true) String fileName, HttpServletResponse response) throws IOException {
-        final Path path = properties.pathToResources.resolve(fileName);
+        final Path path = prop.resources.resolve(fileName);
         if(Files.exists(path)) {
             final BufferedImage image = ImageIO.read(Files.newInputStream(path));
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            ImageIO.write(image, properties.testType, output);
+            ImageIO.write(image, prop.testType, output);
             final byte[] imageBytes = output.toByteArray();
 
-            response.setContentType("image/" + properties.testType);
+            response.setContentType("image/" + prop.testType);
             response.setContentLength(imageBytes.length);
             try (OutputStream os = response.getOutputStream()) {
                 os.write(imageBytes);
@@ -78,10 +75,10 @@ public class PictureController {
         final JSONObject answer = new JSONObject();
         if (null != jsonSelection && !jsonSelection.isEmpty()) {
             final PictureCropInfo pictureCropInfo = PictureCropInfo.fromJson(new JSONObject(jsonSelection));
-            final Path path = properties.pathToResources.resolve(fileName);
+            final Path path = prop.resources.resolve(fileName);
             if(Files.exists(path)) {
                 final BufferedImage src = ImageIO.read(Files.newInputStream(path));
-                final BufferedImage templateImage = resizeImage(crop(src, pictureCropInfo), properties.imageWidth, properties.imageHeight, algorithm);
+                final BufferedImage templateImage = resizeImage(crop(src, pictureCropInfo), prop.imageWidth, prop.imageHeight, algorithm);
 
                 final String file = saveImage(templateImage, "crop_image_");
                 answer.put("status", "ok");
@@ -99,7 +96,7 @@ public class PictureController {
 
     public static BufferedImage crop(final BufferedImage src, final PictureCropInfo pictureCropInfo) throws IOException {
         final BufferedImage dst = new BufferedImage(pictureCropInfo.getWidth(), pictureCropInfo.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-        Graphics2D g = dst.createGraphics();
+        final Graphics2D g = dst.createGraphics();
         g.drawImage(src, 0, 0, pictureCropInfo.getWidth(), pictureCropInfo.getHeight(), pictureCropInfo.getStartX(),
                 pictureCropInfo.getStartY(), pictureCropInfo.getStartX()+pictureCropInfo.getWidth(), pictureCropInfo.getStartY()+pictureCropInfo.getHeight(), null);
         g.dispose();
@@ -120,7 +117,7 @@ public class PictureController {
         final String type = image.getString("type");
         final String src = image.getString("src");
         final byte[] binaryData;
-        if("base64".equals(type)){
+        if(BASE64_IMAGE_TYPE.equals(type)){
             binaryData = DatatypeConverter.parseBase64Binary(src);
         } else {
             try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -142,13 +139,13 @@ public class PictureController {
     }
 
     private String saveImage(final BufferedImage image, final String name) throws IOException {
-        final String fileName = name + format(Instant.now()) + "." + properties.testType;
-        final Path path = properties.pathToResources.resolve(properties.testImages + "/" + fileName);
+        final String fileName = name + format(Instant.now()) + "." + prop.testType;
+        final Path path = prop.resources.resolve(prop.testImages + "/" + fileName);
         if(!Files.exists(path)){
             Files.createFile(path);
         }
-        ImageIO.write(image, properties.testType, Files.newOutputStream(path));
-        return properties.testImages + "/" + fileName;
+        ImageIO.write(image, prop.testType, Files.newOutputStream(path));
+        return prop.testImages + "/" + fileName;
     }
 
     private String format(final Instant instant){
@@ -159,11 +156,11 @@ public class PictureController {
     @RequestMapping("storedImages")
     public String getAllStoredImages(){
         final JSONObject images = new JSONObject();
-        for (int i = 1; i <= properties.faceNumber; i++) {
+        for (int i = 1; i <= prop.faceNumber; i++) {
             final JSONArray oneClassImages = new JSONArray();
-            final String clazz = properties.classPrefix + Utils.leadingZeros(i, properties.classLength);
-            for (int j = 1; j <= properties.eachFaceNumber; j++) {
-                oneClassImages.put("/picture/getImage?file=" + properties.trainingImages + "/" + properties.trainingType + "/" + clazz + "/" + j + "." + properties.trainingType);
+            final String clazz = prop.classPrefix + Utils.leadingZeros(i, prop.classLength);
+            for (int j = 1; j <= prop.eachFaceNumber; j++) {
+                oneClassImages.put("/picture/getImage?file=" + prop.trainingImages + "/" + prop.trainingType + "/" + clazz + "/" + j + "." + prop.trainingType);
             }
             images.put(clazz, oneClassImages);
         }
@@ -173,10 +170,6 @@ public class PictureController {
     private static void deleteImagesWithPrincipalComponents(final Path path, final FeatureExtractionMode fem) throws IOException {
         Files.walk(path.resolve(fem.getName()))
                 .filter(filePath -> !filePath.toString().endsWith(fem.getName()))
-                .forEach(filePath -> {
-                    try {
-                        Files.delete(filePath);
-                    } catch (IOException ignored) {}
-                });
+                .forEach(filePath -> {try {Files.delete(filePath);} catch (IOException ignored) {}});
     }
 }

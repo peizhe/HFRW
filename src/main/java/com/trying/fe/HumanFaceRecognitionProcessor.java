@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Component
 public class HumanFaceRecognitionProcessor {
 
-    @Autowired private com.trying.web.components.Properties properties;
+    @Autowired private com.trying.web.components.Properties prop;
     private final Cache<FeatureExtractionMode, FeatureExtraction> cache = CacheBuilder.newBuilder().build();
 
     public String classifyFace(final FeatureExtraction classifier, final BufferedImage image, final ClassifySettings settings) {
@@ -35,24 +35,24 @@ public class HumanFaceRecognitionProcessor {
 
     public List<String> savePrincipalComponentImages(final FeatureExtraction classifier, final ClassifySettings settings) throws IOException {
         return ImageUtils.saveImagesToFiles(
-                ImageUtils.convertMatricesToImage(classifier.getW(), properties.imageHeight, properties.imageWidth),
-                properties.pathToResources.resolve(properties.components).resolve(settings.getFeMode().getName()).toString(),
-                properties.trainingType
+                ImageUtils.convertMatricesToImage(classifier.getW(), prop.imageHeight, prop.imageWidth),
+                prop.resources.resolve(prop.components).resolve(settings.getFeMode().getName()).toString(),
+                prop.trainingType
         );
     }
 
     private FeatureExtraction trainingSystem(final ClassifySettings settings) {
         /** set trainSet and testSet **/
         final Map<String, List<Integer>> trainMap = new HashMap<>();
-        for (int i = 1; i <= properties.faceNumber; i++) {
-            trainMap.put(properties.classPrefix + Utils.leadingZeros(i, properties.classLength), settings.getTraining().generateTrainNumbers(settings.getNumberOfImages(), properties.eachFaceNumber));
+        for (int i = 1; i <= prop.faceNumber; i++) {
+            trainMap.put(prop.classPrefix + Utils.leadingZeros(i, prop.classLength), settings.getTraining().generateTrainNumbers(settings.getNumberOfImages(), prop.eachFaceNumber));
         }
         /** set featureExtraction **/
-        return settings.getFeMode().getInstance(getWorkingSetWithLabels(trainMap), settings.getComponents(), properties.imageAsVectorLength, trainMap);
+        return settings.getFeMode().getInstance(getWorkingSetWithLabels(trainMap), settings.getComponents(), prop.imageAsVectorLength, trainMap);
     }
 
     public FeatureExtraction getFeatureExtraction(final ClassifySettings settings) {
-        if(properties.useCache) {
+        if(prop.useCache) {
             final FeatureExtraction ifPresent = cache.getIfPresent(settings.getFeMode());
             final FeatureExtraction fe;
             if (null == ifPresent) {
@@ -74,7 +74,7 @@ public class HumanFaceRecognitionProcessor {
                             .map(i -> new Pair<>(label, ImageUtils.toVector(
                                     ImageUtils.convertToMatrix(
                                             ImageUtils.readImage(
-                                                    properties.pathToResources.resolve(properties.trainingImages).resolve(properties.trainingType).resolve(label).resolve(i + "." + properties.trainingType).toString()
+                                                    prop.resources.resolve(prop.trainingImages).resolve(prop.trainingType).resolve(label).resolve(i + "." + prop.trainingType).toString()
                                             )
                                     )
                             )))

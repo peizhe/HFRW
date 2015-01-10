@@ -1,5 +1,6 @@
 package com.trying.web.components;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -13,47 +14,32 @@ public class Properties {
 
     @Resource private Environment environment;
 
-    public int faceNumber;
-    public int imageWidth;
-    public int imageHeight;
-    public boolean useCache;
-    public int eachFaceNumber;
-    public int numOfKNNComponents;
-    public int imageAsVectorLength;
-    public int numOfImagesForTraining;
-    public int principalComponentsCount;
+    @Value("${hfr.use.cache}") public boolean useCache;
+
+    @Value("${hfr.knn.count}") public int numOfKNNComponents;
+    @Value("${hfr.training.images.count}") public int numOfImagesForTraining;
+    @Value("${hfr.principal.components.count}") public int principalComponentsCount;
+
+    @Value("${hfr.test.images}") public String testImages;
+    @Value("${hfr.class.prefix}") public String classPrefix;
+    @Value("${hfr.test.images.type}") public String testType;
+    @Value("${hfr.component.images}") public String components;
+    @Value("${hfr.training.images}") public String trainingImages;
+    @Value("${hfr.training.images.type}") public String trainingType;
+
+    @Value("${face.number}") public int faceNumber;
+    @Value("${face.image.width}") public int imageWidth;
+    @Value("${face.image.height}") public int imageHeight;
+    @Value("${each.face.number}") public int eachFaceNumber;
+
     public int classLength;
-
-    public String testType;
-    public String classPrefix;
-    public String trainingType;
-
-    public Path pathToResources;
-    public String testImages;
-    public String components;
-    public String trainingImages;
+    public Path resources;
+    public int imageAsVectorLength;
 
     @PostConstruct
     private void init() {
-        faceNumber = environment.getRequiredProperty("face.number", Integer.class);
-        imageWidth = environment.getRequiredProperty("face.image.width", Integer.class);
-        imageHeight = environment.getRequiredProperty("face.image.height", Integer.class);
-        eachFaceNumber = environment.getRequiredProperty("each.face.number", Integer.class);
-        numOfKNNComponents = environment.getRequiredProperty("hfr.knn.count", Integer.class);
-        numOfImagesForTraining = environment.getRequiredProperty("hfr.training.images.count", Integer.class);
-        principalComponentsCount = environment.getRequiredProperty("hfr.principal.components.count", Integer.class);
-
-        classLength = String.valueOf(faceNumber).length();
         imageAsVectorLength = imageHeight * imageWidth;
-
-        useCache = environment.getRequiredProperty("hfr.use.cache", Boolean.class);
-        classPrefix = environment.getRequiredProperty("hfr.class.prefix", String.class);
-        testType = environment.getRequiredProperty("hfr.test.images.type", String.class);
-        trainingType = environment.getRequiredProperty("hfr.training.images.type", String.class);
-
-        pathToResources = Paths.get(environment.getRequiredProperty("hfr.path.to.resources", String.class));
-        testImages = environment.getRequiredProperty("hfr.test.images", String.class);
-        components = environment.getRequiredProperty("hfr.component.images", String.class);
-        trainingImages = environment.getRequiredProperty("hfr.training.images", String.class);
+        classLength = String.valueOf(faceNumber).length();
+        resources = Paths.get(environment.getRequiredProperty("hfr.path.to.resources", String.class));
     }
 }

@@ -20,10 +20,23 @@ dependencies {
     compile 'org.springframework:spring-core:4.1.0.RELEASE'
     compile 'org.springframework:spring-web:4.1.0.RELEASE'
     compile 'org.springframework:spring-webmvc:4.1.0.RELEASE'
+    compile 'org.springframework:spring-orm:4.1.0.RELEASE'
 
     compile 'org.json:json:20141113'
     compile 'com.google.guava:guava:18.0'
     compile 'org.imgscalr:imgscalr-lib:4.2'
+
+    /* LOGGING */
+    compile 'org.slf4j:slf4j-api:1.7.9'
+    compile 'org.slf4j:slf4j-log4j12:1.7.5'
+
+    /* DATABSE */
+    compile 'mysql:mysql-connector-java:5.1.32'
+
+    /* JACKSON */
+    compile 'com.fasterxml.jackson.core:jackson-core:2.4.3'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.4.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.4.3'
 
     compile(project(':HFRFeatureExtraction'))
 }

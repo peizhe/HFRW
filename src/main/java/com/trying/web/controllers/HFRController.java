@@ -23,15 +23,15 @@ import java.util.List;
 public class HFRController {
 
     @Autowired private HumanFaceRecognitionProcessor hfr;
-    @Autowired private com.trying.web.components.Properties properties;
+    @Autowired private com.trying.web.components.Properties prop;
 
     @RequestMapping("classify")
     public String classify(@ModelAttribute HFRForm form) {
-        final Path path = properties.pathToResources.resolve(form.getFileName());
+        final Path path = prop.resources.resolve(form.getFileName());
         final JSONObject answer = new JSONObject();
         try {
             if(Files.exists(path)) {
-                final ClassifySettings settings = ClassifySettings.getInstance(properties, form);
+                final ClassifySettings settings = ClassifySettings.getInstance(prop, form);
                 final FeatureExtraction fe = hfr.getFeatureExtraction(settings);
                 final String clazz = hfr.classifyFace(fe, ImageIO.read(Files.newInputStream(path)), settings);
                 answer.put("status", "ok");
@@ -50,11 +50,11 @@ public class HFRController {
 
     @RequestMapping("eigenVectors")
     public String eigenVectors(@ModelAttribute HFRForm form) {
-        final Path path = properties.pathToResources.resolve(form.getFileName());
+        final Path path = prop.resources.resolve(form.getFileName());
         final JSONObject answer = new JSONObject();
         try {
             if(Files.exists(path)) {
-                final ClassifySettings settings = ClassifySettings.getInstance(properties, form);
+                final ClassifySettings settings = ClassifySettings.getInstance(prop, form);
                 final FeatureExtraction fe = hfr.getFeatureExtraction(settings);
                 final List<String> names = hfr.savePrincipalComponentImages(fe, settings);
                 answer.put("status", "ok");
@@ -74,13 +74,13 @@ public class HFRController {
         final JSONArray storedImages = new JSONArray();
         fe.getTrainMap()
                 .get(clazz)
-                .forEach(c -> storedImages.put("/picture/getImage?file=" + properties.trainingImages + "/" + properties.trainingType + "/" + clazz + "/" + c + "." + properties.trainingType));
+                .forEach(c -> storedImages.put("/picture/getImage?file=" + prop.trainingImages + "/" + prop.trainingType + "/" + clazz + "/" + c + "." + prop.trainingType));
         return storedImages;
     }
 
     private JSONArray getEigenVectorImages(final FeatureExtractionMode fem, final List<String> names) throws IOException {
         final JSONArray storedImages = new JSONArray();
-        names.stream().forEach(n -> storedImages.put("/picture/getImage?file=" + properties.components + "/" + fem.getName() + "/" + n));
+        names.stream().forEach(n -> storedImages.put("/picture/getImage?file=" + prop.components + "/" + fem.getName() + "/" + n));
         return storedImages;
     }
 }
