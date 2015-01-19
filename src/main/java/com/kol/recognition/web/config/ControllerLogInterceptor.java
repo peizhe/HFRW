@@ -1,4 +1,4 @@
-package com.trying.web.config;
+package com.kol.recognition.web.config;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

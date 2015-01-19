@@ -1,4 +1,4 @@
-package com.trying.web.config;
+package com.kol.recognition.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +30,7 @@ import java.util.List;
 @EnableWebMvc
 @EnableTransactionManagement
 @PropertySource({"classpath:properties/image.properties", "classpath:properties/database.properties"})
-@ComponentScan({"com.trying.web.config", "com.trying.web.controllers", "com.trying.fe", "com.trying.web.components"})
+@ComponentScan({"com.kol.recognition.web.config", "com.kol.recognition.web.controllers", "com.kol.recognition.fe", "com.kol.recognition.web.components"})
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Resource private Environment environment;

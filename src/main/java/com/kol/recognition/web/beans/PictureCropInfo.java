@@ -1,4 +1,4 @@
-package com.trying.web.beans;
+package com.kol.recognition.web.beans;
 
 import org.json.JSONObject;
 

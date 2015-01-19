@@ -1,4 +1,4 @@
-package com.trying.fe.featureExtraction;
+package com.kol.recognition.featureExtraction;
 
 public final class Mix implements Comparable<Mix> {
     private Integer index;

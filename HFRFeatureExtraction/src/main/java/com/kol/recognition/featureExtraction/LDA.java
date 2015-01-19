@@ -1,8 +1,8 @@
-package com.trying.fe.featureExtraction;
+package com.kol.recognition.featureExtraction;
 
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
-import com.trying.fe.utils.Pair;
+import com.kol.recognition.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;

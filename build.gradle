@@ -38,5 +38,28 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.4.3'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.4.3'
 
+    compile 'org.apache.commons:commons-compress:1.9'
+
     compile(project(':HFRFeatureExtraction'))
+}
+
+war {
+    // AppendUQ
+//    filesMatching("css/**/*.css") { filter(SourceCacheClearFilter, appendTo: "img,js,css,linkCSS") }
+//    filesMatching("templates/**/*.htm") { filter(SourceCacheClearFilter, appendTo: "img,js,linkCSS") }
+//    filesMatching("WEB-INF/jsp/**/*.jsp") { filter(SourceCacheClearFilter, appendTo: "img,js,css,linkCSS") }
+//    filesMatching("WEB-INF/templates/**/*.html") { filter(SourceCacheClearFilter, appendTo: "img,js,linkCSS") }
+
+    // Clear JSP
+//    filesMatching("WEB-INF/jsp/**/*.jsp") { filter(ClearJspFilter) }
+
+    //Minimize JS/CSS
+//    filesMatching("css/**/*.css") { filter(CompressCSSFilter, file: it.path) }
+//    filesMatching("js/**/*.js") { filter(CompressJSFilter, file: it.path) }
+
+    // DB Scripts
+    from("${projectDir}/database") {
+        exclude { (it.isDirectory() && it.name.startsWith("_")) }
+        into("database")
+    }
 }

@@ -1,10 +1,10 @@
-package com.trying.fe.enums;
+package com.kol.recognition.enums;
 
 import Jama.Matrix;
-import com.trying.fe.utils.Pair;
-import com.trying.fe.featureExtraction.FeatureExtraction;
-import com.trying.fe.featureExtraction.LDA;
-import com.trying.fe.featureExtraction.PCA;
+import com.kol.recognition.utils.Pair;
+import com.kol.recognition.featureExtraction.FeatureExtraction;
+import com.kol.recognition.featureExtraction.LDA;
+import com.kol.recognition.featureExtraction.PCA;
 
 import java.util.List;
 import java.util.Map;

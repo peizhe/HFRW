@@ -1,4 +1,4 @@
-package com.trying.fe.utils;
+package com.kol.recognition.utils;
 
 public final class Pair<T, E> {
     private T first;

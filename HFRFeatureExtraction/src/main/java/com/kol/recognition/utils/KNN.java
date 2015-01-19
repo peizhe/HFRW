@@ -1,8 +1,8 @@
-package com.trying.fe.utils;
+package com.kol.recognition.utils;
 
 import Jama.Matrix;
-import com.trying.fe.featureExtraction.ProjectedTrainingMatrix;
-import com.trying.fe.metric.Metric;
+import com.kol.recognition.featureExtraction.ProjectedTrainingMatrix;
+import com.kol.recognition.metric.Metric;
 
 import java.util.HashMap;
 import java.util.Map;

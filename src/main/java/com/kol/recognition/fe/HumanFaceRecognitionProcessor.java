@@ -1,15 +1,15 @@
-package com.trying.fe;
+package com.kol.recognition.fe;
 
 import Jama.Matrix;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.trying.fe.enums.FeatureExtractionMode;
-import com.trying.fe.featureExtraction.FeatureExtraction;
-import com.trying.fe.featureExtraction.ProjectedTrainingMatrix;
-import com.trying.fe.utils.ImageUtils;
-import com.trying.fe.utils.KNN;
-import com.trying.fe.utils.Pair;
-import com.trying.web.utils.Utils;
+import com.kol.recognition.enums.FeatureExtractionMode;
+import com.kol.recognition.featureExtraction.FeatureExtraction;
+import com.kol.recognition.featureExtraction.ProjectedTrainingMatrix;
+import com.kol.recognition.utils.ImageUtils;
+import com.kol.recognition.utils.KNN;
+import com.kol.recognition.utils.Pair;
+import com.kol.recognition.web.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Component
 public class HumanFaceRecognitionProcessor {
 
-    @Autowired private com.trying.web.components.Properties prop;
+    @Autowired private com.kol.recognition.web.components.Properties prop;
     private final Cache<FeatureExtractionMode, FeatureExtraction> cache = CacheBuilder.newBuilder().build();
 
     public String classifyFace(final FeatureExtraction classifier, final BufferedImage image, final ClassifySettings settings) {

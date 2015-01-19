@@ -1,9 +1,9 @@
-package com.trying.fe;
+package com.kol.recognition.fe;
 
-import com.trying.fe.enums.FeatureExtractionMode;
-import com.trying.fe.enums.MetricType;
-import com.trying.web.beans.HFRForm;
-import com.trying.web.components.Properties;
+import com.kol.recognition.enums.FeatureExtractionMode;
+import com.kol.recognition.enums.MetricType;
+import com.kol.recognition.web.beans.HFRForm;
+import com.kol.recognition.web.components.Properties;
 
 public class ClassifySettings {
 

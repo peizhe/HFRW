@@ -1,9 +1,9 @@
-package com.trying.web.beans;
+package com.kol.recognition.web.beans;
 
-import com.trying.fe.ComponentProperty;
-import com.trying.fe.TrainingImage;
-import com.trying.fe.enums.FeatureExtractionMode;
-import com.trying.fe.enums.MetricType;
+import com.kol.recognition.fe.ComponentProperty;
+import com.kol.recognition.fe.TrainingImage;
+import com.kol.recognition.enums.FeatureExtractionMode;
+import com.kol.recognition.enums.MetricType;
 
 public class HFRForm {
     private String fileName;

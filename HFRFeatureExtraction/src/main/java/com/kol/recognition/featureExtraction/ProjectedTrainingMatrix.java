@@ -1,4 +1,4 @@
-package com.trying.fe.featureExtraction;
+package com.kol.recognition.featureExtraction;
 
 import Jama.Matrix;
 

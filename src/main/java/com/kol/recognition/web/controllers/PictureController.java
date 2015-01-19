@@ -1,8 +1,8 @@
-package com.trying.web.controllers;
+package com.kol.recognition.web.controllers;
 
-import com.trying.fe.enums.FeatureExtractionMode;
-import com.trying.web.beans.PictureCropInfo;
-import com.trying.web.utils.Utils;
+import com.kol.recognition.enums.FeatureExtractionMode;
+import com.kol.recognition.web.beans.PictureCropInfo;
+import com.kol.recognition.web.utils.Utils;
 import org.imgscalr.Scalr;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +38,7 @@ public class PictureController {
     private static final String TEST_IMAGES_FILE_NAME = "TEST_IMAGES";
     private static final DateFormat format = new SimpleDateFormat("yyy-MM-dd HH-mm-ss");
 
-    @Autowired private com.trying.web.components.Properties prop;
+    @Autowired private com.kol.recognition.web.components.Properties prop;
 
     @PreDestroy
     private void stop() throws IOException {

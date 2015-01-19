@@ -1,4 +1,4 @@
-package com.trying.web.config;
+package com.kol.recognition.web.config;
 
 import org.springframework.util.Log4jConfigurer;
 import org.springframework.web.WebApplicationInitializer;

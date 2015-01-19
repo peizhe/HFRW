@@ -1,10 +1,10 @@
-package com.trying.web.controllers;
+package com.kol.recognition.web.controllers;
 
-import com.trying.fe.ClassifySettings;
-import com.trying.fe.HumanFaceRecognitionProcessor;
-import com.trying.fe.enums.FeatureExtractionMode;
-import com.trying.fe.featureExtraction.FeatureExtraction;
-import com.trying.web.beans.HFRForm;
+import com.kol.recognition.fe.ClassifySettings;
+import com.kol.recognition.fe.HumanFaceRecognitionProcessor;
+import com.kol.recognition.enums.FeatureExtractionMode;
+import com.kol.recognition.featureExtraction.FeatureExtraction;
+import com.kol.recognition.web.beans.HFRForm;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import java.util.List;
 public class HFRController {
 
     @Autowired private HumanFaceRecognitionProcessor hfr;
-    @Autowired private com.trying.web.components.Properties prop;
+    @Autowired private com.kol.recognition.web.components.Properties prop;
 
     @RequestMapping("classify")
     public String classify(@ModelAttribute HFRForm form) {

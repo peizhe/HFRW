@@ -1,9 +1,9 @@
-package com.trying.fe.enums;
+package com.kol.recognition.enums;
 
-import com.trying.fe.metric.CosineDissimilarity;
-import com.trying.fe.metric.EuclideanDistance;
-import com.trying.fe.metric.L1Distance;
-import com.trying.fe.metric.Metric;
+import com.kol.recognition.metric.CosineDissimilarity;
+import com.kol.recognition.metric.EuclideanDistance;
+import com.kol.recognition.metric.L1Distance;
+import com.kol.recognition.metric.Metric;
 
 public enum MetricType {
     COSINE {

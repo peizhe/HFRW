@@ -1,4 +1,4 @@
-package com.trying.web.utils;
+package com.kol.recognition.web.utils;
 
 public class Utils {
     public static String leadingZeros(final String str, final int length) {

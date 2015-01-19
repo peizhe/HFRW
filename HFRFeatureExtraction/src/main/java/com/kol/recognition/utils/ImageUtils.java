@@ -1,4 +1,4 @@
-package com.trying.fe.utils;
+package com.kol.recognition.utils;
 
 import Jama.Matrix;
 

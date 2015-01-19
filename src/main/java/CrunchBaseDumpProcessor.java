@@ -1,13 +1,5 @@
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.AsyncHttpClientConfig;
-import com.ning.http.client.ListenableFuture;
-import com.ning.http.client.Response;
-import com.pitchbook.taskmanager.beans.Pair;
-import com.pitchbook.taskmanager.tasks.Task;
-import com.pitchbook.taskmanager.utils.StringUtil;
-import com.pitchbook.util.DateUtils;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
@@ -26,9 +18,9 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class CrunchBaseDumpProcessor extends Task {
+public class CrunchBaseDumpProcessor {
 
-    public static final String DATABASE_SCHEME = "scheme";
+    /*public static final String DATABASE_SCHEME = "scheme";
     private static final String DEFAULT_SCHEME = "crunch_base";
 
     public static final String MYSQL_RESTORE_SOURCE_COMMAND = "-e";
@@ -112,7 +104,7 @@ public class CrunchBaseDumpProcessor extends Task {
     /***
      * deletes all files modified in this month in {@param basePath} except one file which is newest
      */
-    private void deleteOldDumps(final String basePath){
+    /*private void deleteOldDumps(final String basePath){
         final Path path = Paths.get(basePath);
         final Collection<Path> files = getFiles(path, "*");
         final List<Path> thisMonthDumps = getThisMonthDumps(files);
@@ -280,5 +272,5 @@ public class CrunchBaseDumpProcessor extends Task {
     @FunctionalInterface
     private interface NeedDelete {
         boolean apply(Path path);
-    }
+    }*/
 }

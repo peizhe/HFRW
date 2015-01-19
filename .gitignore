@@ -3,6 +3,7 @@
 build/
 gradlew
 gradlew.bat
+*.iml
 
 
 ## Directory-based project format:
