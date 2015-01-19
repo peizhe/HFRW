@@ -1,4 +1,4 @@
-package com.kol.recognition.web.components;
+package com.kol.recognition.components;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;

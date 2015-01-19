@@ -2,8 +2,8 @@ package com.kol.recognition.fe;
 
 import com.kol.recognition.enums.FeatureExtractionMode;
 import com.kol.recognition.enums.MetricType;
-import com.kol.recognition.web.beans.HFRForm;
-import com.kol.recognition.web.components.Properties;
+import com.kol.recognition.forms.HFRForm;
+import com.kol.recognition.components.Properties;
 
 public class ClassifySettings {
 

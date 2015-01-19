@@ -7,6 +7,7 @@
           <file>file://$MODULE_DIR$/src/com/trying/web/config/WebConfig.java</file>
           <file>file://$MODULE_DIR$/src/main/java/com/trying/web/config/WebConfig.java</file>
           <file>file://$MODULE_DIR$/src/main/java/com/trying/web/config/WebConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/com/kol/recognition/config/WebConfig.java</file>
         </fileset>
       </configuration>
     </facet>

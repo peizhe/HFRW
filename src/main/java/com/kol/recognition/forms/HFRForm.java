@@ -1,4 +1,4 @@
-package com.kol.recognition.web.beans;
+package com.kol.recognition.forms;
 
 import com.kol.recognition.fe.ComponentProperty;
 import com.kol.recognition.fe.TrainingImage;

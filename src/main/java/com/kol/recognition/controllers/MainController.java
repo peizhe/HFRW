@@ -1,7 +1,7 @@
-package com.kol.recognition.web.controllers;
+package com.kol.recognition.controllers;
 
-import com.kol.recognition.web.components.Properties;
-import com.kol.recognition.web.utils.Utils;
+import com.kol.recognition.components.Properties;
+import com.kol.recognition.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcOperations;
