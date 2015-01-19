@@ -1,0 +1,13 @@
+apply plugin: "java"
+
+sourceCompatibility = '1.7'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'commons-lang:commons-lang:2.6'
+    compile 'commons-io:commons-io:1.4'
+    compile 'com.yahoo.platform.yui:yuicompressor:2.4.8'
+}
