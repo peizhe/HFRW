@@ -30,7 +30,13 @@ import java.util.List;
 @EnableWebMvc
 @EnableTransactionManagement
 @PropertySource({"classpath:properties/image.properties", "classpath:properties/database.properties"})
-@ComponentScan({"com.kol.recognition.config", "com.kol.recognition.controllers", "com.kol.recognition.fe", "com.kol.recognition.components"})
+@ComponentScan({
+        "com.kol.recognition.fe",
+        "com.kol.recognition.dao",
+        "com.kol.recognition.config",
+        "com.kol.recognition.components",
+        "com.kol.recognition.controllers"
+})
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Resource private Environment environment;

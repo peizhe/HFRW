@@ -87,7 +87,7 @@ function init(){
             }
         });
     });
-    getAllStoredImages();
+    getAllStoredImages("human_face");
 }
 
 function storeData() {
@@ -141,10 +141,13 @@ function storeData() {
     };
 }
 
-function getAllStoredImages(){
+function getAllStoredImages(recognitionType){
     $.ajax({
         type: "POST",
         url: "/picture/storedImages",
+        data: {
+            type: recognitionType
+        },
         success: function(resp) {
             var data = $.parseJSON(resp);
             var $collapse = $("#collapse");

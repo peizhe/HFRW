@@ -1,7 +1,13 @@
 package com.kol.recognition.controllers;
 
+import com.google.common.collect.ImmutableListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.kol.recognition.beans.DBImage;
+import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.enums.FeatureExtractionMode;
 import com.kol.recognition.beans.PictureCropInfo;
+import com.kol.recognition.utils.NumberUtils;
 import com.kol.recognition.utils.Utils;
 import org.imgscalr.Scalr;
 import org.json.JSONArray;
@@ -28,11 +34,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "picture")
 public class PictureController {
 
+    @Autowired private PictureDAO dao;
     private static final int BILINEAR = 0;
     private static final String BASE64_IMAGE_TYPE = "base64";
     private static final String TEST_IMAGES_FILE_NAME = "TEST_IMAGES";
@@ -50,18 +59,13 @@ public class PictureController {
     }
 
     @RequestMapping(value = "getImage")
-    public void getImage(@RequestParam(value = "file", required = true) String fileName, HttpServletResponse response) throws IOException {
-        final Path path = prop.resources.resolve(fileName);
-        if(Files.exists(path)) {
-            final BufferedImage image = ImageIO.read(Files.newInputStream(path));
-            final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            ImageIO.write(image, prop.testType, output);
-            final byte[] imageBytes = output.toByteArray();
-
-            response.setContentType("image/" + prop.testType);
-            response.setContentLength(imageBytes.length);
+    public void getImage(@RequestParam(value = "fileId", required = true) String fileId, HttpServletResponse response) throws IOException {
+        final DBImage image = dao.getImage(NumberUtils.decode(fileId));
+        if(null != image) {
+            response.setContentType("image/" + image.getFormat());
+            response.setContentLength(image.getSize());
             try (OutputStream os = response.getOutputStream()) {
-                os.write(imageBytes);
+                os.write(image.getContent());
                 response.getOutputStream().flush();
                 response.getOutputStream().close();
             }
@@ -153,16 +157,13 @@ public class PictureController {
         return format.format(date);
     }
 
-    @RequestMapping("storedImages")
-    public String getAllStoredImages(){
+    @RequestMapping(value = "storedImages")
+    public String getAllStoredImages(@RequestParam(value = "type", required = true) String type){
+        final List<DBImage> dbImages = dao.getImages(type, prop.imageWidth, prop.imageHeight);
         final JSONObject images = new JSONObject();
-        for (int i = 1; i <= prop.faceNumber; i++) {
-            final JSONArray oneClassImages = new JSONArray();
-            final String clazz = prop.classPrefix + Utils.leadingZeros(i, prop.classLength);
-            for (int j = 1; j <= prop.eachFaceNumber; j++) {
-                oneClassImages.put("/picture/getImage?file=" + prop.trainingImages + "/" + prop.trainingType + "/" + clazz + "/" + j + "." + prop.trainingType);
-            }
-            images.put(clazz, oneClassImages);
+        final Multimap<String, DBImage> map = Multimaps.index(dbImages, DBImage::getName);
+        for (String key : map.keySet()) {
+            images.put(key, map.get(key).stream().map(image -> "/picture/getImage?fileId=" + NumberUtils.encode(image.getId())).collect(Collectors.toList()));
         }
         return images.toString();
     }

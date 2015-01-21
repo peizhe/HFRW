@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @Controller
@@ -32,8 +33,8 @@ public class MainController {
     @RequestMapping("test")
     public void test() throws IOException {
         final String sql =
-                "INSERT INTO recognition_data (class_code, image_format, width, height, size, image_content, create_date, create_by, edit_date, edit_by) " +
-                "VALUES (?,?,?,?,?,?,NOW(),?,NOW(),?)";
+                "INSERT INTO recognition_data (class, format, type, width, height, size, create_date, create_by, edit_date, edit_by, content) " +
+                "VALUES (?,?,?,?,?,?,NOW(),?,NOW(),?,?)";
         final List<Object[]> data = new ArrayList<>();
         for (int i = 1; i <= prop.faceNumber; i++) {
             final String clazz = prop.classPrefix + Utils.leadingZeros(i, prop.classLength);
@@ -47,8 +48,8 @@ public class MainController {
                     final byte[] imageBytes = output.toByteArray();
 
                     data.add(new Object[]{
-                            "face_" + i, prop.trainingType, image.getWidth(), image.getHeight(), imageBytes.length,
-                            imageBytes, userId, userId
+                            "face_" + clazz, prop.trainingType, "human_face", image.getWidth(), image.getHeight(), imageBytes.length, userId, userId,
+                            Base64.getEncoder().encodeToString(imageBytes)
                     });
                 }
             }
