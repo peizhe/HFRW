@@ -1,0 +1,50 @@
+<idea-plugin version="2">
+  <id>com.kol.database.changes.plugin</id>
+  <name>Database Changes Plugin</name>
+  <version>1.0</version>
+  <vendor email="olexandr.kucher@gmail.com" url="https://plus.google.com/u/1/115615049421343890130">Oleksandr Kucher</vendor>
+
+  <description><![CDATA[
+      <b>Database Changes Plugin<b> gets last changes of connected database structure and creates sql scripts.<br>
+      Changes can be applied to another database (for example database on Test or Production server)
+    ]]></description>
+
+  <change-notes><![CDATA[Initial release of plugin (pre-alpha version). This version of plugin supports only MySQL database]]></change-notes>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="131"/>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <application-components>
+    <!-- Add your application components here -->
+    <component>
+      <implementation-class>com.kol.dbPlugin.components.DBToolComponent</implementation-class>
+    </component>
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <action id="get.database.changes" class="com.kol.dbPlugin.actions.GetDatabaseChanges" text="Get Database Changes" description="Get all last changes from database">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+    <action id="link.database" class="com.kol.dbPlugin.actions.LinkDatabase" text="Link New Database to Project" description="Add new database to project">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+    <action id="create.sql.script" class="com.kol.dbPlugin.actions.CreateSQLScript" text="Create Empty SQL Script" description="Create empty SQL script">
+      <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+    </action>
+  </actions>
+
+</idea-plugin>
