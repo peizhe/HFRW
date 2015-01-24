@@ -8,7 +8,7 @@ public class CreateSQLScript extends BaseAction {
     public CreateSQLScript(){}
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-
+    public void actionPerformed(@NotNull AnActionEvent event) {
+        super.actionPerformed(event);
     }
 }

@@ -2,11 +2,17 @@ package com.kol.dbPlugin;
 
 public class Credentials {
 
+    private boolean exist;
     private String server;
     private String username;
     private String password;
 
+    public Credentials() {
+        this.exist = false;
+    }
+
     public Credentials(String server, String username, String password) {
+        this.exist = true;
         this.server = server;
         this.username = username;
         this.password = password;
@@ -22,28 +28,20 @@ public class Credentials {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getServer() {
         return server;
     }
 
-    public void setServer(String server) {
-        this.server = server;
+    public boolean isExist() {
+        return exist;
     }
 
     @Override
     public String toString() {
-        return "username=" + username + "\npassword=" + password;
+        return "server=" + server + ", username=" + username + ", password=" + password;
     }
 }

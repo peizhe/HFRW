@@ -8,7 +8,7 @@ public class GetDatabaseChanges extends BaseAction {
     public GetDatabaseChanges(){}
 
     @Override
-    public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-
+    public void actionPerformed(@NotNull AnActionEvent event) {
+        super.actionPerformed(event);
     }
 }
