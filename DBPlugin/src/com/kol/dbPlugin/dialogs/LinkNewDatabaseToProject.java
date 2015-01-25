@@ -20,13 +20,12 @@ import javax.swing.*;
 import com.kol.dbPlugin.beans.Credentials;
 import com.kol.dbPlugin.beans.Settings;
 import com.kol.dbPlugin.Util;
-import com.kol.dbPlugin.managers.Constants;
-import com.kol.dbPlugin.managers.FSSettingsManager;
+import com.kol.dbPlugin.jdbc.DatabaseConnector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport implements Constants {
+public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport {
 
     private JPanel panel;
     private Project project;
@@ -37,15 +36,14 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
     private FieldPanel password;
     private FieldPanel databaseUrl;
 
-    public LinkNewDatabaseToProject(Project project) {
+    public LinkNewDatabaseToProject(@NotNull Project project, @NotNull Credentials defaultCredentials, @NotNull Settings defaultSettings) {
         this.project = project;
 
         createCenterPanel();
-        host.setText(DB_DEFAULT_HOST);
-        port.setText(DB_DEFAULT_PORT);
-        final Credentials c = FSSettingsManager.instance().getCredentials(DB_DEFAULT_HOST);
-        username.setText(c.getUsername());
-        password.setText(c.getPassword());
+        host.setText(defaultSettings.getHost());
+        port.setText(defaultSettings.getPort());
+        username.setText(defaultCredentials.getUsername());
+        password.setText(defaultCredentials.getPassword());
 
         updateURLFromParameters();
 
@@ -55,7 +53,6 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
                 updateURLFromParameters();
             }
         };
-
         host.getTextField().addKeyListener(adapter);
         port.getTextField().addKeyListener(adapter);
         database.getTextField().addKeyListener(adapter);
@@ -70,11 +67,7 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
     }
 
     private void updateURLFromParameters() {
-        final String host = this.host.getText();
-        final String port = this.port.getText();
-        final String database = this.database.getText();
-
-        databaseUrl.setText(Util.Database.makeDBUrl(host, port, database));
+        databaseUrl.setText(Util.Database.makeDBUrl(host.getText(), port.getText(), database.getText()));
     }
 
     private void createCenterPanel() {
@@ -184,7 +177,7 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
         final JPanel test = new JPanel(new BorderLayout());
         test.add(new JButton(new AbstractAction("Test Connection") {
             public void actionPerformed(@NotNull ActionEvent e) {
-                final String message = FSSettingsManager.instance().testConnect(getCredentials(), getSettings());
+                final String message = DatabaseConnector.testConnect(getSettings(), getCredentials());
                 if(Util.Str.isEmpty(message)) {
                     Messages.showMessageDialog(project, "Connection Successful", "Successful", Messages.getInformationIcon());
                 } else {

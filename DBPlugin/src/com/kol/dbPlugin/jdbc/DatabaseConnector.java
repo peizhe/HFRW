@@ -1,5 +1,8 @@
 package com.kol.dbPlugin.jdbc;
 
+import com.kol.dbPlugin.Util;
+import com.kol.dbPlugin.beans.Credentials;
+import com.kol.dbPlugin.beans.Settings;
 import com.kol.dbPlugin.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +13,8 @@ import java.sql.SQLException;
 
 public class DatabaseConnector {
 
-    public static final int TIMEOUT = 10;
+    private static final String MySQL_DATABASE_DRIVER_NAME = "com.mysql.jdbc.Driver";
+    private static final int TIMEOUT = 10;
 
     private DatabaseConnector(){}
 
@@ -31,7 +35,13 @@ public class DatabaseConnector {
         } catch (SQLException ignored) {}
     }
 
-    public static boolean isCorrectDBProperties(@NotNull final ConnectionData data) {
+    public static boolean isCorrectDBProperties(@NotNull final Credentials credentials, @NotNull final Settings settings) {
+        final ConnectionData data = new ConnectionData(
+                Util.Database.makeDBUrl(settings.getHost(), settings.getPort(), settings.getDatabase()),
+                credentials.getUsername(),
+                credentials.getPassword(),
+                MySQL_DATABASE_DRIVER_NAME
+        );
         try {
             Class.forName(data.getDriverName());
             final Connection connection = DriverManager.getConnection(data.getUrl(), data.getUser(), data.getPassword());
@@ -41,10 +51,23 @@ public class DatabaseConnector {
         }
     }
 
-    public static boolean testConnect(@NotNull final ConnectionData data) throws SQLException {
+    @Nullable
+    public static String testConnect(@NotNull final Settings settings, @NotNull final Credentials credentials) {
+        final ConnectionData data = new ConnectionData(
+                Util.Database.makeDBUrl(settings.getHost(), settings.getPort(), settings.getDatabase()),
+                credentials.getUsername(),
+                credentials.getPassword(),
+                MySQL_DATABASE_DRIVER_NAME
+        );
         try {
             Class.forName(data.getDriverName());
         } catch (ClassNotFoundException ignored) {}
-        return DriverManager.getConnection(data.getUrl(), data.getUser(), data.getPassword()).isValid(TIMEOUT);
+
+        try {
+            DriverManager.getConnection(data.getUrl(), data.getUser(), data.getPassword()).isValid(TIMEOUT);
+        } catch (SQLException e) {
+            return e.getMessage();
+        }
+        return null;
     }
 }

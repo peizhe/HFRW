@@ -1,11 +1,13 @@
 package com.kol.dbPlugin.beans;
 
-public class Settings {
+import com.kol.dbPlugin.interfaces.Property;
+import org.jetbrains.annotations.NotNull;
 
-    private boolean exist;
+public class Settings implements Property<Settings> {
 
     private String host;
     private String port;
+    private boolean exist;
     private String database;
 
     public Settings() {
@@ -19,12 +21,21 @@ public class Settings {
         this.database = database;
     }
 
-    public boolean isExist() {
+    @Override
+    public boolean exist() {
         return exist;
     }
 
+    @Override
     public String getHost() {
         return host;
+    }
+
+    @Override
+    public void update(@NotNull Settings data) {
+        host = data.getHost();
+        port = data.getPort();
+        database = data.getDatabase();
     }
 
     public String getPort() {
@@ -33,5 +44,14 @@ public class Settings {
 
     public String getDatabase() {
         return database;
+    }
+
+    @Override
+    public String toString() {
+        return "host=" + host + ", port=" + port + ", database=" + database;
+    }
+
+    public static Settings placeholder(@NotNull final String host, @NotNull final String dbName){
+        return new Settings(host, null, dbName);
     }
 }

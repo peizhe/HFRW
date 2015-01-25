@@ -1,8 +1,9 @@
-package com.kol.dbPlugin.beans;
+package com.kol.dbPlugin;
 
 import com.intellij.openapi.project.Project;
-import com.kol.dbPlugin.Util;
-import com.kol.dbPlugin.managers.FSSettingsManager;
+import com.kol.dbPlugin.beans.Credentials;
+import com.kol.dbPlugin.beans.Settings;
+import com.kol.dbPlugin.jdbc.DatabaseConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,11 +24,11 @@ public enum LinkDatabaseError {
     ALREADY_LINKED_DATABASE(true, "This database already linked to your project") {
         @Override
         public boolean isSettingsError(@NotNull Project project, @NotNull Settings settings) {
-            final FSSettingsManager manager = FSSettingsManager.instance();
-            return manager.getAllSettings(project).stream()
-                    .filter(s -> s.getHost().equals(settings.getHost()))
-                    .filter(s -> s.getDatabase().equals(settings.getDatabase()))
-                    .count() > 0;
+//            final FSSettingsManager manager = FSSettingsManager.instance();
+            return false;//manager.getAllSettings(project).stream()
+//                    .filter(s -> s.getHost().equals(settings.getHost()))
+//                    .filter(s -> s.getDatabase().equals(settings.getDatabase()))
+//                    .count() > 0;
         }
     },
     EMPTY_USERNAME(true, "UserName can not be empty") {
@@ -39,7 +40,7 @@ public enum LinkDatabaseError {
     TEST_CONNECTION_FAILED(false, "Connection to database is failed (some settings is incorrect), please use \"Test Connection\" button") {
         @Override
         public boolean isConnectionError(@NotNull Credentials credentials, @NotNull Settings settings) {
-            return !FSSettingsManager.instance().isCorrect(credentials, settings);
+            return !DatabaseConnector.isCorrectDBProperties(credentials, settings);
         }
     };
 

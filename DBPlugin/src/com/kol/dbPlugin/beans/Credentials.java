@@ -1,9 +1,12 @@
 package com.kol.dbPlugin.beans;
 
-public class Credentials {
+import com.kol.dbPlugin.interfaces.Property;
+import org.jetbrains.annotations.NotNull;
 
-    private boolean exist;
+public class Credentials implements Property<Credentials> {
+
     private String host;
+    private boolean exist;
     private String username;
     private String password;
 
@@ -12,8 +15,8 @@ public class Credentials {
     }
 
     public Credentials(String host, String username, String password) {
-        this.exist = true;
         this.host = host;
+        this.exist = true;
         this.username = username;
         this.password = password;
     }
@@ -26,16 +29,28 @@ public class Credentials {
         return password;
     }
 
+    @Override
+    public boolean exist() {
+        return exist;
+    }
+
+    @Override
     public String getHost() {
         return host;
     }
 
-    public boolean isExist() {
-        return exist;
+    @Override
+    public void update(@NotNull Credentials data) {
+        username = data.getUsername();
+        password = data.getPassword();
     }
 
     @Override
     public String toString() {
         return "host=" + host + ", username=" + username + ", password=" + password;
+    }
+
+    public static Credentials placeholder(@NotNull final String host){
+        return new Credentials(host, null, null);
     }
 }
