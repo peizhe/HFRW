@@ -3,6 +3,7 @@ package com.kol.dbPlugin.actions;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.kol.dbPlugin.C;
 import com.kol.dbPlugin.LinkDatabaseError;
 import com.kol.dbPlugin.beans.Credentials;
 import com.kol.dbPlugin.beans.Settings;
@@ -11,9 +12,6 @@ import com.kol.dbPlugin.dialogs.SingleConfigurableEditor;
 import org.jetbrains.annotations.NotNull;
 
 public class LinkDatabase extends BaseAction {
-
-    private static final String DB_DEFAULT_PORT = "3306";
-    private static final String DB_DEFAULT_HOST = "localhost";
 
     public LinkDatabase(){}
 
@@ -27,7 +25,7 @@ public class LinkDatabase extends BaseAction {
 
         final SingleConfigurableEditor editor = new SingleConfigurableEditor(
                 project,
-                new LinkNewDatabaseToProject(project, credentialsManager.get(Credentials.placeholder(DB_DEFAULT_HOST)), Settings.placeholder(DB_DEFAULT_HOST, DB_DEFAULT_PORT)),
+                new LinkNewDatabaseToProject(project, credentialsManager.get(Credentials.placeholder(C.DB_DEFAULT_HOST)), Settings.placeholder(C.DB_DEFAULT_HOST, C.DB_DEFAULT_PORT)),
                 (credentials, settings) -> {
                     final LinkDatabaseError status = LinkDatabaseError.validate(project, settings, credentials);
                     if(null == status) {

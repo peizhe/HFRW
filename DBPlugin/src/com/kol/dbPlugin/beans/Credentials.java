@@ -1,5 +1,6 @@
 package com.kol.dbPlugin.beans;
 
+import com.google.gson.JsonObject;
 import com.kol.dbPlugin.interfaces.Property;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +28,16 @@ public class Credentials implements Property<Credentials> {
 
     public String getPassword() {
         return password;
+    }
+
+    @NotNull
+    @Override
+    public JsonObject toGson() {
+        final JsonObject gson = new JsonObject();
+        gson.addProperty("host", host);
+        gson.addProperty("username", username);
+        gson.addProperty("password", password);
+        return gson;
     }
 
     @Override

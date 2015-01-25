@@ -7,40 +7,39 @@ import com.kol.dbPlugin.jdbc.DatabaseConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public enum LinkDatabaseError {
 
     EMPTY_DATABASE_HOST(true, "Host can not be empty") {
         @Override
-        public boolean isSettingsError(@NotNull Project project, @NotNull Settings settings) {
+        public boolean isError(@NotNull Project project, @NotNull Credentials credentials, @NotNull Settings settings) {
             return Util.Str.isEmpty(settings.getHost());
         }
     },
     EMPTY_DATABASE_NAME(true, "Database name can not be empty") {
         @Override
-        public boolean isSettingsError(@NotNull Project project, @NotNull Settings settings) {
+        public boolean isError(@NotNull Project project, @NotNull Credentials credentials, @NotNull Settings settings) {
             return Util.Str.isEmpty(settings.getDatabase());
         }
     },
     ALREADY_LINKED_DATABASE(true, "This database already linked to your project") {
         @Override
-        public boolean isSettingsError(@NotNull Project project, @NotNull Settings settings) {
-//            final FSSettingsManager manager = FSSettingsManager.instance();
-            return false;//manager.getAllSettings(project).stream()
-//                    .filter(s -> s.getHost().equals(settings.getHost()))
-//                    .filter(s -> s.getDatabase().equals(settings.getDatabase()))
-//                    .count() > 0;
+        public boolean isError(@NotNull Project project, @NotNull Credentials credentials, @NotNull Settings settings) {
+            return Files.exists(Paths.get(project.getBasePath()).resolve(C.PLUGIN_DIRECTORY_NAME).resolve(settings.getHost()).resolve(settings.getDatabase()));
         }
     },
     EMPTY_USERNAME(true, "UserName can not be empty") {
         @Override
-        public boolean isCredentialsError(@NotNull Project project, @NotNull Credentials credentials) {
+        public boolean isError(@NotNull Project project, @NotNull Credentials credentials, @NotNull Settings settings) {
             return Util.Str.isEmpty(credentials.getUsername());
         }
     },
     TEST_CONNECTION_FAILED(false, "Connection to database is failed (some settings is incorrect), please use \"Test Connection\" button") {
         @Override
-        public boolean isConnectionError(@NotNull Credentials credentials, @NotNull Settings settings) {
-            return !DatabaseConnector.isCorrectDBProperties(credentials, settings);
+        public boolean isError(@NotNull Project project, @NotNull Credentials credentials, @NotNull Settings settings) {
+            return !DatabaseConnector.isCorrectDBProperties(settings, credentials);
         }
     };
 
@@ -60,23 +59,12 @@ public enum LinkDatabaseError {
         return message;
     }
 
-    public boolean isSettingsError(@NotNull Project project, @NotNull Settings settings) {
-        return false;
-    }
-
-    public boolean isCredentialsError(@NotNull Project project, @NotNull Credentials credentials) {
-        return false;
-    }
-
-    public boolean isConnectionError(@NotNull Credentials credentials, @NotNull Settings settings) {
-        return false;
-    }
+    public abstract boolean isError(@NotNull Project project, @NotNull Credentials credentials, @NotNull Settings settings);
 
     @Nullable
     public static LinkDatabaseError validate(@NotNull Project project, @NotNull Settings settings, @NotNull Credentials credentials) {
         for (LinkDatabaseError error : LinkDatabaseError.values()) {
-            if(error.isSettingsError(project, settings) || error.isCredentialsError(project, credentials) ||
-                    error.isConnectionError(credentials, settings)) {
+            if(error.isError(project, credentials, settings)) {
                 return error;
             }
         }

@@ -1,7 +1,10 @@
 package com.kol.dbPlugin.managers;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.kol.dbPlugin.C;
+import com.kol.dbPlugin.Util;
 import com.kol.dbPlugin.beans.Credentials;
 import com.kol.dbPlugin.exceptions.FileSystemException;
 import com.kol.dbPlugin.interfaces.PropertyManager;
@@ -10,20 +13,20 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class CredentialsManager extends PropertyManager<Credentials> {
 
-    private static final String CREDENTIALS_FILE_NAME = "credentials.json";
-
     private Path file;
 
     public CredentialsManager(Path basePath, String dirName) {
         super(basePath.resolve(dirName));
-        file = directory.resolve(CREDENTIALS_FILE_NAME);
+        file = directory.resolve(C.CREDENTIALS_FILE_NAME);
+        createFileIfNotExist(file);
     }
 
     @NotNull
@@ -40,7 +43,15 @@ public final class CredentialsManager extends PropertyManager<Credentials> {
 
     private List<Credentials> getAll() {
         try {
-            return Arrays.asList(new Gson().fromJson(Files.readAllLines(file).stream().collect(Collectors.joining()), Credentials[].class));
+            final String collect = Files.readAllLines(file).stream().collect(Collectors.joining());
+            if(Util.Str.isEmpty(collect)) {
+                return new ArrayList<>();
+            } else {
+                final Credentials[] json = new Gson().fromJson(collect, Credentials[].class);
+                final List<Credentials> list = new ArrayList<>();
+                Collections.addAll(list, json);
+                return list;
+            }
         } catch (IOException e) {
             throw new FileSystemException(e);
         }
@@ -59,12 +70,23 @@ public final class CredentialsManager extends PropertyManager<Credentials> {
     }
 
     private void saveAll(@NotNull final List<Credentials> data) {
-        final Credentials[] credentials = data.toArray(new Credentials[data.size()]);
-        final String json = new GsonBuilder().setPrettyPrinting().create().toJson(credentials, Credentials[].class);
+        final List<JsonObject> collect = data.stream().map(Credentials::toGson).collect(Collectors.toList());
+        final JsonArray array = new JsonArray();
+        collect.forEach(array::add);
         try {
-            Files.write(file, json.getBytes());
+            Files.write(file, array.toString().getBytes());
         } catch (IOException e) {
             throw new FileSystemException(e);
+        }
+    }
+
+    private static void createFileIfNotExist(@NotNull final Path file) {
+        if(!Files.exists(file)) {
+            try {
+                Files.createFile(file);
+            } catch (IOException e) {
+                throw new FileSystemException(e);
+            }
         }
     }
 }

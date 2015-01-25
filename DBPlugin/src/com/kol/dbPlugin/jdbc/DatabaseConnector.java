@@ -1,5 +1,6 @@
 package com.kol.dbPlugin.jdbc;
 
+import com.kol.dbPlugin.C;
 import com.kol.dbPlugin.Util;
 import com.kol.dbPlugin.beans.ConnectionData;
 import com.kol.dbPlugin.beans.Credentials;
@@ -14,7 +15,6 @@ import java.sql.SQLException;
 
 public class DatabaseConnector {
 
-    private static final String MySQL_DATABASE_DRIVER_NAME = "com.mysql.jdbc.Driver";
     private static final int TIMEOUT = 10;
 
     private DatabaseConnector(){}
@@ -36,20 +36,8 @@ public class DatabaseConnector {
         } catch (SQLException ignored) {}
     }
 
-    public static boolean isCorrectDBProperties(@NotNull final Credentials credentials, @NotNull final Settings settings) {
-        final ConnectionData data = new ConnectionData(
-                Util.Database.makeDBUrl(settings.getHost(), settings.getPort(), settings.getDatabase()),
-                credentials.getUsername(),
-                credentials.getPassword(),
-                MySQL_DATABASE_DRIVER_NAME
-        );
-        try {
-            Class.forName(data.getDriverName());
-            final Connection connection = DriverManager.getConnection(data.getUrl(), data.getUser(), data.getPassword());
-            return connection.isValid(TIMEOUT);
-        } catch (SQLException | ClassNotFoundException e) {
-            return false;
-        }
+    public static boolean isCorrectDBProperties(@NotNull final Settings settings, @NotNull final Credentials credentials) {
+        return Util.Str.isEmpty(testConnect(settings, credentials));
     }
 
     @Nullable
@@ -58,15 +46,12 @@ public class DatabaseConnector {
                 Util.Database.makeDBUrl(settings.getHost(), settings.getPort(), settings.getDatabase()),
                 credentials.getUsername(),
                 credentials.getPassword(),
-                MySQL_DATABASE_DRIVER_NAME
+                C.MySQL_DATABASE_DRIVER_NAME
         );
         try {
             Class.forName(data.getDriverName());
-        } catch (ClassNotFoundException ignored) {}
-
-        try {
             DriverManager.getConnection(data.getUrl(), data.getUser(), data.getPassword()).isValid(TIMEOUT);
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             return e.getMessage();
         }
         return null;

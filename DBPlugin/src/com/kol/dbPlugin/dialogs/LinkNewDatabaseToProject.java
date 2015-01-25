@@ -8,22 +8,19 @@ import com.intellij.ui.FieldPanel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.UIUtil.FontSize;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.*;
-
+import com.kol.dbPlugin.Util;
 import com.kol.dbPlugin.beans.Credentials;
 import com.kol.dbPlugin.beans.Settings;
-import com.kol.dbPlugin.Util;
 import com.kol.dbPlugin.jdbc.DatabaseConnector;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport {
 

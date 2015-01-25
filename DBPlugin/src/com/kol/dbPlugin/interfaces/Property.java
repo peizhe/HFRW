@@ -1,15 +1,13 @@
 package com.kol.dbPlugin.interfaces;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
 public interface Property<T> {
 
     @NotNull
-    default Gson toGson() {
-        final Gson gson = new Gson();
-        gson.toJsonTree(this);
-        return gson;
+    default JsonObject toGson() {
+        return new JsonObject();
     }
 
     boolean exist();

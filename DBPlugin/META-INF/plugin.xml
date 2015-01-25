@@ -1,5 +1,5 @@
 <idea-plugin version="2">
-  <id>com.kol.database.changes.plugin</id>
+  <id>com.kol.database.plugin</id>
   <name>Database Changes Plugin</name>
   <version>1.0</version>
   <vendor email="olexandr.kucher@gmail.com" url="https://plus.google.com/u/1/115615049421343890130">Oleksandr Kucher</vendor>

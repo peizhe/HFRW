@@ -2,14 +2,13 @@ package com.kol.dbPlugin.dialogs;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.Action;
-import javax.swing.JComponent;
-
 import com.kol.dbPlugin.interfaces.LinkDatabaseOkCallback;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SingleConfigurableEditor extends DialogWrapper {
     private LinkDatabaseOkCallback okCallback;
