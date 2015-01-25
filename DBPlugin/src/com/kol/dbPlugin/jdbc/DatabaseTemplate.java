@@ -1,5 +1,6 @@
 package com.kol.dbPlugin.jdbc;
 
+import com.kol.dbPlugin.beans.ConnectionData;
 import com.kol.dbPlugin.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

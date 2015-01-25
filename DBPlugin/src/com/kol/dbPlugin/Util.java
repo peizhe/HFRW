@@ -1,9 +1,12 @@
 package com.kol.dbPlugin;
 
-import com.kol.dbPlugin.interfaces.Constants;
 import org.jetbrains.annotations.Nullable;
 
-public class Util implements Constants {
+public class Util {
+
+    public static final String DB_URL_PORT_PREFIX = ":";
+    public static final String DB_URL_PREFIX = "jdbc:mysql://";
+    public static final String DB_URL_DATABASE_SEPARATOR = "/";
 
     private Util() {}
     
@@ -32,17 +35,6 @@ public class Util implements Constants {
             }
             if(Str.isNonEmpty(database)) {
                 sb.append(DB_URL_DATABASE_SEPARATOR).append(database);
-            }
-            return sb.toString();
-        }
-
-        public static String makeDBFolderName(@Nullable final String host, @Nullable final String database) {
-            final StringBuilder sb = new StringBuilder();
-            if(Str.isNonEmpty(database)) {
-                sb.append(database);
-            }
-            if(null != host) {
-                sb.append(DB_NAME_HOST_SEPARATOR).append(host);
             }
             return sb.toString();
         }

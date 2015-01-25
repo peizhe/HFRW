@@ -1,4 +1,4 @@
-package com.kol.dbPlugin.jdbc;
+package com.kol.dbPlugin.beans;
 
 public class ConnectionData {
     private String url;

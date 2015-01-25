@@ -1,6 +1,7 @@
 package com.kol.dbPlugin.jdbc;
 
 import com.kol.dbPlugin.Util;
+import com.kol.dbPlugin.beans.ConnectionData;
 import com.kol.dbPlugin.beans.Credentials;
 import com.kol.dbPlugin.beans.Settings;
 import com.kol.dbPlugin.exceptions.DatabaseException;
