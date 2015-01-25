@@ -40,4 +40,11 @@ public class DatabaseConnector {
             return false;
         }
     }
+
+    public static boolean testConnect(@NotNull final ConnectionData data) throws SQLException {
+        try {
+            Class.forName(data.getDriverName());
+        } catch (ClassNotFoundException ignored) {}
+        return DriverManager.getConnection(data.getUrl(), data.getUser(), data.getPassword()).isValid(TIMEOUT);
+    }
 }

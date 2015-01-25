@@ -1,9 +1,9 @@
-package com.kol.dbPlugin;
+package com.kol.dbPlugin.beans;
 
 public class Credentials {
 
     private boolean exist;
-    private String server;
+    private String host;
     private String username;
     private String password;
 
@@ -11,15 +11,9 @@ public class Credentials {
         this.exist = false;
     }
 
-    public Credentials(String server, String username, String password) {
+    public Credentials(String host, String username, String password) {
         this.exist = true;
-        this.server = server;
-        this.username = username;
-        this.password = password;
-    }
-
-    public Credentials(String username, String password) {
-        this.server = "general";
+        this.host = host;
         this.username = username;
         this.password = password;
     }
@@ -32,8 +26,8 @@ public class Credentials {
         return password;
     }
 
-    public String getServer() {
-        return server;
+    public String getHost() {
+        return host;
     }
 
     public boolean isExist() {
@@ -42,6 +36,6 @@ public class Credentials {
 
     @Override
     public String toString() {
-        return "server=" + server + ", username=" + username + ", password=" + password;
+        return "host=" + host + ", username=" + username + ", password=" + password;
     }
 }

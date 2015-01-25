@@ -1,23 +1,21 @@
-package com.kol.dbPlugin;
+package com.kol.dbPlugin.beans;
 
 public class Settings {
 
     private boolean exist;
 
-    private String url;
+    private String host;
     private String port;
-    private String server;
     private String database;
 
     public Settings() {
         this.exist = false;
     }
 
-    public Settings(String server, String url, String port, String database) {
-        this.url = url;
+    public Settings(String host, String port, String database) {
+        this.host = host;
         this.port = port;
         this.exist = true;
-        this.server = server;
         this.database = database;
     }
 
@@ -25,16 +23,12 @@ public class Settings {
         return exist;
     }
 
-    public String getUrl() {
-        return url;
+    public String getHost() {
+        return host;
     }
 
     public String getPort() {
         return port;
-    }
-
-    public String getServer() {
-        return server;
     }
 
     public String getDatabase() {

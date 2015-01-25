@@ -2,9 +2,7 @@ package com.kol.dbPlugin.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
-import com.kol.dbPlugin.Credentials;
-import com.kol.dbPlugin.Settings;
-import com.kol.dbPlugin.managers.LinkNewDatabaseToProject;
+import com.kol.dbPlugin.dialogs.LinkNewDatabaseToProject;
 import com.kol.dbPlugin.dialogs.SingleConfigurableEditor;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +18,8 @@ public class LinkDatabase extends BaseAction {
             return;
         }
 
-        final SingleConfigurableEditor ed = new SingleConfigurableEditor(project, new LinkNewDatabaseToProject());
-        ed.show();
+        final SingleConfigurableEditor editor = new SingleConfigurableEditor(project, new LinkNewDatabaseToProject(project));
+        editor.show();
 //        final LinkDatabaseWizard w = new LinkDatabaseWizard("Configuring DBTool Plugin", project, FSSettingsManager.instance());
 //        w.show();
 
@@ -31,11 +29,7 @@ public class LinkDatabase extends BaseAction {
             auth.show();
             credentials = new Credentials(auth.getUsername(), auth.getPassword());
             safeSaveCredentials(credentials);
-        }*/
-        /*final SQLWM test = new SQLWM("Test", project);
-        final WizardDialog<WizardModel> dialog = new WizardDialog<>(project, true, test);
-        dialog.show();
-
+        }
         final String url = Messages.showInputDialog(project, "Input URL to your database", "Database URL", Messages.getQuestionIcon());
 
         final ConnectionData data = new ConnectionData("jdbc:mysql://" + url, credentials.getUsername(), credentials.getPassword(), "com.mysql.jdbc.Driver");

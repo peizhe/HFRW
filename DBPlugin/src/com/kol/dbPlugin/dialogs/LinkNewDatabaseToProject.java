@@ -1,7 +1,9 @@
-package com.kol.dbPlugin.managers;
+package com.kol.dbPlugin.dialogs;
 
 import com.intellij.openapi.options.BaseConfigurableWithChangeSupport;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.FieldPanel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.UIUtil;
@@ -15,16 +17,19 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.*;
 
-import com.kol.dbPlugin.Credentials;
-import com.kol.dbPlugin.Settings;
+import com.kol.dbPlugin.beans.Credentials;
+import com.kol.dbPlugin.beans.Settings;
+import com.kol.dbPlugin.Util;
+import com.kol.dbPlugin.managers.Constants;
+import com.kol.dbPlugin.managers.FSSettingsManager;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport {
+public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport implements Constants {
 
     private JPanel panel;
-    private FieldPanel name;
+    private Project project;
     private FieldPanel host;
     private FieldPanel port;
     private FieldPanel database;
@@ -32,48 +37,36 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
     private FieldPanel password;
     private FieldPanel databaseUrl;
 
-    private static final String DB_DEFAULT_PORT = "3306";
-    private static final String DB_URL_PORT_PREFIX = ":";
-    private static final String DB_DEFAULT_HOST = "localhost";
-    private static final String DB_URL_PREFIX = "jdbc:mysql://";
-    private static final String DB_URL_DATABASE_SEPARATOR = "/";
+    public LinkNewDatabaseToProject(Project project) {
+        this.project = project;
 
-    private static final String DB_DRIVER_NAME = "MySQL";
-    private static final String DB_NAME_HOST_SEPARATOR = "@";
-    private static final String DB_DRIVER_NAME_SEPARATOR = "_";
-
-    public LinkNewDatabaseToProject() {
         createCenterPanel();
         host.setText(DB_DEFAULT_HOST);
         port.setText(DB_DEFAULT_PORT);
+        final Credentials c = FSSettingsManager.instance().getCredentials(DB_DEFAULT_HOST);
+        username.setText(c.getUsername());
+        password.setText(c.getPassword());
+
         updateURLFromParameters();
 
-        final KeyAdapter hostDBName = new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                updateURLFromParameters();
-                generateNameFromParameters();
-            }
-        };
-
-        final KeyAdapter portAdapter = new KeyAdapter() {
+        final KeyAdapter adapter = new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 updateURLFromParameters();
             }
         };
 
-        host.getTextField().addKeyListener(hostDBName);
-        port.getTextField().addKeyListener(portAdapter);
-        database.getTextField().addKeyListener(hostDBName);
+        host.getTextField().addKeyListener(adapter);
+        port.getTextField().addKeyListener(adapter);
+        database.getTextField().addKeyListener(adapter);
     }
 
     public Settings getSettings() {
-        return new Settings(name.getText(), host.getText(), port.getText(), database.getText());
+        return new Settings(host.getText(), port.getText(), database.getText());
     }
 
     public Credentials getCredentials() {
-        return new Credentials(name.getText(), username.getText(), password.getText());
+        return new Credentials(host.getText(), username.getText(), password.getText());
     }
 
     private void updateURLFromParameters() {
@@ -81,40 +74,13 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
         final String port = this.port.getText();
         final String database = this.database.getText();
 
-        final StringBuilder sb = new StringBuilder(DB_URL_PREFIX);
-        if(null != host) {
-            sb.append(host);
-        }
-        if(null != port && !port.isEmpty()) {
-            sb.append(DB_URL_PORT_PREFIX).append(port);
-        }
-        if(null != database && !database.isEmpty()) {
-            sb.append(DB_URL_DATABASE_SEPARATOR).append(database);
-        }
-        databaseUrl.setText(sb.toString());
-    }
-
-    private void generateNameFromParameters() {
-        final StringBuilder sb = new StringBuilder(DB_DRIVER_NAME);
-        sb.append(DB_DRIVER_NAME_SEPARATOR);
-
-        final String host = this.host.getText();
-        final String database = this.database.getText();
-
-        if(null != database && !database.isEmpty()) {
-            sb.append(database);
-        }
-        if(null != host && !host.isEmpty()) {
-            sb.append(DB_NAME_HOST_SEPARATOR).append(host);
-        }
-        name.setText(sb.toString());
+        databaseUrl.setText(Util.Database.makeDBUrl(host, port, database));
     }
 
     private void createCenterPanel() {
         panel = new JPanel(new BorderLayout(0, 5));
         final JPanel basePanel = new JPanel(new GridBagLayout());
 
-        addNamePanel(basePanel);
         final JPanel hostPortPanel = createHostPortPanel(basePanel);
         addHostPanel(hostPortPanel);
         addPortPanel(hostPortPanel);
@@ -140,12 +106,6 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
         final GridBagConstraints gbc = getGBC();
         gbc.insets = new Insets(5, 5, 5, 5);
         return gbc;
-    }
-
-    private void addNamePanel(final JPanel basePanel) {
-        name = new FieldPanel(new JBTextField(), "Name:", null, null, null);
-        ((JBTextField) name.getComponent()).getEmptyText().setText("<name>");
-        basePanel.add(name, getGBCi());
     }
 
     private void addHostPanel(final JPanel hostPortPanel) {
@@ -224,8 +184,12 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
         final JPanel test = new JPanel(new BorderLayout());
         test.add(new JButton(new AbstractAction("Test Connection") {
             public void actionPerformed(@NotNull ActionEvent e) {
-//                DataSourceConfigurable.this.testConnection();
-                System.out.println("test");
+                final String message = FSSettingsManager.instance().testConnect(getCredentials(), getSettings());
+                if(Util.Str.isEmpty(message)) {
+                    Messages.showMessageDialog(project, "Connection Successful", "Successful", Messages.getInformationIcon());
+                } else {
+                    Messages.showErrorDialog(project, message, "Connection Failed");
+                }
             }
         }), "East");
         basePanel.add(test, gbc);
@@ -239,7 +203,7 @@ public class LinkNewDatabaseToProject extends BaseConfigurableWithChangeSupport 
 
     @Override
     public JComponent getPreferredFocusedComponent() {
-        return name;
+        return host;
     }
 
     @Nls @Override
