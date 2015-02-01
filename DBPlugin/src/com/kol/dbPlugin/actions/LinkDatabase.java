@@ -47,25 +47,5 @@ public class LinkDatabase extends BaseAction {
                 }
         );
         editor.show();
-//        final LinkDatabaseWizard w = new LinkDatabaseWizard("Configuring DBTool Plugin", project, FSSettingsManager.instance());
-//        w.show();
-
-        /*Credentials credentials = safeGetCredentials("general");
-        if(null == credentials) {
-            final CredentialsDialog auth = new CredentialsDialog(project, "Database Credentials", null, null);
-            auth.show();
-            credentials = new Credentials(auth.getUsername(), auth.getPassword());
-            safeSaveCredentials(credentials);
-        }
-        final String url = Messages.showInputDialog(project, "Input URL to your database", "Database URL", Messages.getQuestionIcon());
-
-        final ConnectionData data = new ConnectionData("jdbc:mysql://" + url, credentials.getUsername(), credentials.getPassword(), "com.mysql.jdbc.Driver");
-        final boolean isOk = DatabaseConnector.isCorrectDBProperties(data);
-        final DatabaseOperations jdbc = new DatabaseTemplate(data);
-
-        final Integer num = jdbc.queryForObject("select count(*) from information_schema.TRIGGERS", Integer.class);
-        final List<String> strings = jdbc.queryForList("SELECT class_code FROM recognition_data_class", String.class);
-
-        System.out.println("OK");*/
     }
 }
