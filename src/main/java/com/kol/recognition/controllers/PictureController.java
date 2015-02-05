@@ -1,16 +1,16 @@
 package com.kol.recognition.controllers;
 
-import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.kol.recognition.beans.DBImage;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.enums.FeatureExtractionMode;
 import com.kol.recognition.beans.PictureCropInfo;
+import com.kol.recognition.perceptualHash.AverageHash;
+import com.kol.recognition.perceptualHash.PerceptualHash;
+import org.apache.commons.lang3.StringUtils;
 import com.kol.recognition.utils.NumberUtils;
-import com.kol.recognition.utils.Utils;
 import org.imgscalr.Scalr;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -172,5 +173,44 @@ public class PictureController {
         Files.walk(path.resolve(fem.getName()))
                 .filter(filePath -> !filePath.toString().endsWith(fem.getName()))
                 .forEach(filePath -> {try {Files.delete(filePath);} catch (IOException ignored) {}});
+    }
+
+    @RequestMapping(value = "test")
+    public void test() throws IOException {
+        final DBImage im1 = dao.getImage(1);
+        final DBImage im2 = dao.getImage(2);
+        final DBImage im3 = dao.getImage(100);
+
+        final int hw = 16;
+        final PerceptualHash hash = new AverageHash(hw, hw);
+
+        final String hash1 = hash.getHash(im1.getContent());
+        final String hash2 = hash.getHash(im2.getContent());
+        final String hash3 = hash.getHash(im3.getContent());
+
+        System.out.println(hash1);
+        System.out.println(hash2);
+        System.out.println(hash3);
+
+        System.out.println(StringUtils.getLevenshteinDistance(hash1, hash2));
+        System.out.println(StringUtils.getLevenshteinDistance(hash1, hash3));
+        System.out.println(StringUtils.getLevenshteinDistance(hash2, hash3));
+
+        final BufferedImage i1 = ImageIO.read(new ByteArrayInputStream(im1.getContent()));
+        final BufferedImage i2 = ImageIO.read(new ByteArrayInputStream(im2.getContent()));
+        final BufferedImage i3 = ImageIO.read(new ByteArrayInputStream(im3.getContent()));
+
+        tmpSave(hash.resize(i1, hw, hw), "im_1_.bmp");
+        tmpSave(hash.resize(i2, hw, hw), "im_2_.bmp");
+        tmpSave(hash.resize(i3, hw, hw), "im_3_.bmp");
+
+    }
+
+    private void tmpSave(final BufferedImage image, final String fileName) throws IOException {
+        final Path path = Paths.get("D:\\").resolve(fileName);
+        if(!Files.exists(path)){
+            Files.createFile(path);
+        }
+        ImageIO.write(image, prop.testType, Files.newOutputStream(path));
     }
 }

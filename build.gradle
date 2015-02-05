@@ -41,6 +41,7 @@ dependencies {
     compile 'org.apache.commons:commons-compress:1.9'
 
     compile(project(':HFRFeatureExtraction'))
+    compile(project(':RecognitionMethods'))
 }
 
 war {

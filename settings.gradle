@@ -1,4 +1,5 @@
 rootProject.name = 'HFRW'
 
 include 'HFRFeatureExtraction'
+include 'RecognitionMethods'
 include 'DBTool'
