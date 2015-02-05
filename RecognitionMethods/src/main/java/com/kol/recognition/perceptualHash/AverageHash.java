@@ -8,6 +8,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 
 public final class AverageHash implements PerceptualHash {
 
@@ -75,7 +76,7 @@ public final class AverageHash implements PerceptualHash {
 
     @Override
     public String bitsChainToString(final String bitsChain) {
-        final String bits;
+        /*final String bits;
         final int length = bitsChain.length();
         final int mod = length % BITS_IN_ONE_STR_ELEMENT;
         if(mod != 0) {
@@ -89,6 +90,7 @@ public final class AverageHash implements PerceptualHash {
         for (String el : iterable) {
             sb.append(Integer.toHexString(Integer.parseInt(el, BINARY_RADIX)));
         }
-        return Utils.leadingZeros(sb.toString(), 60);
+        return Utils.leadingZeros(sb.toString(), 60);*/
+        return new BigInteger(bitsChain, 2).toString(16);
     }
 }
