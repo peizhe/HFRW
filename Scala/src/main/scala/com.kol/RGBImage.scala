@@ -8,7 +8,7 @@ class RGBImage(val width: Int, val height: Int) {
   val blue: Array[Array[Int]] = Array.ofDim(width, height)
   val green: Array[Array[Int]] = Array.ofDim(width, height)
 
-  def this(width: Int, height: Int, red: Array[Array[Int]], blue: Array[Array[Int]], green: Array[Array[Int]]){
+  def this(width: Int, height: Int, red: Array[Array[Int]], blue: Array[Array[Int]], green: Array[Array[Int]]) {
     this(width, height)
     for {
       i <- 0 until width
@@ -39,6 +39,7 @@ class RGBImage(val width: Int, val height: Int) {
    * @return the BufferedImage represented by this object
    */
   def toRedBufferedImage: BufferedImage = toOneColorBufferedImage(red)
+
   def toRed: Array[Int] = toOneColor(red)
 
   /**
@@ -46,6 +47,7 @@ class RGBImage(val width: Int, val height: Int) {
    * @return the BufferedImage represented by this object
    */
   def toBlueBufferedImage: BufferedImage = toOneColorBufferedImage(blue)
+
   def toBlue: Array[Int] = toOneColor(blue)
 
   /**
@@ -53,11 +55,16 @@ class RGBImage(val width: Int, val height: Int) {
    * @return the BufferedImage represented by this object
    */
   def toGreenBufferedImage: BufferedImage = toOneColorBufferedImage(green)
+
   def toGreen: Array[Int] = toOneColor(green)
 
   def meanRed: Double = toRed.sum / (width * height * 1.0)
+
   def meanBlue: Double = toBlue.sum / (width * height * 1.0)
+
   def meanGreen: Double = toGreen.sum / (width * height * 1.0)
+
+  def mean: Double = (meanBlue + meanGreen + meanRed) / 3
 
   private def toOneColorBufferedImage(color: Array[Array[Int]]): BufferedImage = {
     val c: Array[Int] = (for {
@@ -113,6 +120,8 @@ object RGBImage {
   }
 
   def toBlue(pixel: Int): Int = pixel & 0x000000FF
+
   def toRed(pixel: Int): Int = (pixel >> 16) & 0x000000FF
+
   def toGreen(pixel: Int): Int = (pixel >> 8) & 0x000000FF
 }
