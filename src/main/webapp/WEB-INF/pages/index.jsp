@@ -107,7 +107,7 @@
                             <div id="view" class="span6 centered">
                                 <div class="span thumbnail" style="min-height: 194px;">
                                     <div class="centered">
-                                        <img src="/images/face.bmp" id="cropped" class="stored-image" style="display: none;">
+                                        <img src="${pageContext.request.contextPath}/images/face.bmp" id="cropped" class="stored-image" style="display: none;">
                                     </div>
                                     <div id="classify-block" style="display: none;">
                                         <div style="margin-top: 5px;" class="info-text">If image is fine, click 'Classify' button</div>

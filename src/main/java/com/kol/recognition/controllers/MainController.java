@@ -21,16 +21,16 @@ import java.util.List;
 @Controller
 public class MainController {
 
-    @Autowired Properties prop;
-    @Autowired JdbcOperations jdbc;
-    @Value("${system.user.id}") int userId;
+    @Autowired private Properties prop;
+    @Autowired private JdbcOperations jdbc;
+    @Value("${system.user.id}") private int userId;
 
     @RequestMapping("/")
     public String start(){
         return "index";
     }
 
-    @RequestMapping("test")
+    /*@RequestMapping("test")
     public void test() throws IOException {
         final String sql =
                 "INSERT INTO recognition_data (class, format, type, width, height, size, create_date, create_by, edit_date, edit_by, content) " +
@@ -55,5 +55,5 @@ public class MainController {
             }
         }
         jdbc.batchUpdate(sql, data);
-    }
+    }*/
 }

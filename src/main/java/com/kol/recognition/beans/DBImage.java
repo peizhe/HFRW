@@ -10,6 +10,7 @@ public class DBImage {
     private Integer width;
     private Integer height;
     private byte[] content;
+    private Integer parentId;
 
     public Integer getSize() {
         return size;
@@ -73,5 +74,13 @@ public class DBImage {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
     }
 }

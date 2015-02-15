@@ -3,20 +3,14 @@ package com.kol.recognition.controllers;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.kol.recognition.beans.DBImage;
-import com.kol.recognition.components.MailManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.enums.FeatureExtractionMode;
 import com.kol.recognition.beans.PictureCropInfo;
 import com.kol.recognition.perceptualHash.Hash;
-import com.kol.recognition.perceptualHash.bitsChain.BitsChainBigIntToString;
 import com.kol.recognition.perceptualHash.distance.HammingDistance;
 import com.kol.recognition.perceptualHash.distance.JaroWinklerDistance;
 import com.kol.recognition.perceptualHash.distance.LevensteinDistance;
-import com.kol.recognition.perceptualHash.hash.AverageHash;
-import com.kol.recognition.perceptualHash.hash.DCTHash;
 import com.kol.recognition.perceptualHash.hash.PerceptualHash;
-import com.kol.recognition.perceptualHash.monochrome.ToByteGray;
-import com.kol.recognition.perceptualHash.resize.ScalrResize;
 import com.kol.recognition.utils.NumberUtils;
 import org.imgscalr.Scalr;
 import org.json.JSONException;
@@ -51,27 +45,19 @@ import java.util.stream.Collectors;
 public class PictureController {
 
     @Autowired private PictureDAO dao;
-    @Autowired private MailManager mail;
 
     private static final int BILINEAR = 0;
     private static final String BASE64_IMAGE_TYPE = "base64";
-    private static final String TEST_IMAGES_FILE_NAME = "TEST_IMAGES";
     private static final DateFormat format = new SimpleDateFormat("yyy-MM-dd HH-mm-ss");
 
     @Autowired private com.kol.recognition.components.Properties prop;
 
     @PreDestroy
-    private void stop() throws IOException {
-        Files.walk(prop.resources.resolve(prop.testImages))
-                .filter(filePath -> !filePath.toString().endsWith(TEST_IMAGES_FILE_NAME))
-                .forEach(filePath -> {try {Files.delete(filePath);} catch (IOException ignored) {}});
-        deleteImagesWithPrincipalComponents(prop.resources.resolve(prop.components), FeatureExtractionMode.PCA);
-        deleteImagesWithPrincipalComponents(prop.resources.resolve(prop.components), FeatureExtractionMode.LDA);
-    }
+    private void stop() throws IOException {}
 
     @RequestMapping(value = "getImage")
-    public void getImage(@RequestParam(value = "fileId", required = true) String fileId, HttpServletResponse response) throws IOException {
-        final DBImage image = dao.getImage(NumberUtils.decode(fileId));
+    public void getImage(@RequestParam(value = "file", required = true) String file, HttpServletResponse response) throws IOException {
+        final DBImage image = dao.getImage(NumberUtils.decode(file));
         if(null != image) {
             response.setContentType("image/" + image.getFormat());
             response.setContentLength(image.getSize());
@@ -84,23 +70,36 @@ public class PictureController {
     }
 
     @RequestMapping(value = "crop")
-    public String crop(@RequestParam(value = "file", required = true) String fileName,
+    public String crop(@RequestParam(value = "fileId", required = true) String fileId,
                        @RequestParam(value = "selection", required = true) String jsonSelection,
-                       @RequestParam(value = "algorithm", required = true) Integer algorithm) throws JSONException, IOException {
+                       @RequestParam(value = "algorithm", required = true) int algorithm) throws JSONException, IOException {
         final JSONObject answer = new JSONObject();
         if (null != jsonSelection && !jsonSelection.isEmpty()) {
             final PictureCropInfo pictureCropInfo = PictureCropInfo.fromJson(new JSONObject(jsonSelection));
-            final Path path = prop.resources.resolve(fileName);
-            if(Files.exists(path)) {
-                final BufferedImage src = ImageIO.read(Files.newInputStream(path));
-                final BufferedImage templateImage = resizeImage(crop(src, pictureCropInfo), prop.imageWidth, prop.imageHeight, algorithm);
+            final DBImage image = dao.getImage(NumberUtils.decode(fileId));
+            if(null != image) {
+                final BufferedImage src = ImageIO.read(new ByteArrayInputStream(image.getContent()));
+                final BufferedImage templateImage = resizeImage(crop(src, pictureCropInfo), image.getWidth(), image.getHeight(), algorithm);
 
-                final String file = saveImage(templateImage, "crop_image_");
+                final ByteArrayOutputStream output = new ByteArrayOutputStream();
+                ImageIO.write(templateImage, image.getFormat(), output);
+                final byte[] imageBytes = output.toByteArray();
+
+                final DBImage cropped = new DBImage();
+                cropped.setClazz("CROPPED");
+                cropped.setFormat(image.getFormat());
+                cropped.setWidth(templateImage.getWidth());
+                cropped.setHeight(templateImage.getHeight());
+                cropped.setSize(imageBytes.length);
+                cropped.setContent(imageBytes);
+                cropped.setParentId(image.getId());
+                dao.createImage(cropped);
                 answer.put("status", "ok");
-                answer.put("fileName", file);
+                answer.put("fileId", NumberUtils.encode(cropped.getId()));
                 answer.put("width", templateImage.getWidth());
                 answer.put("height", templateImage.getHeight());
-                answer.put("src", "/picture/getImage?file=" + file);
+            } else {
+                answer.put("status", "error");
             }
         } else {
             answer.put("status", "error");
@@ -142,14 +141,20 @@ public class PictureController {
             }
         }
         final BufferedImage renderImage = ImageIO.read(new ByteArrayInputStream(binaryData));
-        final String fileName = saveImage(renderImage, "image_");
+        final DBImage cropped = new DBImage();
+        cropped.setClazz("UPLOADED");
+        cropped.setFormat("bmp");
+        cropped.setWidth(renderImage.getWidth());
+        cropped.setHeight(renderImage.getHeight());
+        cropped.setSize(binaryData.length);
+        cropped.setContent(binaryData);
+        final int id = dao.createImage(cropped);
 
         final JSONObject answer = new JSONObject();
         answer.put("status", "ok");
-        answer.put("fileName", fileName);
         answer.put("width", renderImage.getWidth());
         answer.put("height", renderImage.getHeight());
-        answer.put("src", "/picture/getImage?file=" + fileName);
+        answer.put("src", "/picture/getImage?file=" + NumberUtils.encode(id));
         return answer.toString();
     }
 
@@ -170,11 +175,11 @@ public class PictureController {
 
     @RequestMapping(value = "storedImages")
     public String getAllStoredImages(@RequestParam(value = "type", required = true) String type){
-        final List<DBImage> dbImages = dao.getImages(type, prop.imageWidth, prop.imageHeight);
+        final List<DBImage> dbImages = dao.getImages(prop.imageWidth, prop.imageHeight, type);
         final JSONObject images = new JSONObject();
         final Multimap<String, DBImage> map = Multimaps.index(dbImages, DBImage::getName);
         for (String key : map.keySet()) {
-            images.put(key, map.get(key).stream().map(image -> "/picture/getImage?fileId=" + NumberUtils.encode(image.getId())).collect(Collectors.toList()));
+            images.put(key, map.get(key).stream().map(image -> "/picture/getImage?file=" + NumberUtils.encode(image.getId())).collect(Collectors.toList()));
         }
         return images.toString();
     }
