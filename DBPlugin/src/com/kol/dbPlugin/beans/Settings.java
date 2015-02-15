@@ -21,6 +21,12 @@ public class Settings implements Property<Settings> {
         this.database = database;
     }
 
+    public Settings(DBConnectInfo info) {
+        this.exist = true;
+        this.host = info.getHost();
+        this.database = info.getDatabase();
+    }
+
     @Override
     public boolean exist() {
         return exist;

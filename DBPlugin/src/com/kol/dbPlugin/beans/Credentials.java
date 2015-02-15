@@ -15,6 +15,11 @@ public class Credentials implements Property<Credentials> {
         this.exist = false;
     }
 
+    public Credentials(DBConnectInfo info) {
+        this.exist = true;
+        this.host = info.getHost();
+    }
+
     public Credentials(String host, String username, String password) {
         this.host = host;
         this.exist = true;

@@ -1,6 +1,8 @@
 package com.kol.dbPlugin.managers;
 
 import com.kol.dbPlugin.C;
+import com.kol.dbPlugin.DBObjects;
+import com.kol.dbPlugin.Util;
 import com.kol.dbPlugin.beans.Settings;
 import com.kol.dbPlugin.exceptions.FileSystemException;
 import com.kol.dbPlugin.interfaces.PropertyManager;
@@ -42,8 +44,9 @@ public final class SettingsManager extends PropertyManager<Settings> {
         final Path file = folder.resolve(C.SETTINGS_FILE_NAME);
         if(!Files.exists(file)) {
             try {
-                if(!Files.exists(folder)) {
-                    Files.createDirectories(folder);
+                Util.FS.createDirectory(folder);
+                for (DBObjects object : DBObjects.values()) {
+                    Util.FS.createDirectory(folder.resolve(object.getDirName()));
                 }
                 Files.createFile(file);
             } catch (IOException e) {

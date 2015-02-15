@@ -21,6 +21,10 @@ public abstract class BaseAction extends AnAction {
     public void actionPerformed(@NotNull AnActionEvent event) {
         component = ApplicationManager.getApplication().getComponent(DBToolComponent.class);
         credentialsManager = component.getCredentialsManager();
-        settingsManager = new SettingsManager(Paths.get(event.getProject().getBasePath()), C.PLUGIN_DIRECTORY_NAME);
+        if(null != event.getProject()) {
+            settingsManager = new SettingsManager(Paths.get(event.getProject().getBasePath()), C.PLUGIN_DIRECTORY_NAME);
+        } else {
+            throw new RuntimeException("Project is not opened");
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.kol.recognition.controllers;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.kol.recognition.beans.DBImage;
+import com.kol.recognition.components.MailManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.enums.FeatureExtractionMode;
 import com.kol.recognition.beans.PictureCropInfo;
@@ -50,6 +51,8 @@ import java.util.stream.Collectors;
 public class PictureController {
 
     @Autowired private PictureDAO dao;
+    @Autowired private MailManager mail;
+
     private static final int BILINEAR = 0;
     private static final String BASE64_IMAGE_TYPE = "base64";
     private static final String TEST_IMAGES_FILE_NAME = "TEST_IMAGES";
@@ -189,12 +192,11 @@ public class PictureController {
 //        final double[][] dct = DCT.dctm(new double[][]{{1, 6, 7}, {5, 3, 7}, {1.2, 5.6, 8}});
 //        System.out.println(Arrays.deepToString(dct));
 
-        final int hw = 64;
-        System.out.println("Average Hash");
-        test(new AverageHash(hw, hw, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString()));
-        System.out.println("\n\nDCT Hash");
-        test(new DCTHash(hw, hw, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString()));
-
+//        final int hw = 64;
+//        System.out.println("Average Hash");
+//        test(new AverageHash(hw, hw, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString()));
+//        System.out.println("\n\nDCT Hash");
+//        test(new DCTHash(hw, hw, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString()));
     }
 
     private void test(final PerceptualHash hash) throws IOException {
