@@ -6,7 +6,7 @@ import com.kol.recognition.enums.FeatureExtractionMode;
 import com.kol.recognition.enums.MetricType;
 
 public class HFRForm {
-    private String fileName;
+    private String fileId;
     private MetricType metric;
     private FeatureExtractionMode algorithm;
     private Integer knnCount;
@@ -16,12 +16,12 @@ public class HFRForm {
     private TrainingImage trainingImage;
     private Integer principalComponentsCount;
 
-    public String getFileName() {
-        return fileName;
+    public String getFileId() {
+        return fileId;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 
     public MetricType getMetric() {

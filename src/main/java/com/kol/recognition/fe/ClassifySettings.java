@@ -3,7 +3,6 @@ package com.kol.recognition.fe;
 import com.kol.recognition.enums.FeatureExtractionMode;
 import com.kol.recognition.enums.MetricType;
 import com.kol.recognition.forms.HFRForm;
-import com.kol.recognition.components.Properties;
 
 public class ClassifySettings {
 
@@ -63,10 +62,10 @@ public class ClassifySettings {
         this.numberOfImages = numberOfImages;
     }
 
-    public static ClassifySettings getInstance(final Properties prop, final HFRForm form){
+    public static ClassifySettings getInstance(final int knnCount, final int pcaCount, final int trainingImages, final HFRForm form){
         final ClassifySettings cs = new ClassifySettings();
         if(ComponentProperty.DEFAULT.equals(form.getKnnComponent()) || null == form.getKnnCount()){
-            cs.setKnnCount(prop.numOfKNNComponents);
+            cs.setKnnCount(knnCount);
         } else {
             cs.setKnnCount(form.getKnnCount());
         }
@@ -75,12 +74,12 @@ public class ClassifySettings {
         cs.setTraining(form.getTrainingImage());
 
         if(ComponentProperty.DEFAULT.equals(form.getPrincipalComponents()) || null == form.getPrincipalComponentsCount()){
-            cs.setComponents(prop.principalComponentsCount);
+            cs.setComponents(pcaCount);
         } else {
             cs.setComponents(form.getPrincipalComponentsCount());
         }
         if(null == form.getTrainingImageCount()){
-            cs.setNumberOfImages(prop.numOfImagesForTraining);
+            cs.setNumberOfImages(trainingImages);
         } else {
             cs.setNumberOfImages(form.getTrainingImageCount());
         }

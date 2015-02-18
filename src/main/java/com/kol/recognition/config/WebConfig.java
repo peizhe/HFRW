@@ -77,11 +77,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return new DataSourceTransactionManager(dataSource());
     }
 
-    @Bean
-    public Filter myGateway() {
-        return new GatewayFilter();
-    }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/css/**").addResourceLocations("/resources/css/");

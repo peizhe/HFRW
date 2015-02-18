@@ -96,7 +96,7 @@
                     cropLink: that.settings.cropLink,
                     image: {
                         src: answer.src,
-                        fileName: answer.fileName,
+                        fileId: answer.fileId,
                         originalWidth: answer.width,
                         originalHeight: answer.height
                     }

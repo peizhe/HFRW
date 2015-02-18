@@ -16,14 +16,8 @@ public class Properties {
 
     @Value("${hfr.use.cache}") public boolean useCache;
 
-    @Value("${hfr.knn.count}") public int numOfKNNComponents;
-    @Value("${hfr.training.images.count}") public int numOfImagesForTraining;
-    @Value("${hfr.principal.components.count}") public int principalComponentsCount;
-
-    @Value("${hfr.test.images}") public String testImages;
     @Value("${hfr.class.prefix}") public String classPrefix;
     @Value("${hfr.test.images.type}") public String testType;
-    @Value("${hfr.component.images}") public String components;
     @Value("${hfr.training.images}") public String trainingImages;
     @Value("${hfr.training.images.type}") public String trainingType;
 

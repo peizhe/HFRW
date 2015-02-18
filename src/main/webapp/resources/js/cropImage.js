@@ -79,7 +79,7 @@
                     url: that.settings.cropLink,
                     data: {
                         algorithm: algorithm,
-                        file: that.settings.image.fileName,
+                        fileId: that.settings.image.fileId,
                         selection: JSON.stringify(newSelections)
                     },
                     success: that.settings.cropSuccess

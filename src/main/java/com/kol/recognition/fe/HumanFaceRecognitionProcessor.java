@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,14 +30,6 @@ public class HumanFaceRecognitionProcessor {
 
         final Matrix testCase = classifier.getW().transpose().times(ImageUtils.toVector(matrixImage).minus(classifier.getMeanMatrix()));
         return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, settings.getKnnCount(), settings.getMetric().getMetric());
-    }
-
-    public List<String> savePrincipalComponentImages(final FeatureExtraction classifier, final ClassifySettings settings) throws IOException {
-        return ImageUtils.saveImagesToFiles(
-                ImageUtils.convertMatricesToImage(classifier.getW(), prop.imageHeight, prop.imageWidth),
-                prop.resources.resolve(prop.components).resolve(settings.getFeMode().getName()).toString(),
-                prop.trainingType
-        );
     }
 
     private FeatureExtraction trainingSystem(final ClassifySettings settings) {

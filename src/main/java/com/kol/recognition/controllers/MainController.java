@@ -1,6 +1,11 @@
 package com.kol.recognition.controllers;
 
 import com.kol.recognition.components.Properties;
+import com.kol.recognition.perceptualHash.Hash;
+import com.kol.recognition.perceptualHash.distance.HammingDistance;
+import com.kol.recognition.perceptualHash.distance.JaroWinklerDistance;
+import com.kol.recognition.perceptualHash.distance.LevensteinDistance;
+import com.kol.recognition.perceptualHash.hash.PerceptualHash;
 import com.kol.recognition.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -56,4 +62,59 @@ public class MainController {
         }
         jdbc.batchUpdate(sql, data);
     }*/
+
+    @RequestMapping(value = "test")
+    public void test() throws Exception {
+//        final double[][] dctm = DCT.dct2(new double[][]{{1, 6, 7}, {5, 3, 7}, {1.2, 5.6, 8}}, 0);
+//        System.out.println(Arrays.deepToString(dctm));
+//        final double[][] dct = DCT.dctm(new double[][]{{1, 6, 7}, {5, 3, 7}, {1.2, 5.6, 8}});
+//        System.out.println(Arrays.deepToString(dct));
+
+//        final int hw = 64;
+//        System.out.println("Average Hash");
+//        test(new AverageHash(hw, hw, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString()));
+//        System.out.println("\n\nDCT Hash");
+//        test(new DCTHash(hw, hw, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString()));
+    }
+
+    private void test(final PerceptualHash hash) throws IOException {
+        final BufferedImage im1 = ImageIO.read(Files.newInputStream(Paths.get("D:\\1.jpg")));
+        final BufferedImage im2 = ImageIO.read(Files.newInputStream(Paths.get("D:\\2.jpg")));
+        final BufferedImage im3 = ImageIO.read(Files.newInputStream(Paths.get("D:\\3.jpg")));
+
+        final Hash hash1 = hash.getHash(im1);
+        final Hash hash2 = hash.getHash(im2);
+        final Hash hash3 = hash.getHash(im3);
+
+        System.out.println(hash1);
+        System.out.println(hash2);
+        System.out.println(hash3);
+
+        System.out.println("1 - 2");
+        System.out.println("Hamming = " + new HammingDistance().getDistance(hash1.getHash(), hash2.getHash()));
+        System.out.println("Jaro = " + new JaroWinklerDistance().getDistance(hash1.getHash(), hash2.getHash()));
+        System.out.println("Levenstein = " + new LevensteinDistance().getDistance(hash1.getHash(), hash2.getHash()));
+
+        System.out.println("1 - 3");
+        System.out.println("Hamming = " + new HammingDistance().getDistance(hash1.getHash(), hash3.getHash()));
+        System.out.println("Jaro = " + new JaroWinklerDistance().getDistance(hash1.getHash(), hash3.getHash()));
+        System.out.println("Levenstein = " + new LevensteinDistance().getDistance(hash1.getHash(), hash3.getHash()));
+
+        System.out.println("2 - 3");
+        System.out.println("Hamming = " + new HammingDistance().getDistance(hash2.getHash(), hash3.getHash()));
+        System.out.println("Jaro = " + new JaroWinklerDistance().getDistance(hash2.getHash(), hash3.getHash()));
+        System.out.println("Levenstein = " + new LevensteinDistance().getDistance(hash2.getHash(), hash3.getHash()));
+
+        tmpSave(hash1.getImage(), "im_1_.bmp");
+        tmpSave(hash2.getImage(), "im_2_.bmp");
+        tmpSave(hash3.getImage(), "im_3_.bmp");
+    }
+
+    private void tmpSave(final BufferedImage image, final String fileName) throws IOException {
+        final Path path = Paths.get("D:\\").resolve(fileName);
+        if(!Files.exists(path)){
+            Files.createFile(path);
+        }
+        ImageIO.write(image, prop.testType, Files.newOutputStream(path));
+    }
 }

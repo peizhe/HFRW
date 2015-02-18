@@ -2,7 +2,7 @@ package com.kol.recognition.beans;
 
 import org.json.JSONObject;
 
-public class PictureCropInfo {
+public class CropInfo {
 
     private Integer startX;
     private Integer startY;
@@ -41,12 +41,12 @@ public class PictureCropInfo {
         this.height = height;
     }
 
-    public static PictureCropInfo fromJson(final JSONObject selection) {
-        final PictureCropInfo pictureCropInfo = new PictureCropInfo();
-        pictureCropInfo.setStartX(selection.getInt("x1"));
-        pictureCropInfo.setStartY(selection.getInt("y1"));
-        pictureCropInfo.setWidth(selection.getInt("width"));
-        pictureCropInfo.setHeight(selection.getInt("height"));
-        return pictureCropInfo;
+    public static CropInfo fromJson(final JSONObject selection) {
+        final CropInfo cropInfo = new CropInfo();
+        cropInfo.setStartX(selection.getInt("x1"));
+        cropInfo.setStartY(selection.getInt("y1"));
+        cropInfo.setWidth(selection.getInt("width"));
+        cropInfo.setHeight(selection.getInt("height"));
+        return cropInfo;
     }
 }

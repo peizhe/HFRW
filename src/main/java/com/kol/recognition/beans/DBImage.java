@@ -1,9 +1,15 @@
 package com.kol.recognition.beans;
 
-public class DBImage {
+import com.kol.recognition.interfaces.DBObject;
+import org.springframework.jdbc.core.RowMapper;
+
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+
+public class DBImage implements DBObject<DBImage> {
 
     private Integer id;
-    private String name;
     private String clazz;
     private Integer size;
     private String format;
@@ -52,14 +58,6 @@ public class DBImage {
         this.content = content;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getClazz() {
         return clazz;
     }
@@ -82,5 +80,48 @@ public class DBImage {
 
     public void setParentId(Integer parentId) {
         this.parentId = parentId;
+    }
+
+    @Override
+    public RowMapper<DBImage> getRowMapper() {
+        return (rs, i) -> {
+            final DBImage image = new DBImage();
+            final String content = rs.getString("image_content");
+            image.setContent(Base64.getDecoder().decode(content.getBytes()));
+            image.setSize(rs.getInt("image_size"));
+            image.setWidth(rs.getInt("image_width"));
+            image.setHeight(rs.getInt("image_height"));
+            image.setFormat(rs.getString("image_format"));
+            image.setId(rs.getInt(getIdentityFieldName()));
+            return image;
+        };
+    }
+
+    @Override
+    public Map<String, Object> toSimpleJdbcInsertParams() {
+        final Map<String, Object> parameters = new HashMap<>();
+        parameters.put("class_code", getClazz());
+        parameters.put("image_format", getFormat());
+        parameters.put("image_width", getWidth());
+        parameters.put("image_height", getHeight());
+        parameters.put("image_size", getSize());
+        parameters.put("parent_image_id", getParentId());
+        parameters.put("image_content", new String(Base64.getEncoder().encode(getContent())));
+        return parameters;
+    }
+
+    @Override
+    public String getTableName() {
+        return "recognition_data";
+    }
+
+    @Override
+    public String getIdentityFieldName() {
+        return "id";
+    }
+
+    @Override
+    public void setIdentifier(int id) {
+        this.id = id;
     }
 }

@@ -1,21 +1,23 @@
-$(document).ready(init);
+$(document).ready(function() {
+    init(92, 112);
+});
 
 function img(src, styleClass){
     return $('<img/>').addClass(styleClass).attr("src", src);
 }
 
-function init(){
+function init(width, height){
     var dropParameters = {
-        okWidth: 92,
-        okHeight: 112,
-        aspectRatio: '92:112',
-        cropLink: "/picture/crop",
+        okWidth: width,
+        okHeight: height,
+        cropLink: "./picture/crop",
         parentCropContainerId: "crop",
-        uploadLink: "/picture/upload",
+        uploadLink: "./picture/upload",
         cropContainer: 'cropContainer',
+        aspectRatio: width + ':' + height,
         cropSuccess: function (resp) {
             var data = $.parseJSON(resp);
-            $("#cropped").attr("src", data.src + "&t=" + Date.now()).attr("file-name", data.fileName).show();
+            $("#cropped").attr("src", data.src + "&t=" + Date.now()).attr("file-id", data.fileId).show();
             $("#classify-block").show();
         }
     };
@@ -50,7 +52,7 @@ function init(){
     $("#classify-button").click(function(){
         $.ajax({
             type: "POST",
-            url: "/hfr/classify",
+            url: "./hfr/classify",
             data: storeData(),
             success: function(resp) {
                 var data = $.parseJSON(resp);
@@ -70,7 +72,7 @@ function init(){
     $("#eigen-button").click(function(){
         $.ajax({
             type: "POST",
-            url: "/hfr/eigenVectors",
+            url: "./hfr/eigenVectors",
             data: storeData(),
             success: function(resp) {
                 var data = $.parseJSON(resp);
@@ -99,7 +101,7 @@ function storeData() {
     var knnCount = null;
     var pca = null;
     var pcaCount = null;
-    var fileName = $("#cropped").attr("file-name");
+    var fileId = $("#cropped").attr("file-Id");
     $(".menu[group='algorithm']").each(function(){
         if($(this).parent().hasClass("active")){
             algorithm = $(this).attr("enum-name");
@@ -129,9 +131,9 @@ function storeData() {
         }
     });
     return {
+        fileId: fileId,
         metric: metric,
         knnCount: knnCount,
-        fileName: fileName,
         algorithm: algorithm,
         principalComponents: pca,
         knnComponent: knnComponent,
@@ -159,7 +161,7 @@ function getAllStoredImages(recognitionType){
                 var $class = $('<li><a href="#' + ts[i] + '">' + ts[i] + '</a></li>');
                 $image.append($('<div/>').addClass("info-text").html(ts[i]));
                 for(var j = 0; j < data[ts[i]].length; j++){
-                    $image.append(img(data[ts[i]][j], "stored-image"));
+                    $image.append("./picture/getImage?file=" + img(data[ts[i]][j], "stored-image"));
                 }
                 $storedImages.append($image);
                 $storedClasses.append($class);
