@@ -1,16 +1,16 @@
 package com.kol.recognition.beans;
 
-public class User {
+import org.springframework.jdbc.core.RowMapper;
+
+import java.util.Map;
+
+public class User extends HistoryObject<User, String, String> {
 
     private String firstName;
     private String lastName;
     private String userName;
     private String email;
     private String password;
-
-    public User(String userName) {
-        this.userName = userName;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -50,5 +50,35 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public RowMapper<User> getRowMapper() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> toSimpleJdbcInsertParams() {
+        return null;
+    }
+
+    @Override
+    public String getTableName() {
+        return "user";
+    }
+
+    @Override
+    public String getIdentityFieldName() {
+        return "userName";
+    }
+
+    @Override
+    public void setIdentifier(String id) {
+        this.userName = id;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return userName;
     }
 }

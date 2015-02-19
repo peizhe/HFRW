@@ -1,6 +1,6 @@
 rootProject.name = 'HFRW'
 
-include 'HFRFeatureExtraction'
+include 'Recognizer'
 include 'RecognitionMethods'
 include 'DBTool'
 include 'Scala'

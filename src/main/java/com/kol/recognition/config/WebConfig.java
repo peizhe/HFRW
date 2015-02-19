@@ -15,7 +15,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.client.support.RestGatewaySupport;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -24,7 +23,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import javax.annotation.Resource;
-import javax.servlet.Filter;
 import javax.sql.DataSource;
 import java.util.List;
 
@@ -33,10 +31,10 @@ import java.util.List;
 @EnableTransactionManagement
 @PropertySource({"classpath:properties/image.properties", "classpath:properties/database.properties"})
 @ComponentScan({
-        "com.kol.recognition.fe",
         "com.kol.recognition.dao",
         "com.kol.recognition.config",
         "com.kol.recognition.components",
+        "com.kol.recognition.recognition",
         "com.kol.recognition.controllers"
 })
 public class WebConfig extends WebMvcConfigurerAdapter {
@@ -83,7 +81,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/js/**").addResourceLocations("/resources/js/");
         registry.addResourceHandler("/images/**").addResourceLocations("/resources/images/");
         registry.addResourceHandler("/bootstrap/**").addResourceLocations("/resources/bootstrap/");
-        registry.addResourceHandler("/hfr_resources/**").addResourceLocations("/resources/hfr_resources/");
     }
 
     @Override

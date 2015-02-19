@@ -3,7 +3,6 @@ apply plugin: 'java'
 apply plugin: 'war'
 
 sourceCompatibility = 1.8
-version = '1.0'
 
 repositories {
     mavenCentral()
@@ -43,7 +42,7 @@ dependencies {
 //    compile 'javax.activation:activation:1.1.1'
     compile 'com.sun.mail:javax.mail:1.5.2'
 
-    compile(project(':HFRFeatureExtraction'))
+    compile(project(':Recognizer'))
     compile(project(':RecognitionMethods'))
 }
 

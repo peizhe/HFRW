@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id="HFRW" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" external.system.module.group="" external.system.module.version="1.0" type="JAVA_MODULE" version="4">
+<module external.linked.project.id="HFRW" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$" external.system.id="GRADLE" external.system.module.group="" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="Spring" name="Spring">
       <configuration>
@@ -11,7 +11,10 @@
         </fileset>
       </configuration>
     </facet>
-    <facet type="web" name="Web Gradle : HFRW-1.0.war">
+    <facet type="Python" name="Python">
+      <configuration sdkName="Python 3.3.0 (C:\Python33\python.exe)" />
+    </facet>
+    <facet type="web" name="Web Gradle : HFRW.war">
       <configuration>
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
@@ -22,9 +25,6 @@
           <root url="file://$MODULE_DIR$/src/main/resources" />
         </sourceRoots>
       </configuration>
-    </facet>
-    <facet type="Python" name="Python">
-      <configuration sdkName="Python 3.3.0 (C:\Python33\python.exe)" />
     </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="false">
@@ -41,7 +41,7 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="HFRFeatureExtraction" exported="" />
+    <orderEntry type="module" module-name="Recognizer" exported="" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: javax.servlet.jsp:jsp-api:2.2" level="project" />
     <orderEntry type="library" exported="" name="Gradle: org.springframework:spring-core:4.1.0.RELEASE" level="project" />
@@ -72,6 +72,5 @@
     <orderEntry type="library" exported="" name="Gradle: javax.mail:javax.mail-api:1.5.2" level="project" />
     <orderEntry type="library" exported="" name="Gradle: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" exported="" name="Gradle: com.sun.mail:javax.mail:1.5.2" level="project" />
-    <orderEntry type="library" name="Python 3.3.0 (C:\Python33\python.exe) interpreter library" level="application" />
   </component>
 </module>

@@ -17,7 +17,7 @@ function init(width, height){
         aspectRatio: width + ':' + height,
         cropSuccess: function (resp) {
             var data = $.parseJSON(resp);
-            $("#cropped").attr("src", data.src + "&t=" + Date.now()).attr("file-id", data.fileId).show();
+            $("#cropped").attr("src", data.src + "?t=" + Date.now()).attr("file-id", data.fileId).show();
             $("#classify-block").show();
         }
     };
@@ -89,7 +89,7 @@ function init(width, height){
             }
         });
     });
-    getAllStoredImages("human_face");
+    getAllStoredImages("HMF");
 }
 
 function storeData() {
@@ -101,7 +101,7 @@ function storeData() {
     var knnCount = null;
     var pca = null;
     var pcaCount = null;
-    var fileId = $("#cropped").attr("file-Id");
+    var fileId = $("#cropped").attr("file-id");
     $(".menu[group='algorithm']").each(function(){
         if($(this).parent().hasClass("active")){
             algorithm = $(this).attr("enum-name");
@@ -146,7 +146,7 @@ function storeData() {
 function getAllStoredImages(recognitionType){
     $.ajax({
         type: "POST",
-        url: "/picture/storedImages",
+        url: "./picture/storedImages",
         data: {
             type: recognitionType
         },
@@ -161,7 +161,7 @@ function getAllStoredImages(recognitionType){
                 var $class = $('<li><a href="#' + ts[i] + '">' + ts[i] + '</a></li>');
                 $image.append($('<div/>').addClass("info-text").html(ts[i]));
                 for(var j = 0; j < data[ts[i]].length; j++){
-                    $image.append("./picture/getImage?file=" + img(data[ts[i]][j], "stored-image"));
+                    $image.append(img(data[ts[i]][j], "stored-image"));
                 }
                 $storedImages.append($image);
                 $storedClasses.append($class);

@@ -1,19 +1,19 @@
 package com.kol.recognition.forms;
 
-import com.kol.recognition.fe.ComponentProperty;
-import com.kol.recognition.fe.TrainingImage;
-import com.kol.recognition.enums.FeatureExtractionMode;
+import com.kol.recognition.recognition.ComponentProperty;
+import com.kol.recognition.recognition.RecognizerTrainType;
+import com.kol.recognition.enums.AnalysisAlgorithm;
 import com.kol.recognition.enums.MetricType;
 
 public class HFRForm {
     private String fileId;
     private MetricType metric;
-    private FeatureExtractionMode algorithm;
+    private AnalysisAlgorithm algorithm;
     private Integer knnCount;
     private Integer trainingImageCount;
     private ComponentProperty knnComponent;
     private ComponentProperty principalComponents;
-    private TrainingImage trainingImage;
+    private RecognizerTrainType recognizerTrainType;
     private Integer principalComponentsCount;
 
     public String getFileId() {
@@ -32,11 +32,11 @@ public class HFRForm {
         this.metric = metric;
     }
 
-    public FeatureExtractionMode getAlgorithm() {
+    public AnalysisAlgorithm getAlgorithm() {
         return algorithm;
     }
 
-    public void setAlgorithm(FeatureExtractionMode algorithm) {
+    public void setAlgorithm(AnalysisAlgorithm algorithm) {
         this.algorithm = algorithm;
     }
 
@@ -64,12 +64,12 @@ public class HFRForm {
         this.knnComponent = knnComponent;
     }
 
-    public TrainingImage getTrainingImage() {
-        return trainingImage;
+    public RecognizerTrainType getRecognizerTrainType() {
+        return recognizerTrainType;
     }
 
-    public void setTrainingImage(TrainingImage trainingImage) {
-        this.trainingImage = trainingImage;
+    public void setRecognizerTrainType(RecognizerTrainType recognizerTrainType) {
+        this.recognizerTrainType = recognizerTrainType;
     }
 
     public Integer getPrincipalComponentsCount() {

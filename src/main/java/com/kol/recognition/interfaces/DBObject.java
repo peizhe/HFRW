@@ -4,7 +4,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.util.Map;
 
-public interface DBObject<T> {
+public interface DBObject<T, I> {
 
     RowMapper<T> getRowMapper();
 
@@ -14,5 +14,7 @@ public interface DBObject<T> {
 
     String getIdentityFieldName();
 
-    void setIdentifier(int id);
+    void setIdentifier(I id);
+
+    I getIdentifier();
 }

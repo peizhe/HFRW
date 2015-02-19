@@ -1,13 +1,13 @@
 package com.kol.recognition.beans;
 
-import com.kol.recognition.interfaces.DBObject;
+import com.kol.recognition.interfaces.ByteData;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DBImage implements DBObject<DBImage> {
+public class DBImage extends HistoryObject<DBImage, Integer, String> implements ByteData {
 
     private Integer id;
     private String clazz;
@@ -50,6 +50,7 @@ public class DBImage implements DBObject<DBImage> {
         this.height = height;
     }
 
+    @Override
     public byte[] getContent() {
         return content;
     }
@@ -64,14 +65,6 @@ public class DBImage implements DBObject<DBImage> {
 
     public void setClazz(String clazz) {
         this.clazz = clazz;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Integer getParentId() {
@@ -92,7 +85,7 @@ public class DBImage implements DBObject<DBImage> {
             image.setWidth(rs.getInt("image_width"));
             image.setHeight(rs.getInt("image_height"));
             image.setFormat(rs.getString("image_format"));
-            image.setId(rs.getInt(getIdentityFieldName()));
+            image.setIdentifier(rs.getInt(getIdentityFieldName()));
             return image;
         };
     }
@@ -121,7 +114,12 @@ public class DBImage implements DBObject<DBImage> {
     }
 
     @Override
-    public void setIdentifier(int id) {
+    public void setIdentifier(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public Integer getIdentifier() {
+        return id;
     }
 }

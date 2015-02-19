@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,12 +31,8 @@ public class PictureController {
     @Value("${face.image.width}") private int imageWidth;
     @Value("${face.image.height}") private int imageHeight;
 
-    private static final String BASE64_IMAGE_TYPE = "base64";
-    private static final String IMAGE_CLASS_CROPPED_CODE = "CRPD";
-    private static final String IMAGE_CLASS_UPLOADED_CODE = "UPLD";
-
-    @RequestMapping(value = "getImage")
-    public void getImage(@RequestParam(value = "fileId", required = true) String fileId, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "getImage/{fileId}")
+    public void getImage(@PathVariable(value = "fileId") String fileId, HttpServletResponse response) throws IOException {
         final DBImage image = dao.get(NumberUtils.decode(fileId), DBImage.class);
         if(null != image) {
             response.setContentType("image/" + image.getFormat());
@@ -62,16 +59,16 @@ public class PictureController {
                         image.getWidth(), image.getHeight(), algorithm
                 );
                 final DBImage dbImage = imageManager.toDBImage(templateImage, image.getFormat());
-                dbImage.setClazz(IMAGE_CLASS_CROPPED_CODE);
-                dbImage.setParentId(image.getId());
+                dbImage.setClazz(ImageManager.IMAGE_CLASS_CROPPED_CODE);
+                dbImage.setParentId(image.getIdentifier());
                 dao.save(dbImage);
 
-                final String id = NumberUtils.encode(dbImage.getId());
+                final String id = NumberUtils.encode(dbImage.getIdentifier());
                 answer.put("fileId", id);
                 answer.put("status", "ok");
                 answer.put("width", templateImage.getWidth());
                 answer.put("height", templateImage.getHeight());
-                answer.put("src", "./picture/getImage?fileId=" + id);
+                answer.put("src", "./picture/getImage/" + id);
             } else {
                 answer.put("status", "error");
             }
@@ -87,21 +84,21 @@ public class PictureController {
         final String type = image.getString("type");
         final String src = image.getString("src");
         final byte[] binaryData;
-        if(BASE64_IMAGE_TYPE.equals(type)){
+        if(ImageManager.BASE64_IMAGE_TYPE.equals(type)){
             binaryData = imageManager.fromBase64(src);
         } else {
             binaryData = imageManager.fromUrl(src);
         }
         final DBImage dbImage = imageManager.toDBImage(binaryData, ImageManager.DEFAULT_IMAGE_FORMAT);
-        dbImage.setClazz(IMAGE_CLASS_UPLOADED_CODE);
+        dbImage.setClazz(ImageManager.IMAGE_CLASS_UPLOADED_CODE);
         dao.save(dbImage);
 
         final JSONObject answer = new JSONObject();
         answer.put("status", "ok");
         answer.put("width", dbImage.getWidth());
         answer.put("height", dbImage.getHeight());
-        answer.put("fileId", NumberUtils.encode(dbImage.getId()));
-        answer.put("src", "./picture/getImage?fileId=" + NumberUtils.encode(dbImage.getId()));
+        answer.put("fileId", NumberUtils.encode(dbImage.getIdentifier()));
+        answer.put("src", "./picture/getImage/" + NumberUtils.encode(dbImage.getIdentifier()));
         return answer.toString();
     }
 
@@ -111,7 +108,7 @@ public class PictureController {
         final JSONObject images = new JSONObject();
         final Multimap<String, DBImage> map = Multimaps.index(dbImages, DBImage::getClazz);
         for (String key : map.keySet()) {
-            images.put(key, map.get(key).stream().map(image -> NumberUtils.encode(image.getId())).collect(Collectors.toList()));
+            images.put(key, map.get(key).stream().map(image -> "./picture/getImage/" + NumberUtils.encode(image.getIdentifier())).collect(Collectors.toList()));
         }
         return images.toString();
     }

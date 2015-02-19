@@ -123,7 +123,7 @@
                     });
                 });
             }
-            that.$image.attr("src", that.settings.image.src + "&t=" + Date.now());
+            that.$image.attr("src", that.settings.image.src + "?t=" + Date.now());
             if(that.settings.removeImgAreaSelect){
                 that.$image.imgAreaSelect({remove:true});
             } else {

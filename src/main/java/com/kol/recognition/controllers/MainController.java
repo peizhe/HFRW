@@ -1,12 +1,10 @@
 package com.kol.recognition.controllers;
 
-import com.kol.recognition.components.Properties;
 import com.kol.recognition.perceptualHash.Hash;
 import com.kol.recognition.perceptualHash.distance.HammingDistance;
 import com.kol.recognition.perceptualHash.distance.JaroWinklerDistance;
 import com.kol.recognition.perceptualHash.distance.LevensteinDistance;
 import com.kol.recognition.perceptualHash.hash.PerceptualHash;
-import com.kol.recognition.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcOperations;
@@ -15,21 +13,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
 
 @Controller
 public class MainController {
 
-    @Autowired private Properties prop;
     @Autowired private JdbcOperations jdbc;
     @Value("${system.user.id}") private int userId;
+    @Value("${hfr.test.images.type}") public String testType;
 
     @RequestMapping("/")
     public String start(){
@@ -115,6 +109,6 @@ public class MainController {
         if(!Files.exists(path)){
             Files.createFile(path);
         }
-        ImageIO.write(image, prop.testType, Files.newOutputStream(path));
+        ImageIO.write(image, testType, Files.newOutputStream(path));
     }
 }

@@ -3,9 +3,9 @@ package com.kol.recognition.controllers;
 import com.kol.recognition.beans.DBImage;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
-import com.kol.recognition.fe.ClassifySettings;
-import com.kol.recognition.fe.HumanFaceRecognitionProcessor;
-import com.kol.recognition.featureExtraction.FeatureExtraction;
+import com.kol.recognition.recognition.ClassifySettings;
+import com.kol.recognition.recognition.HumanFaceRecognitionProcessor;
+import com.kol.recognition.recognition.Recognizer;
 import com.kol.recognition.forms.HFRForm;
 import com.kol.recognition.utils.ImageUtils;
 import com.kol.recognition.utils.NumberUtils;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.image.BufferedImage;
@@ -37,16 +38,17 @@ public class HFRController {
     @Value("${hfr.training.images.count}") public int trainingImages;
 
     @RequestMapping(value = "classify")
-    public String classify(@ModelAttribute final HFRForm form) {
+    public String classify(@ModelAttribute final HFRForm form,
+                           @RequestParam(required = false, defaultValue = "HMF") final String type) {
         final DBImage dbImage = dao.get(NumberUtils.decode(form.getFileId()), DBImage.class);
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
             final ClassifySettings settings = ClassifySettings.getInstance(knnCount, pcaCount, trainingImages, form);
-            final FeatureExtraction fe = hfr.getFeatureExtraction(settings);
-            final String className = hfr.classifyFace(fe, imageManager.fromByteArray(dbImage.getContent()), settings);
+            final Recognizer recognizer = hfr.getRecognizer(settings, type);
+            final String className = hfr.classifyFace(recognizer, imageManager.fromByteArray(dbImage.getContent()), settings);
             answer.put("status", "ok");
             answer.put("class", className);
-            answer.put("storedImages", getTrainingImages(className, fe));
+            answer.put("storedImages", getTrainingImages(className, recognizer));
         } else {
             answer.put("status", "error");
             answer.put("reason", "NoSuchFileException");
@@ -55,13 +57,14 @@ public class HFRController {
     }
 
     @RequestMapping(value = "eigenVectors")
-    public String eigenVectors(@ModelAttribute final HFRForm form) {
+    public String eigenVectors(@ModelAttribute final HFRForm form,
+                               @RequestParam(required = false, defaultValue = "HMF") final String type) {
         final DBImage dbImage = dao.get(NumberUtils.decode(form.getFileId()), DBImage.class);
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
             final ClassifySettings settings = ClassifySettings.getInstance(knnCount, pcaCount, trainingImages, form);
-            final FeatureExtraction fe = hfr.getFeatureExtraction(settings);
-            final Collection<DBImage> names = savePrincipalComponentImages(fe, settings.getFeMode().getName());
+            final Recognizer fe = hfr.getRecognizer(settings, type);
+            final Collection<DBImage> names = savePrincipalComponentImages(fe, settings.getAlgorithm().getName());
             answer.put("status", "ok");
             answer.put("storedImages", getEigenVectorImages(names));
         } else {
@@ -71,21 +74,21 @@ public class HFRController {
         return answer.toString();
     }
 
-    private JSONArray getTrainingImages(final String className, final FeatureExtraction fe) {
+    private JSONArray getTrainingImages(final String className, final Recognizer recognizer) {
         final JSONArray storedImages = new JSONArray();
-        fe.getTrainMap()
+        recognizer.getTraining()
                 .get(className)
-                .forEach(c -> storedImages.put("./picture/getImage?fileId="));
+                .forEach(c -> storedImages.put("./picture/getImage/" + c.getId()));
         return storedImages;
     }
 
     private JSONArray getEigenVectorImages(final Collection<DBImage> images) {
         final JSONArray storedImages = new JSONArray();
-        images.stream().forEach(im -> storedImages.put("./picture/getImage?fileId=" + NumberUtils.encode(im.getId())));
+        images.stream().forEach(im -> storedImages.put("./picture/getImage/" + NumberUtils.encode(im.getIdentifier())));
         return storedImages;
     }
 
-    private Collection<DBImage> savePrincipalComponentImages(final FeatureExtraction classifier, final String className) {
+    private Collection<DBImage> savePrincipalComponentImages(final Recognizer classifier, final String className) {
         final List<BufferedImage> images = ImageUtils.convertMatricesToImage(classifier.getW(), imageHeight, imageWidth);
         final Collection<DBImage> dbImages = images.stream()
                 .map(image -> {
