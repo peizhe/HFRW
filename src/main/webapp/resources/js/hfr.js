@@ -137,7 +137,7 @@ function storeData() {
         algorithm: algorithm,
         principalComponents: pca,
         knnComponent: knnComponent,
-        trainingImage: trainingImage,
+        recognizerTrainType: trainingImage,
         principalComponentsCount: pcaCount,
         trainingImageCount: trainingImageCount
     };

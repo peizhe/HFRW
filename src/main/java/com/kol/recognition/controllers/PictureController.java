@@ -56,14 +56,14 @@ public class PictureController {
             if(null != image) {
                 final BufferedImage templateImage = imageManager.resize(
                         imageManager.crop(image.getContent(), cropInfo),
-                        image.getWidth(), image.getHeight(), algorithm
+                        imageWidth, imageHeight, algorithm
                 );
                 final DBImage dbImage = imageManager.toDBImage(templateImage, image.getFormat());
                 dbImage.setClazz(ImageManager.IMAGE_CLASS_CROPPED_CODE);
-                dbImage.setParentId(image.getIdentifier());
+                dbImage.setParentId(image.getId());
                 dao.save(dbImage);
 
-                final String id = NumberUtils.encode(dbImage.getIdentifier());
+                final String id = NumberUtils.encode(dbImage.getId());
                 answer.put("fileId", id);
                 answer.put("status", "ok");
                 answer.put("width", templateImage.getWidth());
@@ -97,8 +97,8 @@ public class PictureController {
         answer.put("status", "ok");
         answer.put("width", dbImage.getWidth());
         answer.put("height", dbImage.getHeight());
-        answer.put("fileId", NumberUtils.encode(dbImage.getIdentifier()));
-        answer.put("src", "./picture/getImage/" + NumberUtils.encode(dbImage.getIdentifier()));
+        answer.put("fileId", NumberUtils.encode(dbImage.getId()));
+        answer.put("src", "./picture/getImage/" + NumberUtils.encode(dbImage.getId()));
         return answer.toString();
     }
 
@@ -108,7 +108,7 @@ public class PictureController {
         final JSONObject images = new JSONObject();
         final Multimap<String, DBImage> map = Multimaps.index(dbImages, DBImage::getClazz);
         for (String key : map.keySet()) {
-            images.put(key, map.get(key).stream().map(image -> "./picture/getImage/" + NumberUtils.encode(image.getIdentifier())).collect(Collectors.toList()));
+            images.put(key, map.get(key).stream().map(image -> "./picture/getImage/" + NumberUtils.encode(image.getId())).collect(Collectors.toList()));
         }
         return images.toString();
     }

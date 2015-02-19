@@ -73,12 +73,12 @@ public class User extends HistoryObject<User, String, String> {
     }
 
     @Override
-    public void setIdentifier(String id) {
+    public void setId(String id) {
         this.userName = id;
     }
 
     @Override
-    public String getIdentifier() {
+    public String getId() {
         return userName;
     }
 }

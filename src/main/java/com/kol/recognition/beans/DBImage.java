@@ -85,7 +85,7 @@ public class DBImage extends HistoryObject<DBImage, Integer, String> implements 
             image.setWidth(rs.getInt("image_width"));
             image.setHeight(rs.getInt("image_height"));
             image.setFormat(rs.getString("image_format"));
-            image.setIdentifier(rs.getInt(getIdentityFieldName()));
+            image.setId(rs.getInt(getIdentityFieldName()));
             return image;
         };
     }
@@ -114,12 +114,12 @@ public class DBImage extends HistoryObject<DBImage, Integer, String> implements 
     }
 
     @Override
-    public void setIdentifier(Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
     @Override
-    public Integer getIdentifier() {
+    public Integer getId() {
         return id;
     }
 }

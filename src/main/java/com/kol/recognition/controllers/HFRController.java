@@ -84,7 +84,7 @@ public class HFRController {
 
     private JSONArray getEigenVectorImages(final Collection<DBImage> images) {
         final JSONArray storedImages = new JSONArray();
-        images.stream().forEach(im -> storedImages.put("./picture/getImage/" + NumberUtils.encode(im.getIdentifier())));
+        images.stream().forEach(im -> storedImages.put("./picture/getImage/" + NumberUtils.encode(im.getId())));
         return storedImages;
     }
 

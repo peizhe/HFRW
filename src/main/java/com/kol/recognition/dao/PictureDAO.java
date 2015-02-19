@@ -36,11 +36,11 @@ public class PictureDAO {
 
     public List<DBImage> getImages(final int width, final int height, final String type) {
         final String sql =
-                "SELECT c.name, rd.id " +
+                "SELECT c.class_code AS clazz, rd.id " +
                 "FROM recognition_data rd " +
                     "INNER JOIN recognition_data_class c ON c.class_code = rd.class_code " +
                 "WHERE rd.image_width = ? AND rd.image_height = ? AND c.type_code = ? " +
-                "ORDER BY c.name";
+                "ORDER BY c.class_code";
         return jdbc.query(sql, new BeanPropertyRowMapper<>(DBImage.class), width, height, type);
     }
 
@@ -53,7 +53,7 @@ public class PictureDAO {
         parameters.put("edit_by", MDC.get("user"));
         parameters.put("create_date", new Date());
         parameters.put("edit_date", new Date());
-        object.setIdentifier(insert.executeAndReturnKey(parameters).intValue());
+        object.setId(insert.executeAndReturnKey(parameters).intValue());
     }
 
     public void save(final Collection<DBImage> list) {

@@ -14,7 +14,7 @@ public interface DBObject<T, I> {
 
     String getIdentityFieldName();
 
-    void setIdentifier(I id);
+    void setId(I id);
 
-    I getIdentifier();
+    I getId();
 }
