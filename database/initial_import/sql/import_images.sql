@@ -18,12 +18,12 @@ CREATE TABLE `hfr`.`recognition_data` (
   INDEX `class_idx` (`class_code`)
 );
 
-CREATE TEMPORARY TABLE tmp(class VARCHAR(32), type VARCHAR(32), format VARCHAR(10), width INT, height INT, size INT, content LONGTEXT);
-
+CREATE TEMPORARY TABLE tmp(class VARCHAR(32), format VARCHAR(10), width INT, height INT, size INT, content LONGTEXT);
 LOAD DATA INFILE 'c:/import_data/images.csv' INTO TABLE tmp
 FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 
-INSERT INTO recognition_data(class, format, type, width, height, size, content, create_date, create_by, edit_date, edit_by)
-SELECT t.class, t.format, t.type, t.width, t.height, t.size, t.content, NOW(), 1, NOW(), 1 FROM tmp t;
+INSERT INTO recognition_data(class_code, image_format, image_width, image_height, image_size,
+                             image_content, create_date, create_by, edit_date, edit_by)
+SELECT t.class, t.format, t.width, t.height, t.size, t.content, NOW(), 'kolexandr', NOW(), 'kolexandr' FROM tmp t;
 
 DROP TEMPORARY TABLE tmp;
