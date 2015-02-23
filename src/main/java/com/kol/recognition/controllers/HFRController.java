@@ -1,12 +1,13 @@
 package com.kol.recognition.controllers;
 
+import com.kol.recognition.beans.ClassifySettings;
 import com.kol.recognition.beans.DBImage;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
-import com.kol.recognition.recognition.ClassifySettings;
 import com.kol.recognition.recognition.HumanFaceRecognitionProcessor;
 import com.kol.recognition.recognition.Recognizer;
 import com.kol.recognition.forms.HFRForm;
+import com.kol.recognition.utils.ClassifySettingsBuilder;
 import com.kol.recognition.utils.ImageUtils;
 import com.kol.recognition.utils.NumberUtils;
 import org.json.JSONArray;
@@ -43,8 +44,8 @@ public class HFRController {
         final DBImage dbImage = dao.get(NumberUtils.decode(form.getFileId()), DBImage.class);
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
-            final ClassifySettings settings = ClassifySettings.getInstance(knnCount, pcaCount, trainingImages, form);
-            final Recognizer recognizer = hfr.getRecognizer(settings, type);
+            final ClassifySettings settings = getSettings(form);
+            final Recognizer recognizer = hfr.getRecognizer(settings, type, form.getRecognizerTrainType());
             final String className = hfr.classifyFace(recognizer, imageManager.fromByteArray(dbImage.getContent()), settings);
             answer.put("status", "ok");
             answer.put("class", className);
@@ -62,8 +63,8 @@ public class HFRController {
         final DBImage dbImage = dao.get(NumberUtils.decode(form.getFileId()), DBImage.class);
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
-            final ClassifySettings settings = ClassifySettings.getInstance(knnCount, pcaCount, trainingImages, form);
-            final Recognizer fe = hfr.getRecognizer(settings, type);
+            final ClassifySettings settings = getSettings(form);
+            final Recognizer fe = hfr.getRecognizer(settings, type, form.getRecognizerTrainType());
             final Collection<DBImage> names = savePrincipalComponentImages(fe, settings.getAlgorithm().getName());
             answer.put("status", "ok");
             answer.put("storedImages", getEigenVectorImages(names));
@@ -98,5 +99,16 @@ public class HFRController {
                 }).collect(Collectors.toList());
         dao.save(dbImages);
         return dbImages;
+    }
+
+    private ClassifySettings getSettings(final HFRForm form) {
+        return ClassifySettingsBuilder
+                .start(knnCount, pcaCount, trainingImages)
+                .knn(form.getKnnCount(), form.getKnnComponent())
+                .pca(form.getPrincipalComponentsCount(), form.getPrincipalComponents())
+                .metric(form.getMetric())
+                .images(form.getTrainingImageCount())
+                .algorithm(form.getAlgorithm())
+                .result();
     }
 }

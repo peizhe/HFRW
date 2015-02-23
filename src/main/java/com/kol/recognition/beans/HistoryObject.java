@@ -2,13 +2,20 @@ package com.kol.recognition.beans;
 
 import com.kol.recognition.interfaces.DBObject;
 
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
+@MappedSuperclass
 public abstract class HistoryObject<T, I, IP> implements DBObject<T, I> {
 
+    @Column(name = "edit_by")
     protected IP editBy;
+    @Column(name = "edit_date")
     protected Date editDate;
+    @Column(name = "create_by")
     protected IP createBy;
+    @Column(name = "create_date")
     protected Date createDate;
 
     public Date getEditDate() {

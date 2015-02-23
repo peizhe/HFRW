@@ -3,10 +3,14 @@ package com.kol.recognition.recognition;
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 import com.google.common.collect.Multimap;
+import com.kol.recognition.beans.ClassifySettings;
 import com.kol.recognition.beans.Image;
+import com.kol.recognition.beans.ProjectedTrainingMatrix;
+import com.kol.recognition.utils.KNN;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class PCA extends Recognizer {
 
@@ -19,6 +23,10 @@ public final class PCA extends Recognizer {
         final List<Matrix> faces = new ArrayList<>(data.values());
         this.meanMatrix = countMean(faces);
         this.w = getFeature(faces, numberOfComponents);
+
+        this.projectedTrainingSet = data.entries().stream()
+                .map(d -> new ProjectedTrainingMatrix(d.getKey(), w.transpose().times(d.getValue().minus(meanMatrix))))
+                .collect(Collectors.toList());
     }
 
     private Matrix getFeature(final List<Matrix> input, final int k) {
@@ -56,5 +64,11 @@ public final class PCA extends Recognizer {
             }
         }
         return selectedEigenVectors;
+    }
+
+    @Override
+    public String classify(final Matrix vector, final ClassifySettings data) {
+        final Matrix testCase = getW().transpose().times(vector.minus(getMeanMatrix()));
+        return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, data.getKnnCount(), data.getMetric());
     }
 }

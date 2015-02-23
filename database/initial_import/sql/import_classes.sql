@@ -53,4 +53,9 @@ FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 INSERT INTO recognition_data_class(class_code, type_code, name, description, create_date, create_by, edit_date, edit_by)
 SELECT class, type, name, description, NOW(), 'kolexandr', NOW(), 'kolexandr' FROM tmp;
 
+INSERT INTO recognition_data_class(class_code, type_code, name, description, create_date, create_by, edit_date, edit_by)
+VALUES
+  ('CRPD', 'HMF', 'CROPPED', 'Cropped images for human face recognition', NOW(), 'kolexandr', NOW(), 'kolexandr'),
+  ('UPLD', 'HMF', 'UPLOADED', 'Uploaded images for human face recognition', NOW(), 'kolexandr', NOW(), 'kolexandr');
+
 DROP TEMPORARY TABLE tmp;

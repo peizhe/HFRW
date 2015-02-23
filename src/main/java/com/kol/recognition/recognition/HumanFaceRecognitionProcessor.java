@@ -5,12 +5,11 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.kol.recognition.beans.ClassifySettings;
 import com.kol.recognition.beans.Image;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.enums.AnalysisAlgorithm;
-import com.kol.recognition.beans.ProjectedTrainingMatrix;
-import com.kol.recognition.utils.KNN;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -33,22 +32,17 @@ public class HumanFaceRecognitionProcessor {
     private final Cache<AnalysisAlgorithm, Recognizer> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES).build();
 
-    public String classifyFace(final Recognizer classifier, final BufferedImage image, final ClassifySettings settings) {
-        final Matrix matrixImage = imageManager.toMatrix(image);
-
-        final List<ProjectedTrainingMatrix> projectedTrainingSet = classifier.getProjectedTrainingSet();
-
-        final Matrix testCase = classifier.getW().transpose().times(imageManager.toVector(matrixImage).minus(classifier.getMeanMatrix()));
-        return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, settings.getKnnCount(), settings.getMetric().getMetric());
+    public String classifyFace(final Recognizer classifier, final BufferedImage image, final com.kol.recognition.beans.ClassifySettings settings) {
+        return classifier.classify(imageManager.toVector(imageManager.toMatrix(image)), settings);
     }
 
-    private Recognizer train(final ClassifySettings settings, final String type) {
+    private Recognizer train(final ClassifySettings settings, final String type, final RecognizerTrainType trainType) {
         final Collection<String> classes = dao.getClasses(type);
 
         /** read images from database ang choose some of them (or all) for train the recognizer **/
         final Multimap<String, Image> training = ArrayListMultimap.create();
         classes.forEach(classCode -> training.putAll(
-                classCode, settings.getTrainType().getTrainObjectIds(
+                classCode, trainType.getTrainObjectIds(
                         settings.getNumberOfImages(),
                         dao.getImages(type, classCode, width, height)
                 )
@@ -63,19 +57,19 @@ public class HumanFaceRecognitionProcessor {
         return settings.getAlgorithm().get(data, settings.getComponents(), width*height, training);
     }
 
-    public Recognizer getRecognizer(final ClassifySettings settings, final String type) {
+    public Recognizer getRecognizer(final ClassifySettings settings, final String type, final RecognizerTrainType trainType) {
         if(useCache) {
             final Recognizer ifPresent = cache.getIfPresent(settings.getAlgorithm());
             final Recognizer recognizer;
             if (null == ifPresent) {
-                recognizer = train(settings, type);
+                recognizer = train(settings, type, trainType);
                 cache.put(settings.getAlgorithm(), recognizer);
             } else {
                 recognizer = ifPresent;
             }
             return recognizer;
         } else {
-            return train(settings, type);
+            return train(settings, type, trainType);
         }
     }
 }

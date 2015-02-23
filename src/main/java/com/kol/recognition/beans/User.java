@@ -2,14 +2,22 @@ package com.kol.recognition.beans;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.util.Map;
 
+@Entity(name = "users")
 public class User extends HistoryObject<User, String, String> {
 
+    @Column(name = "first_name")
     private String firstName;
+    @Column(name = "last_name")
     private String lastName;
+    @Column(name = "username", unique = true)
     private String userName;
+    @Column(name = "email", unique = true)
     private String email;
+    @Column(name = "password")
     private String password;
 
     public String getFirstName() {

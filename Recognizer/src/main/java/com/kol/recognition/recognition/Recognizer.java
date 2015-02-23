@@ -2,9 +2,7 @@ package com.kol.recognition.recognition;
 
 import Jama.Matrix;
 import com.google.common.collect.Multimap;
-import com.kol.recognition.beans.Image;
-import com.kol.recognition.beans.Mix;
-import com.kol.recognition.beans.ProjectedTrainingMatrix;
+import com.kol.recognition.beans.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,10 +31,6 @@ public abstract class Recognizer {
         this.imageAsVectorLength = vecLength;
 
         init();
-
-        this.projectedTrainingSet = data.entries().stream()
-            .map(d -> new ProjectedTrainingMatrix(d.getKey(), w.transpose().times(d.getValue().minus(meanMatrix))))
-            .collect(Collectors.toList());
     }
 
     /**
@@ -67,6 +61,8 @@ public abstract class Recognizer {
      * extract features, namely w
      */
     protected abstract void init();
+
+    public abstract String classify(Matrix vector, ClassifySettings data);
 
     public Matrix reconstruct(final int whichImage, final int dimensions) {
         if (dimensions > this.numberOfComponents) {

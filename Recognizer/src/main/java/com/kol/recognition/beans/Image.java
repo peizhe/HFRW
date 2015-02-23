@@ -2,7 +2,7 @@ package com.kol.recognition.beans;
 
 import com.kol.recognition.interfaces.ByteData;
 
-public class Image implements ByteData {
+public final class Image implements ByteData, Comparable<Image> {
 
     private String id;
     private String clazz;
@@ -67,5 +67,10 @@ public class Image implements ByteData {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public int compareTo(Image o) {
+        return getId().compareTo(o.getId());
     }
 }

@@ -3,18 +3,24 @@ package com.kol.recognition.beans;
 import com.kol.recognition.interfaces.ByteData;
 import org.springframework.jdbc.core.RowMapper;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
 public class DBImage extends HistoryObject<DBImage, Integer, String> implements ByteData {
 
+    @Id
+    @GeneratedValue
     private Integer id;
     private String clazz;
     private Integer size;
     private String format;
     private Integer width;
     private Integer height;
+    @Lob
     private byte[] content;
     private Integer parentId;
 

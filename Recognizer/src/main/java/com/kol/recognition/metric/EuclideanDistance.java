@@ -1,6 +1,7 @@
 package com.kol.recognition.metric;
 
 import Jama.Matrix;
+import com.kol.recognition.interfaces.Metric;
 
 public final class EuclideanDistance implements Metric {
 

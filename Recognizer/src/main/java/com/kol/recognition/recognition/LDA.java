@@ -3,13 +3,16 @@ package com.kol.recognition.recognition;
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 import com.google.common.collect.Multimap;
+import com.kol.recognition.beans.ClassifySettings;
 import com.kol.recognition.beans.Image;
 import com.kol.recognition.beans.ProjectedTrainingMatrix;
+import com.kol.recognition.utils.KNN;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class LDA extends Recognizer {
 
@@ -74,5 +77,15 @@ public final class LDA extends Recognizer {
 
         meanMatrix = pca.getMeanMatrix();
         w = pca.getW().times(selectedEigenVectors);
+
+        this.projectedTrainingSet = data.entries().stream()
+                .map(dv -> new ProjectedTrainingMatrix(dv.getKey(), w.transpose().times(dv.getValue().minus(meanMatrix))))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String classify(final Matrix vector, final ClassifySettings data) {
+        final Matrix testCase = getW().transpose().times(vector.minus(getMeanMatrix()));
+        return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, data.getKnnCount(), data.getMetric());
     }
 }

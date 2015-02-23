@@ -1,6 +1,6 @@
 package com.kol.recognition.forms;
 
-import com.kol.recognition.recognition.ComponentProperty;
+import com.kol.recognition.enums.ComponentProperty;
 import com.kol.recognition.recognition.RecognizerTrainType;
 import com.kol.recognition.enums.AnalysisAlgorithm;
 import com.kol.recognition.enums.MetricType;
