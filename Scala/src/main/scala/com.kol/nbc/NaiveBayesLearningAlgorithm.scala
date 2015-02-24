@@ -38,6 +38,7 @@ object NBLA {
   def doubleArray(decimalSymbols: Int) =
     new NaiveBayesLearningAlgorithm[Array[Double]](v => v.map(f => round(f, decimalSymbols)).mkString(" "))
 
-  private def round(value: Double, places: Int): Double =
-      new math.BigDecimal(value).setScale(places, RoundingMode.HALF_UP).doubleValue()
+  private def round(value: Double, places: Int): BigDecimal = {
+    new math.BigDecimal(value).setScale(places, RoundingMode.HALF_UP)
+  }
 }

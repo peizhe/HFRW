@@ -17,6 +17,25 @@ public final class NBC extends Recognizer {
         super(data, components, vecLength, training);
     }
 
+    /*@Override
+    protected void init() {
+        final List<Matrix> faces = new ArrayList<>(data.values());
+        meanMatrix = countMean(faces);
+        nbc = NBLA.doubleArray(8);
+
+        final PCA pca = new PCA(data, numberOfComponents, imageAsVectorLength, training);
+        final Multimap<String, Matrix> pcaSpace = ArrayListMultimap.create();
+        data.entries().forEach(d -> pcaSpace.put(d.getKey(), pca.getW().transpose().times(d.getValue().minus(meanMatrix)).transpose()));
+        this.w = pca.w;
+
+        pcaSpace.entries().forEach(e -> nbc.addExample(e.getValue().getArray()[0], e.getKey()));
+    }
+
+    @Override
+    public String classify(Matrix vector, ClassifySettings data) {
+        return nbc.classifier().classify(w.transpose().times(vector.minus(meanMatrix)).transpose().getArray()[0]);
+    }*/
+
     @Override
     protected void init() {
         final List<Matrix> faces = new ArrayList<>(data.values());
@@ -27,6 +46,6 @@ public final class NBC extends Recognizer {
 
     @Override
     public String classify(Matrix vector, ClassifySettings data) {
-        return nbc.classifier().classify(vector.minus(getMeanMatrix()).getArray()[0]);
+        return nbc.classifier().classify(vector.minus(meanMatrix).getArray()[0]);
     }
 }
