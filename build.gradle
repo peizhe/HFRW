@@ -25,11 +25,15 @@ dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'org.imgscalr:imgscalr-lib:4.2'
 
+    /* DB DRIVERS AND ORM HIBERNATE */
+    compile 'org.hibernate:hibernate-core:4.3.6.Final'
+    compile 'org.apache.commons:commons-dbcp2:2.0.1'
+
     /* LOGGING */
     compile 'org.slf4j:slf4j-api:1.7.9'
     compile 'org.slf4j:slf4j-log4j12:1.7.5'
 
-    /* DATABSE */
+    /* DATABASE */
     compile 'mysql:mysql-connector-java:5.1.32'
 
     /* JACKSON */

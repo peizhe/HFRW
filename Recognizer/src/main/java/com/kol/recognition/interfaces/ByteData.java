@@ -2,5 +2,7 @@ package com.kol.recognition.interfaces;
 
 public interface ByteData {
 
-    byte[] getContent();
+    byte[] getByteContent();
+
+    void setContentFromBytes(final byte[] bytes);
 }

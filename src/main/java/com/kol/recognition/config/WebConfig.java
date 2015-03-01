@@ -11,9 +11,9 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -25,6 +25,7 @@ import org.springframework.web.servlet.view.JstlView;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Properties;
 
 @Configuration
 @EnableWebMvc
@@ -33,6 +34,7 @@ import java.util.List;
 @ComponentScan({
         "com.kol.recognition.dao",
         "com.kol.recognition.config",
+        "com.kol.recognition.services",
         "com.kol.recognition.components",
         "com.kol.recognition.recognition",
         "com.kol.recognition.controllers"
@@ -40,6 +42,8 @@ import java.util.List;
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Resource private Environment environment;
+    private static final String HIBERNATE_DIALECT = "hibernate.dialect";
+    private static final String HIBERNATE_SHOW_SQL = "hibernate.show_sql";
 
     @Bean
     public InternalResourceViewResolver viewResolver() {
@@ -70,11 +74,6 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return new JdbcTemplate(dataSource());
     }
 
-    @Bean
-    public PlatformTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(dataSource());
-    }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/css/**").addResourceLocations("/resources/css/");
@@ -93,6 +92,32 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         final ObjectMapper mapper = new ObjectMapper();
         messageConverter.setObjectMapper(mapper);
         return messageConverter;
+    }
+
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
+        sessionFactoryBean.setDataSource(dataSource());
+        sessionFactoryBean.setPackagesToScan(environment.getRequiredProperty("package.to.scan"));
+        sessionFactoryBean.setHibernateProperties(getHibernateProperties());
+
+        return sessionFactoryBean;
+    }
+
+    private Properties getHibernateProperties() {
+        Properties properties = new Properties();
+        properties.put(HIBERNATE_DIALECT, environment.getRequiredProperty(HIBERNATE_DIALECT));
+        properties.put(HIBERNATE_SHOW_SQL, environment.getRequiredProperty(HIBERNATE_SHOW_SQL));
+
+        return properties;
+    }
+
+    @Bean
+    public HibernateTransactionManager transactionManager() {
+        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
+        transactionManager.setSessionFactory(sessionFactory().getObject());
+
+        return transactionManager;
     }
 
     @Override

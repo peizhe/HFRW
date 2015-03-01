@@ -2,7 +2,7 @@ package com.kol.recognition.components;
 
 import Jama.Matrix;
 import com.kol.recognition.beans.CropInfo;
-import com.kol.recognition.beans.DBImage;
+import com.kol.recognition.beans.entities.DBImage;
 import com.kol.recognition.interfaces.ByteData;
 import org.imgscalr.Scalr;
 import org.springframework.stereotype.Component;
@@ -24,8 +24,6 @@ public class ImageManager {
     public static final int BILINEAR = 0;
     public static final String DEFAULT_IMAGE_FORMAT = "bmp";
     public static final String BASE64_IMAGE_TYPE = "base64";
-    public static final String IMAGE_CLASS_CROPPED_CODE = "CRPD";
-    public static final String IMAGE_CLASS_UPLOADED_CODE = "UPLD";
 
     public byte[] fromBase64(final String src) {
         return DatatypeConverter.parseBase64Binary(src);
@@ -91,7 +89,7 @@ public class ImageManager {
         dbImage.setWidth(image.getWidth());
         dbImage.setHeight(image.getHeight());
         dbImage.setSize(binaryData.length);
-        dbImage.setContent(binaryData);
+        dbImage.setContentFromBytes(binaryData);
         return dbImage;
     }
 
@@ -116,7 +114,7 @@ public class ImageManager {
     }
 
     public Matrix toMatrix(final ByteData image) {
-        return toMatrix(fromByteArray(image.getContent()));
+        return toMatrix(fromByteArray(image.getByteContent()));
     }
 
     /**

@@ -53,8 +53,13 @@ public final class Image implements ByteData, Comparable<Image> {
     }
 
     @Override
-    public byte[] getContent() {
+    public byte[] getByteContent() {
         return content;
+    }
+
+    @Override
+    public void setContentFromBytes(byte[] bytes) {
+        content = bytes;
     }
 
     public void setContent(byte[] content) {

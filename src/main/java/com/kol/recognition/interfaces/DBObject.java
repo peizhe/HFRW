@@ -2,9 +2,10 @@ package com.kol.recognition.interfaces;
 
 import org.springframework.jdbc.core.RowMapper;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public interface DBObject<T, I> {
+public interface DBObject<T, I extends Serializable> {
 
     RowMapper<T> getRowMapper();
 

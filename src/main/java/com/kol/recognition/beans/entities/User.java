@@ -1,25 +1,20 @@
-package com.kol.recognition.beans;
-
-import org.springframework.jdbc.core.RowMapper;
+package com.kol.recognition.beans.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.util.Map;
+import javax.persistence.Table;
 
-@Entity(name = "users")
-public class User extends HistoryObject<User, String, String> {
+@Entity
+@Table(name = "users")
+public class User extends HistoryObject {
 
-    @Column(name = "first_name")
     private String firstName;
-    @Column(name = "last_name")
     private String lastName;
-    @Column(name = "username", unique = true)
     private String userName;
-    @Column(name = "email", unique = true)
     private String email;
-    @Column(name = "password")
     private String password;
 
+    @Column(name = "first_name")
     public String getFirstName() {
         return firstName;
     }
@@ -28,6 +23,7 @@ public class User extends HistoryObject<User, String, String> {
         this.firstName = firstName;
     }
 
+    @Column(name = "last_name")
     public String getLastName() {
         return lastName;
     }
@@ -36,6 +32,7 @@ public class User extends HistoryObject<User, String, String> {
         this.lastName = lastName;
     }
 
+    @Column(name = "username", unique = true)
     public String getUserName() {
         return userName;
     }
@@ -44,6 +41,7 @@ public class User extends HistoryObject<User, String, String> {
         this.userName = userName;
     }
 
+    @Column(name = "email", unique = true)
     public String getEmail() {
         return email;
     }
@@ -52,41 +50,12 @@ public class User extends HistoryObject<User, String, String> {
         this.email = email;
     }
 
+    @Column(name = "password")
     public String getPassword() {
         return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Override
-    public RowMapper<User> getRowMapper() {
-        return null;
-    }
-
-    @Override
-    public Map<String, Object> toSimpleJdbcInsertParams() {
-        return null;
-    }
-
-    @Override
-    public String getTableName() {
-        return "user";
-    }
-
-    @Override
-    public String getIdentityFieldName() {
-        return "userName";
-    }
-
-    @Override
-    public void setId(String id) {
-        this.userName = id;
-    }
-
-    @Override
-    public String getId() {
-        return userName;
     }
 }

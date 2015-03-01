@@ -1,7 +1,8 @@
 package com.kol.recognition.controllers;
 
 import com.kol.recognition.beans.ClassifySettings;
-import com.kol.recognition.beans.DBImage;
+import com.kol.recognition.beans.entities.DBImage;
+import com.kol.recognition.beans.entities.RecognitionDataClass;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.recognition.HumanFaceRecognitionProcessor;
@@ -41,12 +42,12 @@ public class HFRController {
     @RequestMapping(value = "classify")
     public String classify(@ModelAttribute final HFRForm form,
                            @RequestParam(required = false, defaultValue = "HMF") final String type) {
-        final DBImage dbImage = dao.get(NumberUtils.decode(form.getFileId()), DBImage.class);
+        final DBImage dbImage = dao.getImage(NumberUtils.decode(form.getFileId()));
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
             final ClassifySettings settings = getSettings(form);
             final Recognizer recognizer = hfr.getRecognizer(settings, type, form.getRecognizerTrainType());
-            final String className = hfr.classifyFace(recognizer, imageManager.fromByteArray(dbImage.getContent()), settings);
+            final String className = hfr.classifyFace(recognizer, imageManager.fromByteArray(dbImage.getByteContent()), settings);
             answer.put("status", "ok");
             answer.put("class", className);
             answer.put("storedImages", getTrainingImages(className, recognizer));
@@ -60,12 +61,12 @@ public class HFRController {
     @RequestMapping(value = "eigenVectors")
     public String eigenVectors(@ModelAttribute final HFRForm form,
                                @RequestParam(required = false, defaultValue = "HMF") final String type) {
-        final DBImage dbImage = dao.get(NumberUtils.decode(form.getFileId()), DBImage.class);
+        final DBImage dbImage = dao.getImage(NumberUtils.decode(form.getFileId()));
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
             final ClassifySettings settings = getSettings(form);
             final Recognizer fe = hfr.getRecognizer(settings, type, form.getRecognizerTrainType());
-            final Collection<DBImage> names = savePrincipalComponentImages(fe, settings.getAlgorithm().getName());
+            final Collection<DBImage> names = savePrincipalComponentImages(fe, settings.getAlgorithm().name());
             answer.put("status", "ok");
             answer.put("storedImages", getEigenVectorImages(names));
         } else {
@@ -89,15 +90,16 @@ public class HFRController {
         return storedImages;
     }
 
-    private Collection<DBImage> savePrincipalComponentImages(final Recognizer classifier, final String className) {
+    private Collection<DBImage> savePrincipalComponentImages(final Recognizer classifier, final String classCode) {
+        final RecognitionDataClass clazz = dao.getClassByCode(classCode);
         final List<BufferedImage> images = ImageUtils.convertMatricesToImage(classifier.getW(), imageHeight, imageWidth);
         final Collection<DBImage> dbImages = images.stream()
                 .map(image -> {
                     final DBImage dbImage = imageManager.toDBImage(image, ImageManager.DEFAULT_IMAGE_FORMAT);
-                    dbImage.setClazz(className);
+                    dbImage.setClazz(clazz);
                     return dbImage;
                 }).collect(Collectors.toList());
-        dao.save(dbImages);
+        dao.saveImages(dbImages);
         return dbImages;
     }
 

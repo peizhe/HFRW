@@ -2,7 +2,10 @@ package com.kol.recognition.controllers;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-import com.kol.recognition.beans.DBImage;
+import com.kol.recognition.beans.ImageBean;
+import com.kol.recognition.beans.entities.DBImage;
+import com.kol.recognition.beans.entities.RecognitionDataClass;
+import com.kol.recognition.beans.entities.User;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.beans.CropInfo;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,12 +37,12 @@ public class PictureController {
 
     @RequestMapping(value = "getImage/{fileId}")
     public void getImage(@PathVariable(value = "fileId") String fileId, HttpServletResponse response) throws IOException {
-        final DBImage image = dao.get(NumberUtils.decode(fileId), DBImage.class);
+        final DBImage image = dao.getImage(NumberUtils.decode(fileId));
         if(null != image) {
             response.setContentType("image/" + image.getFormat());
             response.setContentLength(image.getSize());
             try (OutputStream os = response.getOutputStream()) {
-                os.write(image.getContent());
+                os.write(image.getByteContent());
                 os.flush();
                 os.close();
             }
@@ -52,16 +56,21 @@ public class PictureController {
         final JSONObject answer = new JSONObject();
         if (null != jsonSelection && !jsonSelection.isEmpty()) {
             final CropInfo cropInfo = CropInfo.fromJson(new JSONObject(jsonSelection));
-            final DBImage image = dao.get(NumberUtils.decode(fileId), DBImage.class);
+            final DBImage image = dao.getImage(NumberUtils.decode(fileId));
             if(null != image) {
                 final BufferedImage templateImage = imageManager.resize(
-                        imageManager.crop(image.getContent(), cropInfo),
+                        imageManager.crop(image.getByteContent(), cropInfo),
                         imageWidth, imageHeight, algorithm
                 );
+                final User user = dao.getUser("kolexandr");
                 final DBImage dbImage = imageManager.toDBImage(templateImage, image.getFormat());
-                dbImage.setClazz(ImageManager.IMAGE_CLASS_CROPPED_CODE);
-                dbImage.setParentId(image.getId());
-                dao.save(dbImage);
+                dbImage.setClazz(dao.getClassByCode(RecognitionDataClass.IMAGE_CLASS_CROPPED_CODE));
+                dbImage.setCreateBy(user);
+                dbImage.setCreateDate(new Date());
+                dbImage.setEditBy(user);
+                dbImage.setEditDate(new Date());
+                dbImage.setParent(image);
+                dao.saveImage(dbImage);
 
                 final String id = NumberUtils.encode(dbImage.getId());
                 answer.put("fileId", id);
@@ -90,8 +99,13 @@ public class PictureController {
             binaryData = imageManager.fromUrl(src);
         }
         final DBImage dbImage = imageManager.toDBImage(binaryData, ImageManager.DEFAULT_IMAGE_FORMAT);
-        dbImage.setClazz(ImageManager.IMAGE_CLASS_UPLOADED_CODE);
-        dao.save(dbImage);
+        dbImage.setClazz(dao.getClassByCode(RecognitionDataClass.IMAGE_CLASS_UPLOADED_CODE));
+        final User user = dao.getUser("kolexandr");
+        dbImage.setCreateBy(user);
+        dbImage.setCreateDate(new Date());
+        dbImage.setEditBy(user);
+        dbImage.setEditDate(new Date());
+        dao.saveImage(dbImage);
 
         final JSONObject answer = new JSONObject();
         answer.put("status", "ok");
@@ -104,11 +118,11 @@ public class PictureController {
 
     @RequestMapping(value = "storedImages")
     public String getAllStoredImages(@RequestParam(value = "type", required = true) String type){
-        final List<DBImage> dbImages = dao.getImages(imageWidth, imageHeight, type);
+        final List<ImageBean> dbImages = dao.getImages(imageWidth, imageHeight, type);
         final JSONObject images = new JSONObject();
-        final Multimap<String, DBImage> map = Multimaps.index(dbImages, DBImage::getClazz);
+        final Multimap<String, ImageBean> map = Multimaps.index(dbImages, ImageBean::getImageClass);
         for (String key : map.keySet()) {
-            images.put(key, map.get(key).stream().map(image -> "./picture/getImage/" + NumberUtils.encode(image.getId())).collect(Collectors.toList()));
+            images.put(key, map.get(key).stream().map(image -> "./picture/getImage/" + NumberUtils.encode(image.getImageId())).collect(Collectors.toList()));
         }
         return images.toString();
     }
