@@ -16,7 +16,7 @@ public final class KNN {
     /**
      * testFace has been projected to the subspace
      */
-    private static ProjectedTrainingMatrix[] findKNN(final ProjectedTrainingMatrix[] trainingSet, final Matrix testFace, final int k, final Metric metric) {
+    public static ProjectedTrainingMatrix[] findKNN(final ProjectedTrainingMatrix[] trainingSet, final Matrix testFace, final int k, final Metric metric) {
         final int NumOfTrainingSet = trainingSet.length;
         assert k <= NumOfTrainingSet : "k is lager than the length of trainingSet!";
 

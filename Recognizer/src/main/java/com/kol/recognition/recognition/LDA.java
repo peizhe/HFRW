@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public final class LDA extends Recognizer {
 
-    public LDA(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training) {
-        super(data, components, vecLength, training);
+    public LDA(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training, ClassifySettings settings) {
+        super(data, components, vecLength, training, settings);
     }
 
     @Override
@@ -29,7 +29,7 @@ public final class LDA extends Recognizer {
         assert sampleSize >= 2 * classSize : "sampleSize is smaller than 2c!";
 
         // process in PCA
-        final PCA pca = new PCA(data, sampleSize - classSize, imageAsVectorLength, training);
+        final PCA pca = new PCA(data, sampleSize - classSize, imageAsVectorLength, training, settings);
 
         // classify
         final Matrix meanTotal = new Matrix(sampleSize - classSize, 1);

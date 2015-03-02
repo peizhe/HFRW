@@ -10,6 +10,7 @@ import com.kol.recognition.beans.Image;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.enums.AnalysisAlgorithm;
+import com.kol.recognition.utils.ClassifySettingsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,7 @@ public class HumanFaceRecognitionProcessor {
             data.putAll(label, training.get(label).stream().map(imageManager::toVector).collect(Collectors.toList()));
         }
         /** get Recognizer based on exist data **/
-        return settings.getAlgorithm().get(data, settings.getComponents(), width*height, training);
+        return settings.getAlgorithm().get(data, settings.getComponents(), width*height, training, settings);
     }
 
     public Recognizer getRecognizer(final ClassifySettings settings, final String type, final RecognizerTrainType trainType) {

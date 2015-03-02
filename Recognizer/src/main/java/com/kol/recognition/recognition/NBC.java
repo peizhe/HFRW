@@ -13,8 +13,8 @@ import java.util.List;
 public final class NBC extends Recognizer {
     private NaiveBayesLearningAlgorithm<double[]> nbc;
 
-    public NBC(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training) {
-        super(data, components, vecLength, training);
+    public NBC(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training, ClassifySettings settings) {
+        super(data, components, vecLength, training, settings);
     }
 
     /*@Override

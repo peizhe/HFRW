@@ -6,7 +6,6 @@ import com.kol.recognition.beans.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class Recognizer {
 
@@ -21,12 +20,15 @@ public abstract class Recognizer {
 
     protected final int imageAsVectorLength;
 
-    protected Recognizer(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training){
+    protected ClassifySettings settings;
+
+    protected Recognizer(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training, ClassifySettings settings){
         if (components >= data.size()) {
             throw new RuntimeException("the expected dimensions could not be achieved!");
         }
         this.data = data;
         this.training = training;
+        this.settings = settings;
         this.numberOfComponents = components;
         this.imageAsVectorLength = vecLength;
 

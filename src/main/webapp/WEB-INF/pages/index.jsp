@@ -47,6 +47,7 @@
                         <li class="active"><a href="#" group="algorithm" enum-name="PCA" class="menu">PCA</a></li>
                         <li><a href="#" group="algorithm" enum-name="LDA" class="menu">LDA</a></li>
                         <li><a href="#" group="algorithm" enum-name="NBC" class="menu">NBC</a></li>
+                        <li><a href="#" group="algorithm" enum-name="LPP" class="menu">LPP</a></li>
                         <li class="nav-header">Metrics</li>
                         <li class="active"><a href="#" group="metric" enum-name="EUCLIDEAN" class="menu">Euclidean</a></li>
                         <li><a href="#" group="metric" enum-name="COSINE" class="menu">Cosine</a></li>

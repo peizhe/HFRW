@@ -4,6 +4,7 @@ import com.kol.recognition.beans.ClassifySettings;
 import com.kol.recognition.enums.AnalysisAlgorithm;
 import com.kol.recognition.enums.ComponentProperty;
 import com.kol.recognition.enums.MetricType;
+import com.kol.recognition.interfaces.Metric;
 
 public final class ClassifySettingsBuilder {
 
@@ -65,5 +66,19 @@ public final class ClassifySettingsBuilder {
 
     public ClassifySettings result() {
         return settings;
+    }
+
+    public static ClassifySettingsBuilder start() {
+        return new ClassifySettingsBuilder();
+    }
+
+    public ClassifySettingsBuilder knn(final int value) {
+        settings.setKnnCount(value);
+        return this;
+    }
+
+    public ClassifySettingsBuilder metric(final Metric metric) {
+        settings.setMetric(metric);
+        return this;
     }
 }

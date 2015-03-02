@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 public final class PCA extends Recognizer {
 
-    public PCA(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> train) {
-        super(data, components, vecLength, train);
+    public PCA(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> train, ClassifySettings settings) {
+        super(data, components, vecLength, train, settings);
     }
 
     @Override
