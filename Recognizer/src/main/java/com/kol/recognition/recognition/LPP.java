@@ -77,16 +77,16 @@ public class LPP extends Recognizer {
 
         //construct the nearest neighbor graph
         final Matrix nng = constructNearestNeighborGraph(pca.getProjectedTrainingSet());
-        final Matrix D = constructD(nng);
-        final Matrix L = D.minus(nng);
+        final Matrix dMatrix = constructD(nng);
+        final Matrix lMatrix = dMatrix.minus(nng);
 
         //reconstruct the trainingSet into required xMatrix;
         final Matrix xMatrix = constructTrainingMatrix(pca.getProjectedTrainingSet());
-        final Matrix xlxT = xMatrix.times(L).times(xMatrix.transpose());
-        final Matrix xdx = xMatrix.times(D).times(xMatrix.transpose());
+        final Matrix xlxT = xMatrix.times(lMatrix).times(xMatrix.transpose());
+        final Matrix xdxT = xMatrix.times(dMatrix).times(xMatrix.transpose());
 
-        //calculate the eignevalues and eigenvectors of (xdx)^-1 * (xlxT)
-        final EigenvalueDecomposition feature = xdx.inverse().times(xlxT).eig();
+        //calculate the eignevalues and eigenvectors of (xdxT)^-1 * (xlxT)
+        final EigenvalueDecomposition feature = xdxT.inverse().times(xlxT).eig();
 
         final double[] d = feature.getRealEigenvalues();
         assert d.length >= classSize - 1 : "Ensure that the number of eigenvalues is larger than classSize - 1";
