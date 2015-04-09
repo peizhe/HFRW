@@ -10,7 +10,6 @@ import com.kol.recognition.beans.Image;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.enums.AnalysisAlgorithm;
-import com.kol.recognition.utils.ClassifySettingsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

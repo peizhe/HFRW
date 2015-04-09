@@ -11,9 +11,6 @@
         </fileset>
       </configuration>
     </facet>
-    <facet type="Python" name="Python">
-      <configuration sdkName="Python 3.3.0 (C:\Python33\python.exe)" />
-    </facet>
     <facet type="web" name="Web Gradle : HFRW.war">
       <configuration>
         <webroots>
