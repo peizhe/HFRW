@@ -1,12 +1,12 @@
 package com.kol.recognition.controllers;
 
-import com.kol.recognition.beans.ClassifySettings;
+import com.kol.recognition.components.beans.ClassifySettings;
 import com.kol.recognition.beans.entities.DBImage;
 import com.kol.recognition.beans.entities.RecognitionDataClass;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.recognition.HumanFaceRecognitionProcessor;
-import com.kol.recognition.recognition.Recognizer;
+import com.kol.recognition.components.recognition.Recognizer;
 import com.kol.recognition.forms.HFRForm;
 import com.kol.recognition.utils.ClassifySettingsBuilder;
 import com.kol.recognition.utils.ImageUtils;

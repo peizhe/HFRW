@@ -1,8 +1,8 @@
 package com.kol.recognition.utils;
 
 import Jama.Matrix;
-import com.kol.recognition.beans.ProjectedTrainingMatrix;
-import com.kol.recognition.interfaces.Metric;
+import com.kol.recognition.components.beans.ProjectedTrainingMatrix;
+import com.kol.recognition.components.interfaces.Metric;
 
 import java.util.HashMap;
 import java.util.Map;

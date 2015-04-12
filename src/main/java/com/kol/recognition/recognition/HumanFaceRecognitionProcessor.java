@@ -5,11 +5,12 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.kol.recognition.beans.ClassifySettings;
-import com.kol.recognition.beans.Image;
+import com.kol.recognition.components.beans.ClassifySettings;
+import com.kol.recognition.components.beans.Image;
 import com.kol.recognition.components.ImageManager;
+import com.kol.recognition.components.recognition.Recognizer;
 import com.kol.recognition.dao.PictureDAO;
-import com.kol.recognition.enums.AnalysisAlgorithm;
+import com.kol.recognition.components.enums.AnalysisAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,7 @@ public class HumanFaceRecognitionProcessor {
     private final Cache<AnalysisAlgorithm, Recognizer> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES).build();
 
-    public String classifyFace(final Recognizer classifier, final BufferedImage image, final com.kol.recognition.beans.ClassifySettings settings) {
+    public String classifyFace(final Recognizer classifier, final BufferedImage image, final com.kol.recognition.components.beans.ClassifySettings settings) {
         return classifier.classify(imageManager.toVector(imageManager.toMatrix(image)), settings);
     }
 

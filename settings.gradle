@@ -1,6 +1,5 @@
 rootProject.name = 'HFRW'
 
 include 'Recognizer'
-include 'RecognitionMethods'
 include 'DBTool'
 include 'Scala'

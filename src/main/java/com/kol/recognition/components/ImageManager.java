@@ -3,7 +3,7 @@ package com.kol.recognition.components;
 import Jama.Matrix;
 import com.kol.recognition.beans.CropInfo;
 import com.kol.recognition.beans.entities.DBImage;
-import com.kol.recognition.interfaces.ByteData;
+import com.kol.recognition.components.interfaces.ByteData;
 import org.imgscalr.Scalr;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;

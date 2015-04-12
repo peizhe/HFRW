@@ -1,6 +1,6 @@
 package com.kol.recognition.beans.entities;
 
-import com.kol.recognition.interfaces.ByteData;
+import com.kol.recognition.components.interfaces.ByteData;
 
 import javax.persistence.*;
 import java.util.Base64;

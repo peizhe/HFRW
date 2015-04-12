@@ -1,5 +1,6 @@
 apply plugin: 'idea'
 apply plugin: 'java'
+apply plugin: 'scala'
 
 sourceCompatibility = 1.8
 
@@ -10,6 +11,8 @@ repositories {
 dependencies {
     compile 'com.google.guava:guava:18.0'
     compile 'gov.nist.math:jama:1.0.2'
+    compile 'org.imgscalr:imgscalr-lib:4.2'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
 
     compile(project(':Scala'))
 }

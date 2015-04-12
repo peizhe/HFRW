@@ -2,7 +2,7 @@ package com.kol.recognition.dao;
 
 import com.kol.recognition.beans.ImageBean;
 import com.kol.recognition.beans.entities.DBImage;
-import com.kol.recognition.beans.Image;
+import com.kol.recognition.components.beans.Image;
 import com.kol.recognition.beans.entities.RecognitionDataClass;
 import com.kol.recognition.beans.entities.User;
 import com.kol.recognition.services.HibernateService;

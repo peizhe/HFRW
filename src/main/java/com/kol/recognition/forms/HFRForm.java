@@ -1,9 +1,9 @@
 package com.kol.recognition.forms;
 
-import com.kol.recognition.enums.ComponentProperty;
+import com.kol.recognition.components.enums.ComponentProperty;
 import com.kol.recognition.recognition.RecognizerTrainType;
-import com.kol.recognition.enums.AnalysisAlgorithm;
-import com.kol.recognition.enums.MetricType;
+import com.kol.recognition.components.enums.AnalysisAlgorithm;
+import com.kol.recognition.components.enums.MetricType;
 
 public class HFRForm {
     private String fileId;
