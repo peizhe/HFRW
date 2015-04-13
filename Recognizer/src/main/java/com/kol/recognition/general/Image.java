@@ -1,8 +1,6 @@
-package com.kol.recognition.components.beans;
+package com.kol.recognition.general;
 
-import com.kol.recognition.components.interfaces.ByteData;
-
-public final class Image implements ByteData, Comparable<Image> {
+public final class Image implements Comparable<Image> {
 
     private String id;
     private String clazz;
@@ -52,14 +50,8 @@ public final class Image implements ByteData, Comparable<Image> {
         this.height = height;
     }
 
-    @Override
-    public byte[] getByteContent() {
+    public byte[] getContent() {
         return content;
-    }
-
-    @Override
-    public void setContentFromBytes(byte[] bytes) {
-        content = bytes;
     }
 
     public void setContent(byte[] content) {

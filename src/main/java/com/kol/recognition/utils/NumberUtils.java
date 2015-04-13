@@ -6,11 +6,15 @@ public final class NumberUtils {
 
     private NumberUtils(){}
 
-    public static String encode(final int value) {
+    public static String encode(final long value) {
         return Base64.getEncoder().encodeToString(String.valueOf(value).getBytes());
     }
 
-    public static int decode(final String value) {
-        return Integer.valueOf(new String(Base64.getDecoder().decode(value)));
+    public static long decode(final String value) {
+        return Long.valueOf(new String(Base64.getDecoder().decode(value)));
+    }
+
+    public static String generateId() {
+        return encode(System.currentTimeMillis());
     }
 }

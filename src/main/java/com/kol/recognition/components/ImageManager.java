@@ -1,9 +1,8 @@
 package com.kol.recognition.components;
 
-import Jama.Matrix;
 import com.kol.recognition.beans.CropInfo;
 import com.kol.recognition.beans.entities.DBImage;
-import com.kol.recognition.components.interfaces.ByteData;
+import com.kol.recognition.utils.ImageUtils;
 import org.imgscalr.Scalr;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
@@ -17,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Base64;
 
 @Component
 public class ImageManager {
@@ -39,14 +39,6 @@ public class ImageManager {
         }
     }
 
-    public BufferedImage fromByteArray(final byte[] binaryData) {
-        try {
-            return ImageIO.read(new ByteArrayInputStream(binaryData));
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
     public BufferedImage crop(final BufferedImage src, final CropInfo cropInfo) {
         final BufferedImage dst = new BufferedImage(cropInfo.getWidth(), cropInfo.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
         final Graphics2D g = dst.createGraphics();
@@ -57,7 +49,7 @@ public class ImageManager {
     }
 
     public BufferedImage crop(final byte[] binaryData, final CropInfo cropInfo) {
-        final BufferedImage src = fromByteArray(binaryData);
+        final BufferedImage src = ImageUtils.fromByteArray(binaryData);
         final BufferedImage dst = new BufferedImage(cropInfo.getWidth(), cropInfo.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
         final Graphics2D g = dst.createGraphics();
         g.drawImage(src, 0, 0, cropInfo.getWidth(), cropInfo.getHeight(), cropInfo.getStartX(),
@@ -94,46 +86,14 @@ public class ImageManager {
     }
 
     public DBImage toDBImage(final byte[] binaryData, final String format) {
-        return toDBImage(fromByteArray(binaryData), format);
+        return toDBImage(ImageUtils.fromByteArray(binaryData), format);
     }
 
-    /**
-     * Convert BufferedImage to Matrix
-     */
-    public Matrix toMatrix(final BufferedImage image) {
-        final int width = image.getWidth();
-        final int height = image.getHeight();
-        // read the image data
-        final double[][] data2D = new double[height][width];
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                data2D[j][i] = image.getRGB(i, j);
-            }
-        }
-        return new Matrix(data2D);
+    public static byte[] stringToByte(final String content) {
+        return Base64.getDecoder().decode(content.getBytes());
     }
 
-    public Matrix toMatrix(final ByteData image) {
-        return toMatrix(fromByteArray(image.getByteContent()));
-    }
-
-    /**
-     * Convert a m by n matrix into a m*n by 1 matrix
-     */
-    public Matrix toVector(final Matrix input) {
-        final int m = input.getRowDimension();
-        final int n = input.getColumnDimension();
-
-        final Matrix result = new Matrix(m * n, 1);
-        for (int p = 0; p < n; p++) {
-            for (int q = 0; q < m; q++) {
-                result.set(p * m + q, 0, input.get(q, p));
-            }
-        }
-        return result;
-    }
-
-    public Matrix toVector(final ByteData input) {
-        return toVector(toMatrix(input));
+    public static String byteToString(final byte[] bytes) {
+        return new String(Base64.getEncoder().encode(bytes));
     }
 }

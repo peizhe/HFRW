@@ -1,29 +1,37 @@
 package com.kol.recognition.beans.entities;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import java.util.Date;
 
-@MappedSuperclass
 public abstract class HistoryObject {
 
-    protected Integer id;
-    protected User editBy;
+    @Column(name = "id", unique = true)
+    protected String id;
+    @Column(name = "edit_by")
+    protected String editBy;
+    @Column(name = "edit_date")
     protected Date editDate;
-    protected User createBy;
+    @Column(name = "create_by")
+    protected String createBy;
+    @Column(name = "create_date")
     protected Date createDate;
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id", unique = true)
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    @Column(name = "edit_date")
+    public String getEditBy() {
+        return editBy;
+    }
+
+    public void setEditBy(String editBy) {
+        this.editBy = editBy;
+    }
+
     public Date getEditDate() {
         return editDate;
     }
@@ -32,32 +40,19 @@ public abstract class HistoryObject {
         this.editDate = editDate;
     }
 
-    @Column(name = "create_date")
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
+
     public Date getCreateDate() {
         return createDate;
     }
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "edit_by")
-    public User getEditBy() {
-        return editBy;
-    }
-
-    public void setEditBy(User editBy) {
-        this.editBy = editBy;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "create_by")
-    public User getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(User createBy) {
-        this.createBy = createBy;
     }
 }

@@ -40,9 +40,9 @@ public abstract class PerceptualHash {
         }
     }
 
-    protected String toBitsChain(final RGBImage monochrome, double meanPixelValue) {
+    protected String toBitsChain(final RGBImage monochrome, final double meanPixelValue) {
         final StringBuilder bits = new StringBuilder();
-        for (int val : monochrome.toBlue()) {
+        for (int val : monochrome.vectorContent()) {
             if(val < meanPixelValue) {
                 bits.append(0);
             } else {

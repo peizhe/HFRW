@@ -1,31 +1,30 @@
-package com.kol.recognition.components.enums;
+package com.kol.recognition.components.recognition;
 
 import Jama.Matrix;
 import com.google.common.collect.Multimap;
-import com.kol.recognition.components.beans.ClassifySettings;
-import com.kol.recognition.components.beans.Image;
-import com.kol.recognition.components.recognition.*;
+import com.kol.recognition.general.Image;
+import com.kol.recognition.general.settings.ClassifySettings;
 
 public enum AnalysisAlgorithm {
-    PCA("eigenface") {
+    PCA {
         @Override
         public Recognizer get(final Multimap<String, Matrix> data, final int components, final int vecLength, final Multimap<String, Image> train, final ClassifySettings settings) {
             return new PCA(data, components, vecLength, train, settings);
         }
     },
-    LDA("fisherface") {
+    LDA {
         @Override
         public Recognizer get(final Multimap<String, Matrix> data, final int components, final int vecLength, final Multimap<String, Image> train, final ClassifySettings settings) {
             return new LDA(data, components, vecLength, train, settings);
         }
     },
-    NBC("bayesface") {
+    NBC {
         @Override
         public Recognizer get(final Multimap<String, Matrix> data, final int components, final int vecLength, final Multimap<String, Image> train, final ClassifySettings settings) {
             return new NBC(data, components, vecLength, train, settings);
         }
     },
-    LPP("laplacianface") {
+    LPP {
         @Override
         public Recognizer get(final Multimap<String, Matrix> data, final int components, final int vecLength, final Multimap<String, Image> train, final ClassifySettings settings) {
             return new LPP(data, components, vecLength, train, settings);
@@ -33,14 +32,4 @@ public enum AnalysisAlgorithm {
     };
 
     public abstract Recognizer get(final Multimap<String, Matrix> data, final int components, final int vecLength, final Multimap<String, Image> train, final ClassifySettings settings);
-
-    AnalysisAlgorithm(String name) {
-        this.name = name;
-    }
-
-    private String name;
-
-    public String getName(){
-        return name;
-    }
 }

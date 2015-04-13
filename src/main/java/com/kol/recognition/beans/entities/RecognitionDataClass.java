@@ -1,23 +1,22 @@
 package com.kol.recognition.beans.entities;
 
-import javax.persistence.*;
+import javax.persistence.Table;
+import javax.persistence.Column;
 
-@Entity
 @Table(name = "recognition_data_class")
 public class RecognitionDataClass extends SupportObject {
 
     public static final String IMAGE_CLASS_CROPPED_CODE = "CRPD";
     public static final String IMAGE_CLASS_UPLOADED_CODE = "UPLD";
 
-    private RecognitionDataType type;
+    @Column(name = "type_code")
+    private String type;
 
-    @ManyToOne
-    @JoinColumn(name = "type_code")
-    public RecognitionDataType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(RecognitionDataType type) {
+    public void setType(String type) {
         this.type = type;
     }
 }

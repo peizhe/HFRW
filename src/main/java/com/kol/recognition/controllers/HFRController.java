@@ -1,16 +1,14 @@
 package com.kol.recognition.controllers;
 
-import com.kol.recognition.components.beans.ClassifySettings;
+import com.kol.recognition.general.settings.ClassifySettings;
 import com.kol.recognition.beans.entities.DBImage;
-import com.kol.recognition.beans.entities.RecognitionDataClass;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.dao.PictureDAO;
 import com.kol.recognition.recognition.HumanFaceRecognitionProcessor;
 import com.kol.recognition.components.recognition.Recognizer;
 import com.kol.recognition.forms.HFRForm;
-import com.kol.recognition.utils.ClassifySettingsBuilder;
+import com.kol.recognition.general.settings.ClassifySettingsBuilder;
 import com.kol.recognition.utils.ImageUtils;
-import com.kol.recognition.utils.NumberUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,19 +33,19 @@ public class HFRController {
 
     @Value("${hfr.knn.count}") public int knnCount;
     @Value("${face.image.width}") private int imageWidth;
+    @Value("${system.user.username}") private String user;
     @Value("${face.image.height}") private int imageHeight;
     @Value("${hfr.principal.components.count}") public int pcaCount;
     @Value("${hfr.training.images.count}") public int trainingImages;
 
     @RequestMapping(value = "classify")
-    public String classify(@ModelAttribute final HFRForm form,
-                           @RequestParam(required = false, defaultValue = "HMF") final String type) {
-        final DBImage dbImage = dao.getImage(NumberUtils.decode(form.getFileId()));
+    public String classify(@ModelAttribute final HFRForm form, @RequestParam(required = false, defaultValue = "HMF") final String type) {
+        final DBImage dbImage = dao.getImage(form.getFileId());
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
             final ClassifySettings settings = getSettings(form);
             final Recognizer recognizer = hfr.getRecognizer(settings, type, form.getRecognizerTrainType());
-            final String className = hfr.classifyFace(recognizer, imageManager.fromByteArray(dbImage.getByteContent()), settings);
+            final String className = hfr.classifyFace(recognizer, ImageUtils.fromByteArray(dbImage.getByteContent()), settings);
             answer.put("status", "ok");
             answer.put("class", className);
             answer.put("storedImages", getTrainingImages(className, recognizer));
@@ -59,9 +57,8 @@ public class HFRController {
     }
 
     @RequestMapping(value = "eigenVectors")
-    public String eigenVectors(@ModelAttribute final HFRForm form,
-                               @RequestParam(required = false, defaultValue = "HMF") final String type) {
-        final DBImage dbImage = dao.getImage(NumberUtils.decode(form.getFileId()));
+    public String eigenVectors(@ModelAttribute final HFRForm form, @RequestParam(required = false, defaultValue = "HMF") final String type) {
+        final DBImage dbImage = dao.getImage(form.getFileId());
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
             final ClassifySettings settings = getSettings(form);
@@ -86,20 +83,19 @@ public class HFRController {
 
     private JSONArray getEigenVectorImages(final Collection<DBImage> images) {
         final JSONArray storedImages = new JSONArray();
-        images.stream().forEach(im -> storedImages.put("./picture/getImage/" + NumberUtils.encode(im.getId())));
+        images.stream().forEach(im -> storedImages.put("./picture/getImage/" + im.getId()));
         return storedImages;
     }
 
     private Collection<DBImage> savePrincipalComponentImages(final Recognizer classifier, final String classCode) {
-        final RecognitionDataClass clazz = dao.getClassByCode(classCode);
         final List<BufferedImage> images = ImageUtils.convertMatricesToImage(classifier.getW(), imageHeight, imageWidth);
         final Collection<DBImage> dbImages = images.stream()
                 .map(image -> {
                     final DBImage dbImage = imageManager.toDBImage(image, ImageManager.DEFAULT_IMAGE_FORMAT);
-                    dbImage.setClazz(clazz);
+                    dbImage.setClazz(classCode);
                     return dbImage;
                 }).collect(Collectors.toList());
-        dao.saveImages(dbImages);
+        dao.saveImages(dbImages, user);
         return dbImages;
     }
 

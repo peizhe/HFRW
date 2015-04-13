@@ -1,10 +1,8 @@
-package com.kol.recognition.utils;
+package com.kol.recognition.general.settings;
 
-import com.kol.recognition.components.beans.ClassifySettings;
-import com.kol.recognition.components.enums.AnalysisAlgorithm;
-import com.kol.recognition.components.enums.ComponentProperty;
-import com.kol.recognition.components.enums.MetricType;
-import com.kol.recognition.components.interfaces.Metric;
+import com.kol.recognition.components.metric.MetricType;
+import com.kol.recognition.components.metric.Metric;
+import com.kol.recognition.components.recognition.AnalysisAlgorithm;
 
 public final class ClassifySettingsBuilder {
 

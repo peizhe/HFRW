@@ -1,4 +1,4 @@
-package com.kol.recognition.components.interfaces;
+package com.kol.recognition.components.metric;
 
 import Jama.Matrix;
 

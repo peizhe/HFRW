@@ -5,12 +5,14 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.kol.recognition.components.beans.ClassifySettings;
-import com.kol.recognition.components.beans.Image;
+import com.kol.recognition.beans.entities.DBImage;
+import com.kol.recognition.general.settings.ClassifySettings;
+import com.kol.recognition.general.Image;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.components.recognition.Recognizer;
 import com.kol.recognition.dao.PictureDAO;
-import com.kol.recognition.components.enums.AnalysisAlgorithm;
+import com.kol.recognition.components.recognition.AnalysisAlgorithm;
+import com.kol.recognition.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,7 +26,6 @@ import java.util.stream.Collectors;
 public class HumanFaceRecognitionProcessor {
 
     @Autowired private PictureDAO dao;
-    @Autowired private ImageManager imageManager;
 
     @Value("${face.image.width}") private int width;
     @Value("${face.image.height}") private int height;
@@ -33,8 +34,8 @@ public class HumanFaceRecognitionProcessor {
     private final Cache<AnalysisAlgorithm, Recognizer> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES).build();
 
-    public String classifyFace(final Recognizer classifier, final BufferedImage image, final com.kol.recognition.components.beans.ClassifySettings settings) {
-        return classifier.classify(imageManager.toVector(imageManager.toMatrix(image)), settings);
+    public String classifyFace(final Recognizer classifier, final BufferedImage image, final ClassifySettings settings) {
+        return classifier.classify(ImageUtils.toVector(ImageUtils.toMatrix(image)), settings);
     }
 
     private Recognizer train(final ClassifySettings settings, final String type, final RecognizerTrainType trainType) {
@@ -45,14 +46,14 @@ public class HumanFaceRecognitionProcessor {
         classes.forEach(classCode -> training.putAll(
                 classCode, trainType.getTrainObjectIds(
                         settings.getNumberOfImages(),
-                        dao.getImages(type, classCode, width, height)
+                        dao.getImages(classCode, width, height).stream().map(DBImage::toImage).collect(Collectors.toList())
                 )
         ));
 
         /** transform images, which were choose for training, into Jama.Matrix **/
         final Multimap<String, Matrix> data = ArrayListMultimap.create();
         for (String label : training.keySet()) {
-            data.putAll(label, training.get(label).stream().map(imageManager::toVector).collect(Collectors.toList()));
+            data.putAll(label, training.get(label).stream().map(ImageUtils::toVector).collect(Collectors.toList()));
         }
         /** get Recognizer based on exist data **/
         return settings.getAlgorithm().get(data, settings.getComponents(), width*height, training, settings);

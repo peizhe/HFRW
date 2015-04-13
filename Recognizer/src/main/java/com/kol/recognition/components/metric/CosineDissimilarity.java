@@ -1,7 +1,6 @@
 package com.kol.recognition.components.metric;
 
 import Jama.Matrix;
-import com.kol.recognition.components.interfaces.Metric;
 
 public final class CosineDissimilarity implements Metric {
 

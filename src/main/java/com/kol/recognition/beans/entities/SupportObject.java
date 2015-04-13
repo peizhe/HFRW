@@ -1,17 +1,15 @@
 package com.kol.recognition.beans.entities;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
 
-@MappedSuperclass
 public abstract class SupportObject {
+    @Column(name = "code", unique = true)
     private String code;
+    @Column(name = "name")
     private String name;
+    @Column(name = "description")
     private String description;
 
-    @Id
-    @Column(name = "code", unique = true)
     public String getCode() {
         return code;
     }
@@ -20,7 +18,6 @@ public abstract class SupportObject {
         this.code = code;
     }
 
-    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -29,7 +26,6 @@ public abstract class SupportObject {
         this.name = name;
     }
 
-    @Column(name = "description")
     public String getDescription() {
         return description;
     }

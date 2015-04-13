@@ -1,20 +1,22 @@
 package com.kol.recognition.beans.entities;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Entity
 @Table(name = "users")
 public class User extends HistoryObject {
 
+    @Column(name = "first_name")
     private String firstName;
+    @Column(name = "last_name")
     private String lastName;
+    @Column(name = "username", unique = true)
     private String userName;
+    @Column(name = "email", unique = true)
     private String email;
+    @Column(name = "password")
     private String password;
 
-    @Column(name = "first_name")
     public String getFirstName() {
         return firstName;
     }
@@ -23,7 +25,6 @@ public class User extends HistoryObject {
         this.firstName = firstName;
     }
 
-    @Column(name = "last_name")
     public String getLastName() {
         return lastName;
     }
@@ -32,7 +33,6 @@ public class User extends HistoryObject {
         this.lastName = lastName;
     }
 
-    @Column(name = "username", unique = true)
     public String getUserName() {
         return userName;
     }
@@ -41,7 +41,6 @@ public class User extends HistoryObject {
         this.userName = userName;
     }
 
-    @Column(name = "email", unique = true)
     public String getEmail() {
         return email;
     }
@@ -50,7 +49,6 @@ public class User extends HistoryObject {
         this.email = email;
     }
 
-    @Column(name = "password")
     public String getPassword() {
         return password;
     }

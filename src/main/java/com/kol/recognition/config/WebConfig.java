@@ -1,19 +1,14 @@
 package com.kol.recognition.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -24,8 +19,6 @@ import org.springframework.web.servlet.view.JstlView;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.util.List;
-import java.util.Properties;
 
 @Configuration
 @EnableWebMvc
@@ -34,7 +27,6 @@ import java.util.Properties;
 @ComponentScan({
         "com.kol.recognition.dao",
         "com.kol.recognition.config",
-        "com.kol.recognition.services",
         "com.kol.recognition.components",
         "com.kol.recognition.recognition",
         "com.kol.recognition.controllers"
@@ -42,8 +34,6 @@ import java.util.Properties;
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Resource private Environment environment;
-    private static final String HIBERNATE_DIALECT = "hibernate.dialect";
-    private static final String HIBERNATE_SHOW_SQL = "hibernate.show_sql";
 
     @Bean
     public InternalResourceViewResolver viewResolver() {
@@ -85,45 +75,5 @@ public class WebConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new ControllerLogInterceptor());
-    }
-
-    public MappingJackson2HttpMessageConverter jacksonMessageConverter() {
-        final MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-        final ObjectMapper mapper = new ObjectMapper();
-        messageConverter.setObjectMapper(mapper);
-        return messageConverter;
-    }
-
-    @Bean
-    public LocalSessionFactoryBean sessionFactory() {
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(dataSource());
-        sessionFactoryBean.setPackagesToScan(environment.getRequiredProperty("package.to.scan"));
-        sessionFactoryBean.setHibernateProperties(getHibernateProperties());
-
-        return sessionFactoryBean;
-    }
-
-    private Properties getHibernateProperties() {
-        Properties properties = new Properties();
-        properties.put(HIBERNATE_DIALECT, environment.getRequiredProperty(HIBERNATE_DIALECT));
-        properties.put(HIBERNATE_SHOW_SQL, environment.getRequiredProperty(HIBERNATE_SHOW_SQL));
-
-        return properties;
-    }
-
-    @Bean
-    public HibernateTransactionManager transactionManager() {
-        HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(sessionFactory().getObject());
-
-        return transactionManager;
-    }
-
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        //Here we add our custom-configured HttpMessageConverter
-        converters.add(jacksonMessageConverter());
-        super.configureMessageConverters(converters);
     }
 }

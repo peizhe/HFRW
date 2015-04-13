@@ -2,9 +2,12 @@ package com.kol.recognition.perceptualHash.hash;
 
 import com.kol.RGBImage;
 import com.kol.recognition.perceptualHash.Hash;
+import com.kol.recognition.perceptualHash.bitsChain.BitsChainBigIntToString;
 import com.kol.recognition.perceptualHash.bitsChain.BitsChainToString;
+import com.kol.recognition.perceptualHash.monochrome.ToByteGray;
 import com.kol.recognition.perceptualHash.monochrome.ToMonochrome;
 import com.kol.recognition.perceptualHash.resize.ResizeImage;
+import com.kol.recognition.perceptualHash.resize.ScalrResize;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -18,6 +21,10 @@ public final class AverageHash extends PerceptualHash {
                        ToMonochrome toMonochrome,
                        BitsChainToString toString) {
         super(smallWidth, smallHeight, resizeImage, toMonochrome, toString);
+    }
+
+    public AverageHash(int smallWidth, int smallHeight) {
+        super(smallWidth, smallHeight, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString());
     }
 
     @Override

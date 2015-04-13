@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 import com.google.common.collect.Multimap;
-import com.kol.recognition.components.beans.ClassifySettings;
-import com.kol.recognition.components.beans.Image;
+import com.kol.recognition.general.settings.ClassifySettings;
+import com.kol.recognition.general.Image;
 import com.kol.recognition.components.beans.ProjectedTrainingMatrix;
 import com.kol.recognition.utils.KNN;
 
 
-public class LPP extends Recognizer {
+public final class LPP extends Recognizer {
 
     public LPP(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training, ClassifySettings settings) {
         super(data, components, vecLength, training, settings);

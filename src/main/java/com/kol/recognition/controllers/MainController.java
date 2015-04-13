@@ -4,10 +4,10 @@ import com.kol.recognition.perceptualHash.Hash;
 import com.kol.recognition.perceptualHash.distance.HammingDistance;
 import com.kol.recognition.perceptualHash.distance.JaroWinklerDistance;
 import com.kol.recognition.perceptualHash.distance.LevensteinDistance;
+import com.kol.recognition.perceptualHash.hash.AverageHash;
+import com.kol.recognition.perceptualHash.hash.DCTHash;
 import com.kol.recognition.perceptualHash.hash.PerceptualHash;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -21,8 +21,7 @@ import java.nio.file.Paths;
 @Controller
 public class MainController {
 
-    @Autowired private JdbcOperations jdbc;
-    @Value("${system.user.id}") private int userId;
+    @Value("${system.user.username}") private String user;
     @Value("${hfr.test.images.type}") public String testType;
 
     @RequestMapping("/")
@@ -59,22 +58,23 @@ public class MainController {
 
     @RequestMapping(value = "test")
     public void test() throws Exception {
-//        final double[][] dctm = DCT.dct2(new double[][]{{1, 6, 7}, {5, 3, 7}, {1.2, 5.6, 8}}, 0);
+//        final double[][] dctm = DCT.dct(new double[][]{{1, 6, 7}, {5, 3, 7}, {1.2, 5.6, 8}});
 //        System.out.println(Arrays.deepToString(dctm));
 //        final double[][] dct = DCT.dctm(new double[][]{{1, 6, 7}, {5, 3, 7}, {1.2, 5.6, 8}});
 //        System.out.println(Arrays.deepToString(dct));
-
-//        final int hw = 64;
-//        System.out.println("Average Hash");
-//        test(new AverageHash(hw, hw, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString()));
-//        System.out.println("\n\nDCT Hash");
-//        test(new DCTHash(hw, hw, new ScalrResize(), new ToByteGray(), new BitsChainBigIntToString()));
+//
+        final int hw = 64;
+        System.out.println("Average Hash");
+        test(new AverageHash(hw, hw));
+        System.out.println("\n\nDCT Hash");
+        test(new DCTHash(hw, hw));
     }
 
     private void test(final PerceptualHash hash) throws IOException {
         final BufferedImage im1 = ImageIO.read(Files.newInputStream(Paths.get("D:\\1.jpg")));
         final BufferedImage im2 = ImageIO.read(Files.newInputStream(Paths.get("D:\\2.jpg")));
         final BufferedImage im3 = ImageIO.read(Files.newInputStream(Paths.get("D:\\3.jpg")));
+
 
         final Hash hash1 = hash.getHash(im1);
         final Hash hash2 = hash.getHash(im2);

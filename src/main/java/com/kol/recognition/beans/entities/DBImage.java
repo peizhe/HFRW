@@ -1,23 +1,37 @@
 package com.kol.recognition.beans.entities;
 
-import com.kol.recognition.components.interfaces.ByteData;
+import com.kol.recognition.components.ImageManager;
+import com.kol.recognition.general.Image;
 
-import javax.persistence.*;
-import java.util.Base64;
+import javax.persistence.Column;
+import javax.persistence.Table;
 
-@Entity
 @Table(name = "recognition_data")
-public class DBImage extends HistoryObject implements ByteData {
+public class DBImage extends HistoryObject {
 
-    private RecognitionDataClass clazz;
-    private Integer size;
-    private String format;
-    private Integer width;
-    private Integer height;
-    private String content;
-    private DBImage parent;
-
+    @Column(name = "class_code")
+    private String clazz;
     @Column(name = "image_size")
+    private Integer size;
+    @Column(name = "image_format")
+    private String format;
+    @Column(name = "image_width")
+    private Integer width;
+    @Column(name = "image_height")
+    private Integer height;
+    @Column(name = "image_content")
+    private String content;
+    @Column(name = "parent_image_id")
+    private String parent;
+
+    public String getClazz() {
+        return clazz;
+    }
+
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
+
     public Integer getSize() {
         return size;
     }
@@ -26,7 +40,6 @@ public class DBImage extends HistoryObject implements ByteData {
         this.size = size;
     }
 
-    @Column(name = "image_format")
     public String getFormat() {
         return format;
     }
@@ -35,7 +48,6 @@ public class DBImage extends HistoryObject implements ByteData {
         this.format = format;
     }
 
-    @Column(name = "image_width")
     public Integer getWidth() {
         return width;
     }
@@ -44,7 +56,6 @@ public class DBImage extends HistoryObject implements ByteData {
         this.width = width;
     }
 
-    @Column(name = "image_height")
     public Integer getHeight() {
         return height;
     }
@@ -53,7 +64,6 @@ public class DBImage extends HistoryObject implements ByteData {
         this.height = height;
     }
 
-    @Column(name = "image_content")
     public String getContent() {
         return content;
     }
@@ -62,34 +72,31 @@ public class DBImage extends HistoryObject implements ByteData {
         this.content = content;
     }
 
-    @ManyToOne
-    @JoinColumn(name = "class_code")
-    public RecognitionDataClass getClazz() {
-        return clazz;
-    }
-
-    public void setClazz(RecognitionDataClass clazz) {
-        this.clazz = clazz;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "parent_image_id")
-    public DBImage getParent() {
+    public String getParent() {
         return parent;
     }
 
-    public void setParent(DBImage parent) {
+    public void setParent(String parent) {
         this.parent = parent;
     }
 
-    @Override
-    @Transient
     public byte[] getByteContent() {
-        return Base64.getDecoder().decode(content.getBytes());
+        return ImageManager.stringToByte(content);
     }
 
-    @Override
     public void setContentFromBytes(final byte[] bytes) {
-        content = new String(Base64.getEncoder().encode(bytes));
+        content = ImageManager.byteToString(bytes);
+    }
+
+    public Image toImage() {
+        final Image im = new Image();
+        im.setClazz(clazz);
+        im.setContent(getByteContent());
+        im.setFormat(format);
+        im.setHeight(height);
+        im.setSize(size);
+        im.setWidth(width);
+        im.setId(id);
+        return im;
     }
 }

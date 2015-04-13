@@ -1,4 +1,4 @@
-package com.kol.recognition.components.enums;
+package com.kol.recognition.general.settings;
 
 public enum ComponentProperty {
     DEFAULT, CUSTOM

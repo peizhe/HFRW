@@ -1,10 +1,12 @@
 package com.kol.recognition.utils;
 
 import Jama.Matrix;
+import com.kol.recognition.general.Image;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -139,5 +141,53 @@ public final class ImageUtils {
     public static void convertPGMTo(final String inPath, final String outPath, final String fileName, final String format) throws IOException {
         final Matrix imageMatrix = convertPGMtoMatrix(inPath + fileName + ".pgm");
         ImageUtils.saveImageToFile(ImageUtils.convertMatrixToImage(imageMatrix, imageMatrix.getRowDimension(), imageMatrix.getColumnDimension()), outPath + fileName, format);
+    }
+
+    /**
+     * Convert BufferedImage to Matrix
+     */
+    public static Matrix toMatrix(final BufferedImage image) {
+        final int width = image.getWidth();
+        final int height = image.getHeight();
+        // read the image data
+        final double[][] data2D = new double[height][width];
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                data2D[j][i] = image.getRGB(i, j);
+            }
+        }
+        return new Matrix(data2D);
+    }
+
+    public static Matrix toMatrix(final Image image) {
+        return toMatrix(fromByteArray(image.getContent()));
+    }
+
+    /**
+     * Convert a m by n matrix into a m*n by 1 matrix
+     */
+    public static Matrix toVector(final Matrix input) {
+        final int m = input.getRowDimension();
+        final int n = input.getColumnDimension();
+
+        final Matrix result = new Matrix(m * n, 1);
+        for (int p = 0; p < n; p++) {
+            for (int q = 0; q < m; q++) {
+                result.set(p * m + q, 0, input.get(q, p));
+            }
+        }
+        return result;
+    }
+
+    public static Matrix toVector(final Image input) {
+        return toVector(toMatrix(input));
+    }
+
+    public static BufferedImage fromByteArray(final byte[] binaryData) {
+        try {
+            return ImageIO.read(new ByteArrayInputStream(binaryData));
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

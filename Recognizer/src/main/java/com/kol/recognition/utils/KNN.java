@@ -2,7 +2,7 @@ package com.kol.recognition.utils;
 
 import Jama.Matrix;
 import com.kol.recognition.components.beans.ProjectedTrainingMatrix;
-import com.kol.recognition.components.interfaces.Metric;
+import com.kol.recognition.components.metric.Metric;
 
 import java.util.HashMap;
 import java.util.Map;

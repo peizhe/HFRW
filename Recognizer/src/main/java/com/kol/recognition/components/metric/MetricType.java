@@ -1,11 +1,8 @@
-package com.kol.recognition.components.enums;
+package com.kol.recognition.components.metric;
 
-import com.kol.recognition.components.metric.CosineDissimilarity;
-import com.kol.recognition.components.metric.EuclideanDistance;
-import com.kol.recognition.components.metric.L1Distance;
-import com.kol.recognition.components.interfaces.Metric;
+import com.kol.recognition.general.EnumType;
 
-public enum MetricType {
+public enum MetricType implements EnumType<Metric> {
     COSINE {
         @Override
         public Metric get() {
@@ -23,7 +20,5 @@ public enum MetricType {
         public Metric get() {
             return new EuclideanDistance();
         }
-    };
-
-    public abstract Metric get();
+    }
 }

@@ -4,8 +4,8 @@ import Jama.Matrix;
 import com.google.common.collect.Multimap;
 import com.kol.nbc.NBLA;
 import com.kol.nbc.NaiveBayesLearningAlgorithm;
-import com.kol.recognition.components.beans.ClassifySettings;
-import com.kol.recognition.components.beans.Image;
+import com.kol.recognition.general.settings.ClassifySettings;
+import com.kol.recognition.general.Image;
 
 import java.util.ArrayList;
 import java.util.List;

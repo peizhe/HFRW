@@ -33,11 +33,12 @@ public class PictureController {
     @Autowired private PictureDAO dao;
     @Autowired private ImageManager imageManager;
     @Value("${face.image.width}") private int imageWidth;
+    @Value("${system.user.username}") private String user;
     @Value("${face.image.height}") private int imageHeight;
 
     @RequestMapping(value = "getImage/{fileId}")
     public void getImage(@PathVariable(value = "fileId") String fileId, HttpServletResponse response) throws IOException {
-        final DBImage image = dao.getImage(NumberUtils.decode(fileId));
+        final DBImage image = dao.getImage(fileId);
         if(null != image) {
             response.setContentType("image/" + image.getFormat());
             response.setContentLength(image.getSize());
@@ -56,23 +57,18 @@ public class PictureController {
         final JSONObject answer = new JSONObject();
         if (null != jsonSelection && !jsonSelection.isEmpty()) {
             final CropInfo cropInfo = CropInfo.fromJson(new JSONObject(jsonSelection));
-            final DBImage image = dao.getImage(NumberUtils.decode(fileId));
+            final DBImage image = dao.getImage(fileId);
             if(null != image) {
                 final BufferedImage templateImage = imageManager.resize(
                         imageManager.crop(image.getByteContent(), cropInfo),
                         imageWidth, imageHeight, algorithm
                 );
-                final User user = dao.getUser("kolexandr");
                 final DBImage dbImage = imageManager.toDBImage(templateImage, image.getFormat());
-                dbImage.setClazz(dao.getClassByCode(RecognitionDataClass.IMAGE_CLASS_CROPPED_CODE));
-                dbImage.setCreateBy(user);
-                dbImage.setCreateDate(new Date());
-                dbImage.setEditBy(user);
-                dbImage.setEditDate(new Date());
-                dbImage.setParent(image);
-                dao.saveImage(dbImage);
+                dbImage.setClazz(RecognitionDataClass.IMAGE_CLASS_CROPPED_CODE);
+                dbImage.setParent(image.getId());
+                dao.saveImage(dbImage, user);
 
-                final String id = NumberUtils.encode(dbImage.getId());
+                final String id = dbImage.getId();
                 answer.put("fileId", id);
                 answer.put("status", "ok");
                 answer.put("width", templateImage.getWidth());
@@ -99,20 +95,15 @@ public class PictureController {
             binaryData = imageManager.fromUrl(src);
         }
         final DBImage dbImage = imageManager.toDBImage(binaryData, ImageManager.DEFAULT_IMAGE_FORMAT);
-        dbImage.setClazz(dao.getClassByCode(RecognitionDataClass.IMAGE_CLASS_UPLOADED_CODE));
-        final User user = dao.getUser("kolexandr");
-        dbImage.setCreateBy(user);
-        dbImage.setCreateDate(new Date());
-        dbImage.setEditBy(user);
-        dbImage.setEditDate(new Date());
-        dao.saveImage(dbImage);
+        dbImage.setClazz(RecognitionDataClass.IMAGE_CLASS_UPLOADED_CODE);
+        dao.saveImage(dbImage, user);
 
         final JSONObject answer = new JSONObject();
         answer.put("status", "ok");
         answer.put("width", dbImage.getWidth());
         answer.put("height", dbImage.getHeight());
-        answer.put("fileId", NumberUtils.encode(dbImage.getId()));
-        answer.put("src", "./picture/getImage/" + NumberUtils.encode(dbImage.getId()));
+        answer.put("fileId", dbImage.getId());
+        answer.put("src", "./picture/getImage/" + dbImage.getId());
         return answer.toString();
     }
 
@@ -122,7 +113,7 @@ public class PictureController {
         final JSONObject images = new JSONObject();
         final Multimap<String, ImageBean> map = Multimaps.index(dbImages, ImageBean::getImageClass);
         for (String key : map.keySet()) {
-            images.put(key, map.get(key).stream().map(image -> "./picture/getImage/" + NumberUtils.encode(image.getImageId())).collect(Collectors.toList()));
+            images.put(key, map.get(key).stream().map(image -> "./picture/getImage/" + image.getImageId()).collect(Collectors.toList()));
         }
         return images.toString();
     }

@@ -2,14 +2,14 @@ package com.kol.recognition.beans;
 
 public class ImageBean {
 
-    private Integer imageId;
+    private String imageId;
     private String imageClass;
 
-    public Integer getImageId() {
+    public String getImageId() {
         return imageId;
     }
 
-    public void setImageId(Integer imageId) {
+    public void setImageId(String imageId) {
         this.imageId = imageId;
     }
 
