@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class CrunchBaseDumpProcessor {
+public class RestoreDatabaseDump {
 
     /*public static final String DATABASE_SCHEME = "scheme";
     private static final String DEFAULT_SCHEME = "crunch_base";

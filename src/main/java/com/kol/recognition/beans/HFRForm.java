@@ -1,4 +1,4 @@
-package com.kol.recognition.forms;
+package com.kol.recognition.beans;
 
 import com.kol.recognition.general.settings.ComponentProperty;
 import com.kol.recognition.recognition.RecognizerTrainType;

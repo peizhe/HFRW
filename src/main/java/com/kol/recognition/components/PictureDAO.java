@@ -1,4 +1,4 @@
-package com.kol.recognition.dao;
+package com.kol.recognition.components;
 
 import com.google.common.base.Strings;
 import com.kol.recognition.jdbc.AnnotationBasedSave;
