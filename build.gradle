@@ -16,10 +16,19 @@ dependencies {
     runtime 'javax.servlet:jstl:1.2'
 
     /* SPRING FRAMEWORK */
-    compile 'org.springframework:spring-core:4.1.0.RELEASE'
-    compile 'org.springframework:spring-web:4.1.0.RELEASE'
-    compile 'org.springframework:spring-webmvc:4.1.0.RELEASE'
-    compile 'org.springframework:spring-orm:4.1.0.RELEASE'
+//    compile 'org.springframework:spring-core:4.1.0.RELEASE'
+//    compile 'org.springframework:spring-web:4.1.0.RELEASE'
+//    compile 'org.springframework:spring-webmvc:4.1.0.RELEASE'
+//    compile 'org.springframework:spring-orm:4.1.0.RELEASE'
+//
+    compile 'org.springframework:spring-core:4.1.6.RELEASE'
+    compile 'org.springframework:spring-web:4.1.6.RELEASE'
+    compile 'org.springframework:spring-webmvc:4.1.6.RELEASE'
+    compile 'org.springframework:spring-orm:4.1.6.RELEASE'
+    compile 'org.springframework.data:spring-data-jpa:1.8.0.RELEASE'
+    compile 'org.springframework:spring-aspects:4.1.6.RELEASE'
+    compile 'org.springframework:spring-aop:4.1.6.RELEASE'
+    compile 'org.hibernate:hibernate-entitymanager:4.2.7.Final'
 
     compile 'org.json:json:20141113'
     compile 'com.google.guava:guava:18.0'
@@ -34,6 +43,8 @@ dependencies {
 
     compile 'org.apache.commons:commons-compress:1.9'
     compile 'javax.persistence:persistence-api:1.0.2'
+
+    compile 'joda-time:joda-time:2.7'
 
     compile(project(':Recognizer'))
 }

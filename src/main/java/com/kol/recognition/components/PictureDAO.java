@@ -7,6 +7,7 @@ import com.kol.recognition.beans.ImageBean;
 import com.kol.recognition.beans.entities.DBImage;
 import com.kol.recognition.beans.entities.RecognitionDataClass;
 import com.kol.recognition.beans.entities.User;
+import com.kol.recognition.service.ImageService;
 import com.kol.recognition.utils.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.*;
@@ -18,6 +19,7 @@ import java.util.*;
 @Component
 public class PictureDAO {
     @Autowired private JdbcOperations jdbc;
+    @Autowired private ImageService imageService;
 
     public DBImage getImage(final String id) {
         final String sql =
@@ -26,7 +28,8 @@ public class PictureDAO {
                     "image_width, image_height, image_content, parent_image_id, " +
                     "edit_by, edit_date, create_by, create_date " +
                 "FROM recognition_data WHERE id = ?";
-        return jdbc.queryForObject(sql, new AnnotationRowMapper<>(DBImage.class), id);
+//        return jdbc.queryForObject(sql, new AnnotationRowMapper<>(DBImage.class), id);
+        return null;
     }
 
     public List<ImageBean> getImages(final int width, final int height, final String type) {
@@ -43,14 +46,14 @@ public class PictureDAO {
         final AnnotationBasedSave<DBImage> abs = new AnnotationBasedSave<>(DBImage.class);
         if(Strings.isNullOrEmpty(image.getId())) {
             image.setId(NumberUtils.generateId());
-            image.setCreateBy(username);
-            image.setCreateDate(new Date());
-            image.setEditBy(username);
-            image.setEditDate(new Date());
+//            image.setCreateBy(username);
+//            image.setCreateDate(new Date());
+//            image.setEditBy(username);
+//            image.setEditDate(new Date());
             jdbc.update(abs.saveSQL(), abs.saveParameters(image));
         } else {
-            image.setEditBy(username);
-            image.setEditDate(new Date());
+//            image.setEditBy(username);
+//            image.setEditDate(new Date());
             jdbc.update(abs.updateSQL(), abs.updateParameters(image));
         }
     }

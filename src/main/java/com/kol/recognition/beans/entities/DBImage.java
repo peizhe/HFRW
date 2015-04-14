@@ -4,8 +4,11 @@ import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.general.Image;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.beans.Transient;
 
+@Entity
 @Table(name = "recognition_data")
 public class DBImage extends HistoryObject {
 
@@ -80,6 +83,7 @@ public class DBImage extends HistoryObject {
         this.parent = parent;
     }
 
+    @Transient
     public byte[] getByteContent() {
         return ImageManager.stringToByte(content);
     }

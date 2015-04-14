@@ -1,15 +1,19 @@
 package com.kol.recognition.beans.entities;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
+@Entity
 @Table(name = "users")
-public class User extends HistoryObject {
+public class User {
 
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+    @Id
     @Column(name = "username", unique = true)
     private String userName;
     @Column(name = "email", unique = true)

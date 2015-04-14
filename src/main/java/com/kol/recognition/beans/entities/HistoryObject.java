@@ -1,20 +1,38 @@
 package com.kol.recognition.beans.entities;
 
+import org.joda.time.DateTime;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
+@MappedSuperclass
 public abstract class HistoryObject {
 
+    @Id
     @Column(name = "id", unique = true)
     protected String id;
+
+    @LastModifiedBy
     @Column(name = "edit_by")
-    protected String editBy;
+    protected User editBy;
+
+    @LastModifiedDate
     @Column(name = "edit_date")
-    protected Date editDate;
+    protected DateTime editDate;
+
+    @CreatedBy
     @Column(name = "create_by")
-    protected String createBy;
+    protected User createBy;
+
+    @CreatedDate
     @Column(name = "create_date")
-    protected Date createDate;
+    protected DateTime createDate;
 
     public String getId() {
         return id;
@@ -24,35 +42,35 @@ public abstract class HistoryObject {
         this.id = id;
     }
 
-    public String getEditBy() {
+    public User getEditBy() {
         return editBy;
     }
 
-    public void setEditBy(String editBy) {
+    public void setEditBy(User editBy) {
         this.editBy = editBy;
     }
 
-    public Date getEditDate() {
+    public DateTime getEditDate() {
         return editDate;
     }
 
-    public void setEditDate(Date editDate) {
+    public void setEditDate(DateTime editDate) {
         this.editDate = editDate;
     }
 
-    public String getCreateBy() {
+    public User getCreateBy() {
         return createBy;
     }
 
-    public void setCreateBy(String createBy) {
+    public void setCreateBy(User createBy) {
         this.createBy = createBy;
     }
 
-    public Date getCreateDate() {
+    public DateTime getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(DateTime createDate) {
         this.createDate = createDate;
     }
 }
