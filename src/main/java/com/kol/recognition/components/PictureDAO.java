@@ -43,19 +43,19 @@ public class PictureDAO {
     }
 
     public void saveImage(final DBImage image, final String username) {
-        final AnnotationBasedSave<DBImage> abs = new AnnotationBasedSave<>(DBImage.class);
-        if(Strings.isNullOrEmpty(image.getId())) {
-            image.setId(NumberUtils.generateId());
+//        final AnnotationBasedSave<DBImage> abs = new AnnotationBasedSave<>(DBImage.class);
+//        if(Strings.isNullOrEmpty(image.getId())) {
+//            image.setId(NumberUtils.generateId());
 //            image.setCreateBy(username);
 //            image.setCreateDate(new Date());
 //            image.setEditBy(username);
 //            image.setEditDate(new Date());
-            jdbc.update(abs.saveSQL(), abs.saveParameters(image));
-        } else {
+//            jdbc.update(abs.saveSQL(), abs.saveParameters(image));
+//        } else {
 //            image.setEditBy(username);
 //            image.setEditDate(new Date());
-            jdbc.update(abs.updateSQL(), abs.updateParameters(image));
-        }
+//            jdbc.update(abs.updateSQL(), abs.updateParameters(image));
+//        }
     }
 
     public void saveImages(final Collection<DBImage> list, final String username) {

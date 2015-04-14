@@ -1,6 +1,7 @@
 package com.kol.recognition.config;
 
 import com.kol.recognition.audit.AuditorAwareImpl;
+import com.kol.recognition.beans.entities.DBImage;
 import com.kol.recognition.beans.entities.User;
 import com.kol.recognition.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @EnableJpaAuditing
 @EnableSpringDataWebSupport
-@EnableJpaRepositories(basePackages = "com.kol.recognition.repository", entityManagerFactoryRef = "emf")
+@EnableJpaRepositories(basePackageClasses = DBImage.class, basePackages = "com.kol.recognition.repository", entityManagerFactoryRef = "emf")
 @PropertySource({"classpath:properties/image.properties", "classpath:properties/database.properties"})
 @ComponentScan({
         "com.kol.recognition.config",
@@ -106,33 +107,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         return new AuditorAwareImpl();
     }
 
-//    @Bean
-//    public EntityManagerFactory entityManagerFactory() {
-//        return Persistence.createEntityManagerFactory("my-presistence-unit");
-//    }
-
-//    @Bean
-//    public JpaVendorAdapter jpaVendorAdapter() {
-//        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
-//        hibernateJpaVendorAdapter.setShowSql(false);
-//        hibernateJpaVendorAdapter.setGenerateDdl(true);
-//        hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
-//        return hibernateJpaVendorAdapter;
-//    }
-
-//    @Bean
-//    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource, JpaVendorAdapter jpaVendorAdapter) {
-//        LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
-//        lef.setDataSource(dataSource);
-//        lef.setJpaVendorAdapter(jpaVendorAdapter);
-//        lef.setPackagesToScan("com.kol.recognition.repository");
-//        return lef;
-//    }
-
-    @Autowired JpaVendorAdapter jpaVendorAdapter;
-
     @Bean(name = "emf")
     public EntityManagerFactory entityManagerFactory() {
+        HibernateJpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         LocalContainerEntityManagerFactoryBean lef = new LocalContainerEntityManagerFactoryBean();
         lef.setDataSource(dataSource());
         lef.setJpaVendorAdapter(jpaVendorAdapter);

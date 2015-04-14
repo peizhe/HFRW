@@ -2,15 +2,19 @@ package com.kol.recognition.beans.entities;
 
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.general.Image;
+import org.springframework.data.jpa.domain.AbstractAuditable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Table;
 import java.beans.Transient;
 
 @Entity
 @Table(name = "recognition_data")
-public class DBImage extends HistoryObject {
+@EntityListeners({AuditingEntityListener.class})
+public class DBImage extends AbstractAuditable<User, String> {
 
     @Column(name = "class_code")
     private String clazz;
@@ -100,7 +104,7 @@ public class DBImage extends HistoryObject {
         im.setHeight(height);
         im.setSize(size);
         im.setWidth(width);
-        im.setId(id);
+        im.setId(getId());
         return im;
     }
 }
