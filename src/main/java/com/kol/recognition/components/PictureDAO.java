@@ -1,32 +1,57 @@
 package com.kol.recognition.components;
 
 import com.google.common.base.Strings;
-import com.kol.recognition.jdbc.AnnotationBasedSave;
-import com.kol.recognition.jdbc.AnnotationRowMapper;
 import com.kol.recognition.beans.ImageBean;
 import com.kol.recognition.beans.entities.DBImage;
-import com.kol.recognition.beans.entities.RecognitionDataClass;
-import com.kol.recognition.beans.entities.User;
+import com.kol.recognition.beans.entities.HistoryObject;
+import com.kol.recognition.jdbc.AnnotationBasedSave;
+import com.kol.recognition.jdbc.AnnotationRowMapper;
 import com.kol.recognition.utils.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.*;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.stereotype.Component;
-import static com.kol.recognition.beans.entities.RecognitionDataClass.*;
 
-import java.util.*;
+import javax.persistence.Table;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import static com.kol.recognition.beans.entities.RecognitionDataClass.IMAGE_CLASS_CROPPED_CODE;
+import static com.kol.recognition.beans.entities.RecognitionDataClass.IMAGE_CLASS_UPLOADED_CODE;
 
 @Component
 public class PictureDAO {
     @Autowired private JdbcOperations jdbc;
 
+    public <T extends HistoryObject> T get(final String id, final Class<T> clazz) {
+        final Table table = clazz.getAnnotation(Table.class);
+        final String sql = "SELECT * FROM " + table.name() + " WHERE id = ?";
+        return jdbc.queryForObject(sql, new AnnotationRowMapper<>(clazz), id);
+    }
+
+    public <T extends HistoryObject> void save(final T obj, final String username, final Class<T> clazz) {
+        final AnnotationBasedSave<T> abs = new AnnotationBasedSave<>(clazz);
+        if(Strings.isNullOrEmpty(obj.getId())) {
+            obj.setId(NumberUtils.generateId());
+            obj.setCreateBy(username);
+            obj.setCreateDate(new Date());
+            obj.setEditBy(username);
+            obj.setEditDate(new Date());
+            jdbc.update(abs.saveSQL(), abs.saveParameters(obj));
+        } else {
+            obj.setEditBy(username);
+            obj.setEditDate(new Date());
+            jdbc.update(abs.updateSQL(), abs.updateParameters(obj));
+        }
+    }
+
     public DBImage getImage(final String id) {
-        final String sql =
-                "SELECT " +
-                    "id, class_code, image_size, image_format, " +
-                    "image_width, image_height, image_content, parent_image_id, " +
-                    "edit_by, edit_date, create_by, create_date " +
-                "FROM recognition_data WHERE id = ?";
-        return jdbc.queryForObject(sql, new AnnotationRowMapper<>(DBImage.class), id);
+        return get(id, DBImage.class);
+    }
+
+    public void saveImage(final DBImage image, final String username) {
+        save(image, username, DBImage.class);
     }
 
     public List<ImageBean> getImages(final int width, final int height, final String type) {
@@ -37,22 +62,6 @@ public class PictureDAO {
                 "WHERE rd.image_width = ? AND rd.image_height = ? AND c.type_code = ? " +
                 "ORDER BY c.code";
         return jdbc.query(sql, new BeanPropertyRowMapper<>(ImageBean.class), width, height, type);
-    }
-
-    public void saveImage(final DBImage image, final String username) {
-        final AnnotationBasedSave<DBImage> abs = new AnnotationBasedSave<>(DBImage.class);
-        if(Strings.isNullOrEmpty(image.getId())) {
-            image.setId(NumberUtils.generateId());
-            image.setCreateBy(username);
-            image.setCreateDate(new Date());
-            image.setEditBy(username);
-            image.setEditDate(new Date());
-            jdbc.update(abs.saveSQL(), abs.saveParameters(image));
-        } else {
-            image.setEditBy(username);
-            image.setEditDate(new Date());
-            jdbc.update(abs.updateSQL(), abs.updateParameters(image));
-        }
     }
 
     public void saveImages(final Collection<DBImage> list, final String username) {
@@ -69,15 +78,5 @@ public class PictureDAO {
                 "SELECT rd.* FROM recognition_data rd " +
                 "WHERE rd.class_code = ? AND rd.image_width = ? AND rd.image_height = ?";
         return jdbc.query(sql, new AnnotationRowMapper<>(DBImage.class), classCode, width, height);
-    }
-
-    public RecognitionDataClass getClassByCode(final String code) {
-        final String sql = "SELECT * FROM recognition_data_class WHERE code = ?";
-        return jdbc.queryForObject(sql, new AnnotationRowMapper<>(RecognitionDataClass.class), code);
-    }
-
-    public User getUser(final String username) {
-        final String sql = "SELECT * FROM users WHERE username = ?";
-        return jdbc.queryForObject(sql, new AnnotationRowMapper<>(User.class), username);
     }
 }

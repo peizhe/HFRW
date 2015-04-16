@@ -1,6 +1,6 @@
 package com.kol.recognition.controllers;
 
-import com.kol.recognition.perceptualHash.Hash;
+import com.kol.recognition.perceptualHash.bean.Hash;
 import com.kol.recognition.perceptualHash.distance.HammingDistance;
 import com.kol.recognition.perceptualHash.distance.JaroWinklerDistance;
 import com.kol.recognition.perceptualHash.distance.LevensteinDistance;

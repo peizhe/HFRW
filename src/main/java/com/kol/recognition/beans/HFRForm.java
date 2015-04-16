@@ -1,20 +1,23 @@
 package com.kol.recognition.beans;
 
-import com.kol.recognition.general.settings.ComponentProperty;
-import com.kol.recognition.recognition.RecognizerTrainType;
-import com.kol.recognition.components.recognition.AnalysisAlgorithm;
 import com.kol.recognition.components.metric.MetricType;
+import com.kol.recognition.general.RecognitionAlgorithm;
+import com.kol.recognition.general.settings.ComponentProperty;
+import com.kol.recognition.components.RecognizerTrainType;
+import com.kol.recognition.perceptualHash.distance.StringDistanceType;
 
 public class HFRForm {
     private String fileId;
     private MetricType metric;
-    private AnalysisAlgorithm algorithm;
+    private RecognitionAlgorithm algorithm;
     private Integer knnCount;
     private Integer trainingImageCount;
     private ComponentProperty knnComponent;
     private ComponentProperty principalComponents;
     private RecognizerTrainType recognizerTrainType;
     private Integer principalComponentsCount;
+    private String type;
+    private StringDistanceType distanceType;
 
     public String getFileId() {
         return fileId;
@@ -32,11 +35,11 @@ public class HFRForm {
         this.metric = metric;
     }
 
-    public AnalysisAlgorithm getAlgorithm() {
+    public RecognitionAlgorithm getAlgorithm() {
         return algorithm;
     }
 
-    public void setAlgorithm(AnalysisAlgorithm algorithm) {
+    public void setAlgorithm(RecognitionAlgorithm algorithm) {
         this.algorithm = algorithm;
     }
 
@@ -86,5 +89,21 @@ public class HFRForm {
 
     public void setPrincipalComponents(ComponentProperty principalComponents) {
         this.principalComponents = principalComponents;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public StringDistanceType getDistanceType() {
+        return distanceType;
+    }
+
+    public void setDistanceType(StringDistanceType distanceType) {
+        this.distanceType = distanceType;
     }
 }

@@ -1,4 +1,4 @@
-package com.kol.recognition.recognition;
+package com.kol.recognition.components;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

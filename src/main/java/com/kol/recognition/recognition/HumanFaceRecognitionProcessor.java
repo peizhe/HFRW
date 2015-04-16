@@ -6,18 +6,25 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.kol.recognition.beans.entities.DBImage;
-import com.kol.recognition.general.settings.ClassifySettings;
-import com.kol.recognition.general.Image;
-import com.kol.recognition.components.recognition.Recognizer;
 import com.kol.recognition.components.PictureDAO;
-import com.kol.recognition.components.recognition.AnalysisAlgorithm;
+import com.kol.recognition.components.beans.AnalysisSettings;
+import com.kol.recognition.components.beans.AnalysisSettingsPlaceholder;
+import com.kol.recognition.general.Algorithm;
+import com.kol.recognition.general.Image;
+import com.kol.recognition.general.RecognitionAlgorithm;
+import com.kol.recognition.general.settings.ClassifySettings;
+import com.kol.recognition.perceptualHash.bean.Hash;
+import com.kol.recognition.perceptualHash.bean.HashSettingsPlaceholder;
+import com.kol.recognition.perceptualHash.hash.AverageHash;
+import com.kol.recognition.perceptualHash.hash.DCTHash;
+import com.kol.recognition.perceptualHash.hash.PerceptualHash;
 import com.kol.recognition.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -30,20 +37,23 @@ public class HumanFaceRecognitionProcessor {
     @Value("${face.image.height}") private int height;
     @Value("${hfr.use.cache}") private boolean useCache;
 
-    private final Cache<AnalysisAlgorithm, Recognizer> cache = CacheBuilder.newBuilder()
+    @Value("${hfr.hash.width}") private int hashWidth;
+    @Value("${hfr.hash.height}") private int hashHeight;
+
+    private final Cache<ClassifySettings, Algorithm> cache = CacheBuilder.newBuilder()
             .expireAfterAccess(10, TimeUnit.MINUTES).build();
 
-    public String classifyFace(final Recognizer classifier, final BufferedImage image, final ClassifySettings settings) {
-        return classifier.classify(ImageUtils.toVector(ImageUtils.toMatrix(image)), settings);
+    public String classifyFace(final Algorithm algorithm, final BufferedImage image) {
+        return algorithm.classify(image);
     }
 
-    private Recognizer train(final ClassifySettings settings, final String type, final RecognizerTrainType trainType) {
-        final Collection<String> classes = dao.getClasses(type);
+    private Algorithm trainComponentAlgorithm(final ClassifySettings settings) {
+        final Collection<String> classes = dao.getClasses(settings.getType());
 
         /** read images from database ang choose some of them (or all) for train the recognizer **/
         final Multimap<String, Image> training = ArrayListMultimap.create();
         classes.forEach(classCode -> training.putAll(
-                classCode, trainType.getTrainObjectIds(
+                classCode, settings.getTrainType().getTrainObjectIds(
                         settings.getNumberOfImages(),
                         dao.getImages(classCode, width, height).stream().map(DBImage::toImage).collect(Collectors.toList())
                 )
@@ -55,22 +65,80 @@ public class HumanFaceRecognitionProcessor {
             data.putAll(label, training.get(label).stream().map(ImageUtils::toVector).collect(Collectors.toList()));
         }
         /** get Recognizer based on exist data **/
-        return settings.getAlgorithm().get(data, settings.getComponents(), width*height, training, settings);
+        final AnalysisSettingsPlaceholder placeholder = new AnalysisSettingsPlaceholder();
+        placeholder.setData(data);
+        placeholder.setTrain(training);
+        placeholder.setVecLength(width * height);
+        placeholder.setComponents(settings.getComponents());
+
+        final AnalysisSettings analysisSettings = new AnalysisSettings();
+        analysisSettings.setKnnCount(settings.getKnnCount());
+        analysisSettings.setMetric(settings.getMetric());
+        analysisSettings.setWidth(width);
+        analysisSettings.setHeight(height);
+        placeholder.setSettings(analysisSettings);
+
+        return settings.getAlgorithm().get(placeholder);
     }
 
-    public Recognizer getRecognizer(final ClassifySettings settings, final String type, final RecognizerTrainType trainType) {
+    private Algorithm trainHashAlgorithm(final ClassifySettings settings) {
+        final RecognitionAlgorithm algorithm = settings.getAlgorithm();
+
+        final Collection<String> classes = dao.getClasses(settings.getType());
+        final Multimap<String, Image> training = ArrayListMultimap.create();
+        classes.forEach(classCode -> training.putAll(classCode, dao.getImages(classCode, width, height).stream().map(DBImage::toImage).collect(Collectors.toList())));
+
+        final PerceptualHash hash = hash(algorithm);
+        final Multimap<String, Hash> data = ArrayListMultimap.create();
+        for (String label : training.keySet()) {
+            data.putAll(label, training.get(label).stream().map(i -> hash.getHash(i.getContent())).collect(Collectors.toList()));
+        }
+
+        final HashSettingsPlaceholder placeholder = new HashSettingsPlaceholder();
+        placeholder.setDistance(settings.getDistanceType().get());
+        placeholder.setHeight(hashHeight);
+        placeholder.setWidth(hashWidth);
+        placeholder.setData(data);
+        placeholder.setTrain(training);
+        return algorithm.get(placeholder);
+    }
+
+    public Algorithm getAlgorithm(final ClassifySettings settings) {
         if(useCache) {
-            final Recognizer ifPresent = cache.getIfPresent(settings.getAlgorithm());
-            final Recognizer recognizer;
+            final Algorithm ifPresent = cache.getIfPresent(settings);
+            final Algorithm algorithm;
             if (null == ifPresent) {
-                recognizer = train(settings, type, trainType);
-                cache.put(settings.getAlgorithm(), recognizer);
+                algorithm = algorithm(settings);
+                cache.put(settings, algorithm);
             } else {
-                recognizer = ifPresent;
+                algorithm = ifPresent;
             }
-            return recognizer;
+            return algorithm;
         } else {
-            return train(settings, type, trainType);
+            return algorithm(settings);
+        }
+    }
+
+    private Algorithm algorithm(final ClassifySettings settings) {
+        final RecognitionAlgorithm algorithm = settings.getAlgorithm();
+        switch(algorithm.getType()) {
+            case COMPONENT:
+                return trainComponentAlgorithm(settings);
+            case HASH:
+                return trainHashAlgorithm(settings);
+            default:
+                throw new RuntimeException("Incorrect Recognition Algorithm Type: " + algorithm.getType());
+        }
+    }
+
+    private PerceptualHash hash(final RecognitionAlgorithm algorithm) {
+        switch(algorithm) {
+            case AHASH:
+                return new AverageHash(hashWidth, hashHeight);
+            case DCT_HASH:
+                return new DCTHash(hashWidth, hashHeight);
+            default:
+                throw new RuntimeException("Incorrect Perceptual Hash Algorithm selected: " + algorithm);
         }
     }
 }

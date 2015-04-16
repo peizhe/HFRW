@@ -1,4 +1,4 @@
-package com.kol.recognition.perceptualHash;
+package com.kol.recognition.perceptualHash.bean;
 
 import java.awt.image.BufferedImage;
 

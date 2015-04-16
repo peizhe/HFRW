@@ -4,7 +4,7 @@ import Jama.Matrix;
 import com.google.common.collect.Multimap;
 import com.kol.nbc.NBLA;
 import com.kol.nbc.NaiveBayesLearningAlgorithm;
-import com.kol.recognition.general.settings.ClassifySettings;
+import com.kol.recognition.components.beans.AnalysisSettings;
 import com.kol.recognition.general.Image;
 
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import java.util.List;
 public final class NBC extends Recognizer {
     private NaiveBayesLearningAlgorithm<double[]> nbc;
 
-    public NBC(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training, ClassifySettings settings) {
-        super(data, components, vecLength, training, settings);
+    public NBC(Multimap<String, Matrix> data, Multimap<String, Image> training) {
+        super(data, -1, -1, training, AnalysisSettings.empty());
     }
 
     /*@Override
@@ -45,7 +45,7 @@ public final class NBC extends Recognizer {
     }
 
     @Override
-    public String classify(Matrix vector, ClassifySettings data) {
+    public String classify(Matrix vector) {
         return nbc.classifier().classify(vector.minus(meanMatrix).getArray()[0]);
     }
 }

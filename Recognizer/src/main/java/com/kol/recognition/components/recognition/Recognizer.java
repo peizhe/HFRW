@@ -2,15 +2,18 @@ package com.kol.recognition.components.recognition;
 
 import Jama.Matrix;
 import com.google.common.collect.Multimap;
-import com.kol.recognition.general.settings.ClassifySettings;
-import com.kol.recognition.general.Image;
+import com.kol.recognition.components.beans.AnalysisSettings;
 import com.kol.recognition.components.beans.Mix;
 import com.kol.recognition.components.beans.ProjectedTrainingMatrix;
+import com.kol.recognition.general.Algorithm;
+import com.kol.recognition.general.Image;
+import com.kol.recognition.utils.ImageUtils;
 
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class Recognizer {
+public abstract class Recognizer implements Algorithm {
 
     protected Multimap<String, Matrix> data;
     protected Multimap<String, Image> training;
@@ -23,9 +26,9 @@ public abstract class Recognizer {
 
     protected final int imageAsVectorLength;
 
-    protected ClassifySettings settings;
+    protected AnalysisSettings settings;
 
-    protected Recognizer(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training, ClassifySettings settings){
+    protected Recognizer(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> training, AnalysisSettings settings){
         if (components >= data.size()) {
             throw new RuntimeException("the expected dimensions could not be achieved!");
         }
@@ -67,30 +70,31 @@ public abstract class Recognizer {
      */
     protected abstract void init();
 
-    public abstract String classify(Matrix vector, ClassifySettings data);
-
-    public Matrix reconstruct(final int whichImage, final int dimensions) {
-        if (dimensions > this.numberOfComponents) {
-            throw new RuntimeException("dimensions should be smaller than the number of components");
-        }
-        final Matrix afterPCA = projectedTrainingSet.get(whichImage).getMatrix().getMatrix(0, dimensions - 1, 0, 0);
-        final Matrix eigen = w.getMatrix(0, imageAsVectorLength - 1, 0, dimensions - 1);
-        return eigen.times(afterPCA).plus(meanMatrix);
-    }
-
-    public Matrix getW() {
-        return w;
-    }
-
-    public Matrix getMeanMatrix() {
+    protected Matrix getMeanMatrix() {
         return meanMatrix;
     }
 
-    public List<ProjectedTrainingMatrix> getProjectedTrainingSet() {
+    protected List<ProjectedTrainingMatrix> getProjectedTrainingSet() {
         return projectedTrainingSet;
+    }
+
+    protected Matrix getW() {
+        return w;
     }
 
     public Multimap<String, Image> getTraining() {
         return training;
+    }
+
+    public abstract String classify(Matrix vector);
+
+    @Override
+    public String classify(BufferedImage image) {
+        return classify(ImageUtils.toVector(ImageUtils.toMatrix(image)));
+    }
+
+    @Override
+    public List<BufferedImage> getProcessedImages() {
+        return ImageUtils.convertMatricesToImage(getW(), settings.getHeight(), settings.getWidth());
     }
 }

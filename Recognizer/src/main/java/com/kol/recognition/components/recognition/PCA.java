@@ -3,9 +3,9 @@ package com.kol.recognition.components.recognition;
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
 import com.google.common.collect.Multimap;
-import com.kol.recognition.general.settings.ClassifySettings;
-import com.kol.recognition.general.Image;
+import com.kol.recognition.components.beans.AnalysisSettings;
 import com.kol.recognition.components.beans.ProjectedTrainingMatrix;
+import com.kol.recognition.general.Image;
 import com.kol.recognition.utils.KNN;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public final class PCA extends Recognizer {
 
-    public PCA(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> train, ClassifySettings settings) {
+    public PCA(Multimap<String, Matrix> data, int components, int vecLength, Multimap<String, Image> train, AnalysisSettings settings) {
         super(data, components, vecLength, train, settings);
     }
 
@@ -67,8 +67,8 @@ public final class PCA extends Recognizer {
     }
 
     @Override
-    public String classify(final Matrix vector, final ClassifySettings data) {
+    public String classify(final Matrix vector) {
         final Matrix testCase = getW().transpose().times(vector.minus(getMeanMatrix()));
-        return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, data.getKnnCount(), data.getMetric());
+        return KNN.assignLabel(projectedTrainingSet.toArray(new ProjectedTrainingMatrix[projectedTrainingSet.size()]), testCase, settings.getKnnCount(), settings.getMetric());
     }
 }

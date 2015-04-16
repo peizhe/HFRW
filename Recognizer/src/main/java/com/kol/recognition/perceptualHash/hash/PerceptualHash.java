@@ -1,7 +1,7 @@
 package com.kol.recognition.perceptualHash.hash;
 
 import com.kol.RGBImage;
-import com.kol.recognition.perceptualHash.Hash;
+import com.kol.recognition.perceptualHash.bean.Hash;
 import com.kol.recognition.perceptualHash.bitsChain.BitsChainToString;
 import com.kol.recognition.perceptualHash.monochrome.ToMonochrome;
 import com.kol.recognition.perceptualHash.resize.ResizeImage;
