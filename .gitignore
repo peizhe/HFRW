@@ -4,7 +4,9 @@ build/
 gradlew
 gradlew.bat
 *.iml
-
+gradle/wrapper/gradle-wrapper.properties
+.gradle
+classes/
 
 ## Directory-based project format:
 .idea/
