@@ -14,7 +14,10 @@ public final class NumberUtils {
         return Long.valueOf(new String(Base64.getDecoder().decode(value)));
     }
 
-    public static String generateId() {
-        return encode(System.currentTimeMillis());
+    public static synchronized String generateId() {
+        try {
+            Thread.sleep(10);
+        } catch (InterruptedException ignored) {}
+        return encode(System.nanoTime());
     }
 }
