@@ -41,6 +41,7 @@ CREATE TABLE `recognition_data_class` (
   `create_by` VARCHAR(64) NOT NULL,
   `edit_date` DATETIME NOT NULL,
   `edit_by` VARCHAR(64)NOT NULL,
+  `for_recognition` BIT NOT NULL,
   PRIMARY KEY (`code`),
   UNIQUE INDEX `code_idx` (`code`),
   INDEX `type_code_idx` (`type_code`)
@@ -50,16 +51,16 @@ CREATE TEMPORARY TABLE tmp(class VARCHAR(32), type VARCHAR(32), name VARCHAR(128
 LOAD DATA INFILE 'c:/import_data/classes.csv' INTO TABLE tmp
 FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 
-INSERT INTO recognition_data_class(code, type_code, name, description, create_date, create_by, edit_date, edit_by)
-SELECT class, type, name, description, NOW(), 'kolexandr', NOW(), 'kolexandr' FROM tmp;
+INSERT INTO recognition_data_class(code, type_code, name, description, create_date, create_by, edit_date, edit_by, for_recognition)
+SELECT class, type, name, description, NOW(), 'kolexandr', NOW(), 'kolexandr', 1 FROM tmp;
 
-INSERT INTO recognition_data_class(code, type_code, name, description, create_date, create_by, edit_date, edit_by)
+INSERT INTO recognition_data_class(code, type_code, name, description, create_date, create_by, edit_date, edit_by, for_recognition)
 VALUES
-  ('CRPD', 'HMF', 'CROPPED', 'Cropped images for human face recognition', NOW(), 'kolexandr', NOW(), 'kolexandr'),
-  ('UPLD', 'HMF', 'UPLOADED', 'Uploaded images for human face recognition', NOW(), 'kolexandr', NOW(), 'kolexandr'),
-  ('PCA', 'HMF', 'Eigen Face', 'Components produced by PCA algorithm', NOW(), 'kolexandr', NOW(), 'kolexandr'),
-  ('LDA', 'HMF', 'Fisher Face', 'Components produced by LDA algorithm', NOW(), 'kolexandr', NOW(), 'kolexandr'),
-  ('NBC', 'HMF', 'Bayes Face', 'Components produced by Naive Bayes Classifier', NOW(), 'kolexandr', NOW(), 'kolexandr'),
-  ('LPP', 'HMF', 'Laplacian Face', 'Components produced by LPP classifier', NOW(), 'kolexandr', NOW(), 'kolexandr');
+  ('CRPD', 'HMF', 'CROPPED', 'Cropped images for human face recognition', NOW(), 'kolexandr', NOW(), 'kolexandr', 0),
+  ('UPLD', 'HMF', 'UPLOADED', 'Uploaded images for human face recognition', NOW(), 'kolexandr', NOW(), 'kolexandr', 0),
+  ('PCA', 'HMF', 'Eigen Face', 'Components produced by PCA algorithm', NOW(), 'kolexandr', NOW(), 'kolexandr', 0),
+  ('LDA', 'HMF', 'Fisher Face', 'Components produced by LDA algorithm', NOW(), 'kolexandr', NOW(), 'kolexandr', 0),
+  ('NBC', 'HMF', 'Bayes Face', 'Components produced by Naive Bayes Classifier', NOW(), 'kolexandr', NOW(), 'kolexandr', 0),
+  ('LPP', 'HMF', 'Laplacian Face', 'Components produced by LPP classifier', NOW(), 'kolexandr', NOW(), 'kolexandr', 0);
 
 DROP TEMPORARY TABLE tmp;

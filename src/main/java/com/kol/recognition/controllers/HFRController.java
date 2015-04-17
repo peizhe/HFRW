@@ -5,6 +5,7 @@ import com.kol.recognition.beans.entities.DBImage;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.components.PictureDAO;
 import com.kol.recognition.general.Algorithm;
+import com.kol.recognition.general.RecognitionAlgorithm;
 import com.kol.recognition.general.settings.ClassifySettings;
 import com.kol.recognition.general.settings.ClassifySettingsBuilder;
 import com.kol.recognition.recognition.HumanFaceRecognitionProcessor;
@@ -61,8 +62,8 @@ public class HFRController {
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
             final ClassifySettings settings = getSettings(form);
-            final Algorithm fe = hfr.getAlgorithm(settings);
-            final Collection<DBImage> names = savePrincipalComponentImages(fe, settings.getAlgorithm().name());
+            final Algorithm algorithm = hfr.getAlgorithm(settings);
+            final Collection<DBImage> names = savePrincipalComponentImages(algorithm, settings.getAlgorithm());
             answer.put("status", "ok");
             answer.put("storedImages", getEigenVectorImages(names));
         } else {
@@ -73,27 +74,19 @@ public class HFRController {
     }
 
     private JSONArray getTrainingImages(final String className, final Algorithm algorithm) {
-        final JSONArray storedImages = new JSONArray();
-        algorithm.getTraining()
-                .get(className)
-                .forEach(c -> storedImages.put("./picture/getImage/" + c.getId()));
-        return storedImages;
+        return new JSONArray(algorithm.getTraining().get(className).stream().map(c -> "./picture/getImage/" + c.getId()).collect(Collectors.toList()));
     }
 
     private JSONArray getEigenVectorImages(final Collection<DBImage> images) {
-        final JSONArray storedImages = new JSONArray();
-        images.stream().forEach(im -> storedImages.put("./picture/getImage/" + im.getId()));
-        return storedImages;
+        return new JSONArray(images.stream().map(im -> "./picture/getImage/" + im.getId()).collect(Collectors.toList()));
     }
 
-    private Collection<DBImage> savePrincipalComponentImages(final Algorithm classifier, final String classCode) {
+    private Collection<DBImage> savePrincipalComponentImages(final Algorithm classifier, final RecognitionAlgorithm algorithm) {
         final List<BufferedImage> images = classifier.getProcessedImages();
         final Collection<DBImage> dbImages = images.stream()
-                .map(image -> {
-                    final DBImage dbImage = imageManager.toDBImage(image, ImageManager.DEFAULT_IMAGE_FORMAT);
-                    dbImage.setClazz(classCode);
-                    return dbImage;
-                }).collect(Collectors.toList());
+                .map(image -> imageManager.toDBImage(image, ImageManager.DEFAULT_IMAGE_FORMAT))
+                .peek(image -> image.setClazz(algorithm.name()))
+                .collect(Collectors.toList());
         dao.saveImages(dbImages, user);
         return dbImages;
     }
@@ -106,7 +99,7 @@ public class HFRController {
                 .metric(form.getMetric())
                 .images(form.getTrainingImageCount())
                 .algorithm(form.getAlgorithm())
-                .type(form.getType())
+                .type(form.getRecognitionType())
                 .distance(form.getDistanceType())
                 .recognizerTrainType(form.getRecognizerTrainType())
                 .result();

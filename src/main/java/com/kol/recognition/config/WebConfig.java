@@ -25,7 +25,6 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 @PropertySource({"classpath:properties/image.properties", "classpath:properties/database.properties"})
 @ComponentScan({
-        "com.kol.recognition.dao",
         "com.kol.recognition.config",
         "com.kol.recognition.components",
         "com.kol.recognition.recognition",

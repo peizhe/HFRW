@@ -2,13 +2,12 @@ package com.kol.recognition.controllers;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.kol.recognition.beans.CropInfo;
 import com.kol.recognition.beans.ImageBean;
 import com.kol.recognition.beans.entities.DBImage;
 import com.kol.recognition.beans.entities.RecognitionDataClass;
 import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.components.PictureDAO;
-import com.kol.recognition.beans.CropInfo;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,8 +41,6 @@ public class PictureController {
             response.setContentLength(image.getSize());
             try (OutputStream os = response.getOutputStream()) {
                 os.write(image.getByteContent());
-                os.flush();
-                os.close();
             }
         }
     }
@@ -50,7 +48,7 @@ public class PictureController {
     @RequestMapping(value = "crop")
     public String crop(@RequestParam(value = "fileId", required = true) String fileId,
                        @RequestParam(value = "selection", required = true) String jsonSelection,
-                       @RequestParam(value = "algorithm", required = true) int algorithm) throws JSONException {
+                       @RequestParam(value = "algorithm", required = true) int algorithm) {
         final JSONObject answer = new JSONObject();
         if (null != jsonSelection && !jsonSelection.isEmpty()) {
             final CropInfo cropInfo = CropInfo.fromJson(new JSONObject(jsonSelection));
@@ -81,7 +79,7 @@ public class PictureController {
     }
 
     @RequestMapping(value = "upload")
-    public String upload(@RequestParam(value = "image", required = true) String jsonImage) throws JSONException {
+    public String upload(@RequestParam(value = "image", required = true) String jsonImage) {
         final JSONObject image = new JSONObject(jsonImage);
         final String type = image.getString("type");
         final String src = image.getString("src");
@@ -105,7 +103,7 @@ public class PictureController {
     }
 
     @RequestMapping(value = "storedImages")
-    public String getAllStoredImages(@RequestParam(value = "type", required = true) String type){
+    public String getAllStoredImages(@RequestParam(value = "type", required = true) String type) {
         final List<ImageBean> dbImages = dao.getImages(imageWidth, imageHeight, type);
         final JSONObject images = new JSONObject();
         final Multimap<String, ImageBean> map = Multimaps.index(dbImages, ImageBean::getImageClass);

@@ -17,9 +17,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import static com.kol.recognition.beans.entities.RecognitionDataClass.IMAGE_CLASS_CROPPED_CODE;
-import static com.kol.recognition.beans.entities.RecognitionDataClass.IMAGE_CLASS_UPLOADED_CODE;
-
 @Component
 public class PictureDAO {
     @Autowired private JdbcOperations jdbc;
@@ -59,7 +56,7 @@ public class PictureDAO {
                 "SELECT c.code AS imageClass, rd.id AS imageId " +
                 "FROM recognition_data rd " +
                     "INNER JOIN recognition_data_class c ON c.code = rd.class_code " +
-                "WHERE rd.image_width = ? AND rd.image_height = ? AND c.type_code = ? " +
+                "WHERE rd.image_width = ? AND rd.image_height = ? AND c.type_code = ? AND c.for_recognition = 1 " +
                 "ORDER BY c.code";
         return jdbc.query(sql, new BeanPropertyRowMapper<>(ImageBean.class), width, height, type);
     }
@@ -69,14 +66,15 @@ public class PictureDAO {
     }
 
     public Collection<String> getClasses(final String type) {
-        final String sql = "SELECT rdc.code FROM recognition_data_class rdc WHERE rdc.type_code = ? AND rdc.code NOT IN (?, ?)";
-        return jdbc.queryForList(sql, String.class, type, IMAGE_CLASS_CROPPED_CODE, IMAGE_CLASS_UPLOADED_CODE);
+        final String sql = "SELECT rdc.code FROM recognition_data_class rdc WHERE rdc.type_code = ? AND rdc.for_recognition = 1";
+        return jdbc.queryForList(sql, String.class, type);
     }
 
     public Collection<DBImage> getImages(final String classCode, final int width, final int height) {
         final String sql =
                 "SELECT rd.* FROM recognition_data rd " +
-                "WHERE rd.class_code = ? AND rd.image_width = ? AND rd.image_height = ?";
+                    "INNER JOIN recognition_data_class rdc ON rdc.code = rd.class_code " +
+                "WHERE rd.class_code = ? AND rd.image_width = ? AND rd.image_height = ? AND rdc.for_recognition = 1";
         return jdbc.query(sql, new AnnotationRowMapper<>(DBImage.class), classCode, width, height);
     }
 }

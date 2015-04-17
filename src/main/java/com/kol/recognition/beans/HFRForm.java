@@ -8,15 +8,17 @@ import com.kol.recognition.perceptualHash.distance.StringDistanceType;
 
 public class HFRForm {
     private String fileId;
-    private MetricType metric;
+    private String recognitionType;
     private RecognitionAlgorithm algorithm;
-    private Integer knnCount;
+
+    private MetricType metric;
     private Integer trainingImageCount;
+    private Integer knnCount;
     private ComponentProperty knnComponent;
+    private Integer principalComponentsCount;
     private ComponentProperty principalComponents;
     private RecognizerTrainType recognizerTrainType;
-    private Integer principalComponentsCount;
-    private String type;
+
     private StringDistanceType distanceType;
 
     public String getFileId() {
@@ -91,12 +93,12 @@ public class HFRForm {
         this.principalComponents = principalComponents;
     }
 
-    public String getType() {
-        return type;
+    public String getRecognitionType() {
+        return recognitionType;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setRecognitionType(String recognitionType) {
+        this.recognitionType = recognitionType;
     }
 
     public StringDistanceType getDistanceType() {
