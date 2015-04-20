@@ -17,8 +17,8 @@ public final class KNN {
      * testFace has been projected to the subspace
      */
     public static ProjectedTrainingMatrix[] findKNN(final ProjectedTrainingMatrix[] trainingSet, final Matrix testFace, final int k, final Metric metric) {
-        final int NumOfTrainingSet = trainingSet.length;
-        assert k <= NumOfTrainingSet : "k is lager than the length of trainingSet!";
+        final int numOfTrainingSet = trainingSet.length;
+        assert k <= numOfTrainingSet : "k is lager than the length of trainingSet!";
 
         // initialization
         final ProjectedTrainingMatrix[] neighbors = new ProjectedTrainingMatrix[k];
@@ -29,7 +29,7 @@ public final class KNN {
         }
 
         // go through the remaining records in the trainingSet to find k nearest neighbors
-        for (int i = k; i < NumOfTrainingSet; i++) {
+        for (int i = k; i < numOfTrainingSet; i++) {
             trainingSet[i].setDistance(metric.getDistance(trainingSet[i].getMatrix(), testFace));
 //            System.out.println("index: " + i + " distance: " + trainingSet[i].getDistance());
             int maxIndex = 0;
