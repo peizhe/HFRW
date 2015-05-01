@@ -49,24 +49,26 @@ function HFR() {
             });
         });
         $("#eigen-button").click(function () {
-            $.ajax({
-                type: "POST",
-                url: "./hfr/eigenVectors",
-                data: storeData(recognitionType),
-                success: function (resp) {
-                    var data = $.parseJSON(resp);
-                    var $res = $("#eigenvectors");
-                    $res.find(".each").html("");
-                    if (data.status === "ok") {
-                        for (var i in data.storedImages) {
-                            $res.find(".each").append(img(data.storedImages[i], "stored-image"));
+            if(settingsBuilder.algorithm.code != "NBC") {
+                $.ajax({
+                    type: "POST",
+                    url: "./hfr/eigenVectors",
+                    data: storeData(recognitionType),
+                    success: function (resp) {
+                        var data = $.parseJSON(resp);
+                        var $res = $("#eigenvectors");
+                        $res.find(".each").html("");
+                        if (data.status === "ok") {
+                            for (var i in data.storedImages) {
+                                $res.find(".each").append(img(data.storedImages[i], "stored-image"));
+                            }
+                            $res.show();
+                        } else {
+                            $res.hide();
                         }
-                        $res.show();
-                    } else {
-                        $res.hide();
                     }
-                }
-            });
+                });
+            }
         });
         this.getAllStoredImages(recognitionType);
     };

@@ -17,11 +17,20 @@ function SettingsBuilder() {
                 $(this).parent().removeClass("active");
             }).find(".li-input").each(function(){
                 $(this).hide();
+            }).off().keypress(function(e) {
+                return (inputDigitsOnly(e) || e.which == 45) && e.which != 46;
+            }).change(function() {
+                $(this).val($(this).val().replace(/[^0-9]/g, ""));
+                if($(this).val().trim().length == 0) {
+                    $(this).val($(this).attr("default-value"));
+                }
             });
 
             $(this).parent().addClass("active");
             var find = $(this).parent().find("input");
-            find.val(find.attr("default-value"));
+            if(!find.val() || find.val().trim().length == 0) {
+                find.val(find.attr("default-value"));
+            }
             find.show();
         });
     };
@@ -90,7 +99,11 @@ function SettingsBuilder() {
         return $("<input/>")
             .addClass("li-input")
             .attr("type", "text")
-            .attr("placeholder", defaultValue)
             .attr("default-value", defaultValue);
+    }
+
+    function inputDigitsOnly(event){
+        return !(event.which != 8 && event.which != 0 &&
+        (event.which < 48 || event.which > 57) && event.which != 46);
     }
 }

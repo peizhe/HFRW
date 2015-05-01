@@ -132,7 +132,7 @@ var algorithms = {
             name: "NBC",
             code: "NBC",
             description: "Naive Bayes Classifier",
-            settings: [metrics, trainingSettings]
+            settings: [trainingSettings]
         },
         {
             name: "Average Hash",

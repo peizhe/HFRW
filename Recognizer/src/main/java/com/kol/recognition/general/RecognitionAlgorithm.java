@@ -3,6 +3,7 @@ package com.kol.recognition.general;
 import com.kol.recognition.components.beans.AnalysisSettingsPlaceholder;
 import com.kol.recognition.components.recognition.LDA;
 import com.kol.recognition.components.recognition.LPP;
+import com.kol.recognition.components.recognition.NBC;
 import com.kol.recognition.components.recognition.PCA;
 import com.kol.recognition.nbc.NBCRecognizer;
 import com.kol.recognition.nbc.NBCSettingsPlaceholder;
@@ -26,7 +27,14 @@ public enum RecognitionAlgorithm {
             return new LDA(settings.getData(), settings.getComponents(), settings.getVecLength(), settings.getTrain(), settings.getSettings());
         }
     },
-    NBC(AlgorithmType.CLASSIFY) {
+    NBC(AlgorithmType.COMPONENT) {
+        @Override
+        public <T extends SettingsPlaceholder> Algorithm get(final T placeholder) {
+            final AnalysisSettingsPlaceholder settings = (AnalysisSettingsPlaceholder) placeholder;
+            return new NBC(settings.getData(), settings.getTrain());
+        }
+    },
+    NBC_C(AlgorithmType.CLASSIFY) {
         @Override
         public <T extends SettingsPlaceholder> Algorithm get(final T placeholder) {
             final NBCSettingsPlaceholder settings = (NBCSettingsPlaceholder) placeholder;

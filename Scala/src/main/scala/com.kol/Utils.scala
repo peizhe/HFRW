@@ -10,4 +10,10 @@ object Utils {
   def toInt(array: Array[Array[Double]]): Array[Array[Int]] = array.map(v => v.map(math.round(_).toInt))
 
   def toDouble(array: Array[Array[Int]]): Array[Array[Double]] = array.map(v => v.map(_.toDouble))
+
+  def toDouble(array: Array[Int]): Array[Double] = array.map(_.toDouble)
+
+  def sum(f: Array[Int], s: Array[Int]): Array[Int] = f.zip(s).map(v => v._1 + v._2)
+
+  def diff(f: Array[Int], s: Array[Int]): Array[Int] = f.zip(s).map(v => v._1 - v._2)
 }
