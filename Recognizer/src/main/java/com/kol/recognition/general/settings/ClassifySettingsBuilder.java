@@ -41,7 +41,9 @@ public final class ClassifySettingsBuilder {
     }
 
     public ClassifySettingsBuilder metric(final MetricType value) {
-        settings.setMetric(value.get());
+        if(null != value) {
+            settings.setMetric(value.get());
+        }
         return this;
     }
 

@@ -163,6 +163,10 @@ public final class ImageUtils {
         return toMatrix(fromByteArray(image.getContent()));
     }
 
+    public static Matrix toVector(final BufferedImage image) {
+        return toVector(toMatrix(image));
+    }
+
     /**
      * Convert a m by n matrix into a m*n by 1 matrix
      */

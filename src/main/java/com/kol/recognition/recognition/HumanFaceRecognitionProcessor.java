@@ -13,6 +13,7 @@ import com.kol.recognition.general.Algorithm;
 import com.kol.recognition.general.Image;
 import com.kol.recognition.general.RecognitionAlgorithm;
 import com.kol.recognition.general.settings.ClassifySettings;
+import com.kol.recognition.nbc.NBCSettingsPlaceholder;
 import com.kol.recognition.perceptualHash.bean.Hash;
 import com.kol.recognition.perceptualHash.bean.HashSettingsPlaceholder;
 import com.kol.recognition.perceptualHash.hash.AverageHash;
@@ -86,7 +87,12 @@ public class HumanFaceRecognitionProcessor {
 
         final Collection<String> classes = dao.getClasses(settings.getType());
         final Multimap<String, Image> training = ArrayListMultimap.create();
-        classes.forEach(classCode -> training.putAll(classCode, dao.getImages(classCode, width, height).stream().map(DBImage::toImage).collect(Collectors.toList())));
+        classes.forEach(classCode -> training.putAll(classCode,
+                settings.getTrainType().getTrainObjectIds(
+                        settings.getNumberOfImages(),
+                        dao.getImages(classCode, width, height).stream().map(DBImage::toImage).collect(Collectors.toList())
+                )
+        ));
 
         final PerceptualHash hash = hash(algorithm);
         final Multimap<String, Hash> data = ArrayListMultimap.create();
@@ -101,6 +107,33 @@ public class HumanFaceRecognitionProcessor {
         placeholder.setData(data);
         placeholder.setTrain(training);
         return algorithm.get(placeholder);
+    }
+
+    private Algorithm trainClassifyAlgorithm(final ClassifySettings settings) {
+        final Collection<String> classes = dao.getClasses(settings.getType());
+
+        /** read images from database ang choose some of them (or all) for train the recognizer **/
+        final Multimap<String, Image> training = ArrayListMultimap.create();
+        classes.forEach(classCode -> training.putAll(
+                classCode, settings.getTrainType().getTrainObjectIds(
+                        settings.getNumberOfImages(),
+                        dao.getImages(classCode, width, height).stream().map(DBImage::toImage).collect(Collectors.toList())
+                )
+        ));
+
+        /** transform images, which were choose for training, into Jama.Matrix **/
+        final Multimap<String, BufferedImage> data = ArrayListMultimap.create();
+        for (String label : training.keySet()) {
+            data.putAll(label, training.get(label).stream().map(v -> ImageUtils.fromByteArray(v.getContent())).collect(Collectors.toList()));
+        }
+        /** get Recognizer based on exist data **/
+        final NBCSettingsPlaceholder placeholder = new NBCSettingsPlaceholder();
+        placeholder.setData(data);
+        placeholder.setTrain(training);
+        placeholder.setWidth(width);
+        placeholder.setHeight(height);
+
+        return settings.getAlgorithm().get(placeholder);
     }
 
     public Algorithm getAlgorithm(final ClassifySettings settings) {
@@ -126,6 +159,8 @@ public class HumanFaceRecognitionProcessor {
                 return trainComponentAlgorithm(settings);
             case HASH:
                 return trainHashAlgorithm(settings);
+            case CLASSIFY:
+                return trainClassifyAlgorithm(settings);
             default:
                 throw new RuntimeException("Incorrect Recognition Algorithm Type: " + algorithm.getType());
         }

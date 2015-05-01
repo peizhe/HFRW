@@ -3,8 +3,9 @@ package com.kol.recognition.general;
 import com.kol.recognition.components.beans.AnalysisSettingsPlaceholder;
 import com.kol.recognition.components.recognition.LDA;
 import com.kol.recognition.components.recognition.LPP;
-import com.kol.recognition.components.recognition.NBC;
 import com.kol.recognition.components.recognition.PCA;
+import com.kol.recognition.nbc.NBCRecognizer;
+import com.kol.recognition.nbc.NBCSettingsPlaceholder;
 import com.kol.recognition.perceptualHash.bean.HashSettingsPlaceholder;
 import com.kol.recognition.perceptualHash.hash.AverageHash;
 import com.kol.recognition.perceptualHash.hash.DCTHash;
@@ -25,11 +26,11 @@ public enum RecognitionAlgorithm {
             return new LDA(settings.getData(), settings.getComponents(), settings.getVecLength(), settings.getTrain(), settings.getSettings());
         }
     },
-    NBC(AlgorithmType.COMPONENT) {
+    NBC(AlgorithmType.CLASSIFY) {
         @Override
         public <T extends SettingsPlaceholder> Algorithm get(final T placeholder) {
-            final AnalysisSettingsPlaceholder settings = (AnalysisSettingsPlaceholder) placeholder;
-            return new NBC(settings.getData(), settings.getTrain());
+            final NBCSettingsPlaceholder settings = (NBCSettingsPlaceholder) placeholder;
+            return new NBCRecognizer(settings.getData(), settings.getTrain(), settings.getWidth(), settings.getHeight());
         }
     },
     LPP(AlgorithmType.COMPONENT) {
@@ -71,6 +72,6 @@ public enum RecognitionAlgorithm {
     public abstract <T extends SettingsPlaceholder> Algorithm get(final T placeholder);
 
     public enum AlgorithmType {
-        COMPONENT, HASH
+        COMPONENT, HASH, CLASSIFY
     }
 }

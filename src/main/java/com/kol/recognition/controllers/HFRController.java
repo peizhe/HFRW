@@ -94,14 +94,14 @@ public class HFRController {
     private ClassifySettings getSettings(final HFRForm form) {
         return ClassifySettingsBuilder
                 .start(knnCount, pcaCount, trainingImages, type)
-                .knn(form.getKnnCount(), form.getKnnComponent())
-                .pca(form.getPrincipalComponentsCount(), form.getPrincipalComponents())
-                .metric(form.getMetric())
-                .images(form.getTrainingImageCount())
+                .knn(form.getKnnValue(), form.getKnnType())
+                .pca(form.getComponentsValue(), form.getComponentsType())
+                .metric(form.getMetricType())
+                .images(form.getTrainingValue())
                 .algorithm(form.getAlgorithm())
                 .type(form.getRecognitionType())
-                .distance(form.getDistanceType())
-                .recognizerTrainType(form.getRecognizerTrainType())
+                .distance(form.getStringDistanceType())
+                .recognizerTrainType(form.getTrainingType())
                 .result();
     }
 }
