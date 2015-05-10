@@ -1,9 +1,9 @@
 package com.kol.recognition.beans.entities;
 
-import com.kol.recognition.components.ImageManager;
 import com.kol.recognition.general.Image;
 
 import javax.persistence.Column;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Table(name = "recognition_data")
@@ -19,8 +19,9 @@ public class DBImage extends HistoryObject {
     private Integer width;
     @Column(name = "image_height")
     private Integer height;
+    @Lob
     @Column(name = "image_content")
-    private String content;
+    private byte[] content;
     @Column(name = "parent_image_id")
     private String parent;
 
@@ -64,11 +65,11 @@ public class DBImage extends HistoryObject {
         this.height = height;
     }
 
-    public String getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 
@@ -80,18 +81,10 @@ public class DBImage extends HistoryObject {
         this.parent = parent;
     }
 
-    public byte[] getByteContent() {
-        return ImageManager.stringToByte(content);
-    }
-
-    public void setContentFromBytes(final byte[] bytes) {
-        content = ImageManager.byteToString(bytes);
-    }
-
     public Image toImage() {
         final Image im = new Image();
         im.setClazz(clazz);
-        im.setContent(getByteContent());
+        im.setContent(getContent());
         im.setFormat(format);
         im.setHeight(height);
         im.setSize(size);

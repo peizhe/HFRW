@@ -40,7 +40,7 @@ public class PictureController {
             response.setContentType("image/" + image.getFormat());
             response.setContentLength(image.getSize());
             try (OutputStream os = response.getOutputStream()) {
-                os.write(image.getByteContent());
+                os.write(image.getContent());
             }
         }
     }
@@ -55,7 +55,7 @@ public class PictureController {
             final DBImage image = dao.getImage(fileId);
             if(null != image) {
                 final BufferedImage templateImage = imageManager.resize(
-                        imageManager.crop(image.getByteContent(), cropInfo),
+                        imageManager.crop(image.getContent(), cropInfo),
                         imageWidth, imageHeight, algorithm
                 );
                 final DBImage dbImage = imageManager.toDBImage(templateImage, image.getFormat());

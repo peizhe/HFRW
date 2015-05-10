@@ -6,7 +6,7 @@ CREATE TABLE `recognition_data` (
   `image_width` INT NOT NULL,
   `image_height` INT NOT NULL,
   `image_size` INT NOT NULL,
-  `image_content` LONGTEXT NOT NULL,
+  `image_content` LONGBLOB NOT NULL,
   `create_date` DATETIME NOT NULL,
   `create_by` VARCHAR(64) NOT NULL,
   `edit_date` DATETIME NOT NULL,

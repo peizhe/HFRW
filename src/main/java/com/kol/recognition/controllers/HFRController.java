@@ -46,7 +46,7 @@ public class HFRController {
         final JSONObject answer = new JSONObject();
         if(null != dbImage) {
             final Algorithm algorithm = hfr.getAlgorithm(getSettings(form));
-            final String className = hfr.classifyFace(algorithm, ImageUtils.fromByteArray(dbImage.getByteContent()));
+            final String className = hfr.classifyFace(algorithm, ImageUtils.fromByteArray(dbImage.getContent()));
             answer.put("status", "ok");
             answer.put("class", className);
             answer.put("storedImages", getTrainingImages(className, algorithm));
@@ -81,7 +81,7 @@ public class HFRController {
         if(null != dbImage) {
             final ClassifySettings settings = getSettings(form);
             final PerceptualHash hash = hfr.hash(settings.getAlgorithm());
-            final List<BufferedImage> hashImages = hash.getHashImage(ImageUtils.fromByteArray(dbImage.getByteContent()));
+            final List<BufferedImage> hashImages = hash.getHashImage(ImageUtils.fromByteArray(dbImage.getContent()));
             final Collection<DBImage> dbImages = hashImages.stream()
                     .map(image -> imageManager.toDBImage(image, ImageManager.DEFAULT_IMAGE_FORMAT))
                     .peek(image -> image.setClazz(settings.getAlgorithm().name()))

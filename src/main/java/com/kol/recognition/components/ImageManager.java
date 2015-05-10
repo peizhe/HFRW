@@ -80,7 +80,7 @@ public class ImageManager {
         dbImage.setWidth(image.getWidth());
         dbImage.setHeight(image.getHeight());
         dbImage.setSize(binaryData.length);
-        dbImage.setContentFromBytes(binaryData);
+        dbImage.setContent(binaryData);
         return dbImage;
     }
 
