@@ -166,7 +166,7 @@ public class HumanFaceRecognitionProcessor {
         }
     }
 
-    private PerceptualHash hash(final RecognitionAlgorithm algorithm) {
+    public PerceptualHash hash(final RecognitionAlgorithm algorithm) {
         switch(algorithm) {
             case AHASH:
                 return new AverageHash(hashWidth, hashHeight);

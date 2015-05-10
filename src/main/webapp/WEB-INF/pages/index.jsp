@@ -81,9 +81,14 @@
                                     <div class="info-text">Images from class, which was selected as native for your face</div>
                                     <div class="centered each"></div>
                                 </div>
+                                <div class="span thumbnail" id="hashImages" style="margin: 5px 0 0 0; display: none;">
+                                    <button type="button" class="close">x</button>
+                                    <div class="info-text">Hash Image</div>
+                                    <div class="centered each"></div>
+                                </div>
                                 <div class="span thumbnail" id="eigenvectors" style="margin: 5px 0 0 0; display: none;">
                                     <button type="button" class="close">x</button>
-                                    <div class="info-text">Eigen Vectors (Eigen Faces for PCA, Fisher Faces for LDA, Laplacian Faces Faces for LPP or training images for NBC and PHash)</div>
+                                    <div class="info-text">Eigen Vectors (Eigen Faces for PCA, Fisher Faces for LDA, Laplacian Faces for LPP or training images for PHash)</div>
                                     <div class="centered each"></div>
                                 </div>
                             </div>
@@ -129,10 +134,8 @@
             <p>Code licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>, documentation under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
         </div>
     </div>
-    <div id="processingLabel" style="float: left; display: none; width: 100px; margin-top: -5px; margin-bottom: -8px;">
-        <center>
-            <div class="processingLabel"><img src="${pageContext.request.contextPath}/images/loading.gif" align="absmiddle"/></div>
-        </center>
+    <div id="processingLabel" style="float: left; display: none; margin-top: -5px; margin-bottom: -8px;">
+        <div class="processingLabel"><img src="${pageContext.request.contextPath}/images/globe64.gif" align="absmiddle"/></div>
     </div>
 </body>
 </html>

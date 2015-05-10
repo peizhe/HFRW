@@ -5,6 +5,7 @@ import com.kol.recognition.general.Image;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -193,5 +194,21 @@ public final class ImageUtils {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public static BufferedImage binaryImage(final int[][] content, final int width, final int height) {
+        final byte BLACK = (byte)0;
+        final byte WHITE = (byte)255;
+        final byte[] map = {BLACK, WHITE};
+        final IndexColorModel icm = new IndexColorModel(1, map.length, map, map, map);
+        // create checkered data
+        final int[] data = new int[width*height];
+        for(int i = 0; i < width; i++) {
+            System.arraycopy(content[i], 0, data, i * height, height);
+        }
+        // create image from color model and data
+        final WritableRaster raster = icm.createCompatibleWritableRaster(width, height);
+        raster.setPixels(0, 0, width, height, data);
+        return new BufferedImage(icm, raster, false, null);
     }
 }

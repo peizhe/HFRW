@@ -8,6 +8,7 @@ import com.kol.recognition.general.Algorithm;
 import com.kol.recognition.general.RecognitionAlgorithm;
 import com.kol.recognition.general.settings.ClassifySettings;
 import com.kol.recognition.general.settings.ClassifySettingsBuilder;
+import com.kol.recognition.perceptualHash.hash.PerceptualHash;
 import com.kol.recognition.recognition.HumanFaceRecognitionProcessor;
 import com.kol.recognition.utils.ImageUtils;
 import org.json.JSONArray;
@@ -66,6 +67,28 @@ public class HFRController {
             final Collection<DBImage> names = savePrincipalComponentImages(algorithm, settings.getAlgorithm());
             answer.put("status", "ok");
             answer.put("storedImages", getEigenVectorImages(names));
+        } else {
+            answer.put("status", "error");
+            answer.put("reason", "NoSuchFileException");
+        }
+        return answer.toString();
+    }
+
+    @RequestMapping(value = "hashImage")
+    public String hashImage(@ModelAttribute final HFRForm form) {
+        final DBImage dbImage = dao.getImage(form.getFileId());
+        final JSONObject answer = new JSONObject();
+        if(null != dbImage) {
+            final ClassifySettings settings = getSettings(form);
+            final PerceptualHash hash = hfr.hash(settings.getAlgorithm());
+            final List<BufferedImage> hashImages = hash.getHashImage(ImageUtils.fromByteArray(dbImage.getByteContent()));
+            final Collection<DBImage> dbImages = hashImages.stream()
+                    .map(image -> imageManager.toDBImage(image, ImageManager.DEFAULT_IMAGE_FORMAT))
+                    .peek(image -> image.setClazz(settings.getAlgorithm().name()))
+                    .collect(Collectors.toList());
+            dao.saveImages(dbImages, user);
+            answer.put("status", "ok");
+            answer.put("storedImages", getEigenVectorImages(dbImages));
         } else {
             answer.put("status", "error");
             answer.put("reason", "NoSuchFileException");

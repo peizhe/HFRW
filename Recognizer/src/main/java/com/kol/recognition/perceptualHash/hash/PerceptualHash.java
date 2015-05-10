@@ -5,13 +5,18 @@ import com.kol.recognition.perceptualHash.bean.Hash;
 import com.kol.recognition.perceptualHash.bitsChain.BitsChainToString;
 import com.kol.recognition.perceptualHash.monochrome.ToMonochrome;
 import com.kol.recognition.perceptualHash.resize.ResizeImage;
+import com.kol.recognition.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 public abstract class PerceptualHash {
+
+    private static final int WHITE = 255;
+    private static final int BLACK = 0;
 
     protected int width;
     protected int height;
@@ -32,6 +37,8 @@ public abstract class PerceptualHash {
 
     public abstract Hash getHash(BufferedImage image);
 
+    public abstract List<BufferedImage> getHashImage(BufferedImage image);
+
     public Hash getHash(byte[] binaryData) {
         try {
             return getHash(ImageIO.read(new ByteArrayInputStream(binaryData)));
@@ -50,6 +57,22 @@ public abstract class PerceptualHash {
             }
         }
         return bits.toString();
+    }
+
+    protected BufferedImage toBitsChainImgContent(final RGBImage monochrome, final double meanPixelValue) {
+        final int[][] content = monochrome.content();
+        final int[][] bitsImg = new int[monochrome.width()][monochrome.height()];
+        for (int i = 0; i < monochrome.width(); i++) {
+            for (int j = 0; j < monochrome.height(); j++) {
+                if(content[i][j] < meanPixelValue) {
+                    bitsImg[i][j] = BLACK;
+                } else {
+                    bitsImg[i][j] = WHITE;
+                }
+            }
+        }
+//        return ImageUtils.binaryImage(Utils.transpose(bitsImg), monochrome.height(), monochrome.width());
+        return ImageUtils.binaryImage(bitsImg, monochrome.width(), monochrome.height());
     }
 
     protected double meanPixelValue(final RGBImage monochrome) {

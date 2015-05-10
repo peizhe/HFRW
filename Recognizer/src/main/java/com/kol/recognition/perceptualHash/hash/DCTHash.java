@@ -1,5 +1,6 @@
 package com.kol.recognition.perceptualHash.hash;
 
+import com.google.common.collect.Lists;
 import com.kol.RGBImage;
 import com.kol.Utils;
 import com.kol.dct.DCT;
@@ -12,6 +13,7 @@ import com.kol.recognition.perceptualHash.resize.ResizeImage;
 import com.kol.recognition.perceptualHash.resize.ScalrResize;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public final class DCTHash extends PerceptualHash {
 
@@ -34,5 +36,14 @@ public final class DCTHash extends PerceptualHash {
         final double mean = Utils.mean(DCT.dct(Utils.toDouble(rgbImage.content())));
         final String bitsChain = toBitsChain(rgbImage, mean);
         return new Hash(bitsChainToString(bitsChain), monochrome);
+    }
+
+    @Override
+    public List<BufferedImage> getHashImage(final BufferedImage image) {
+        final BufferedImage resize = resize(image, width, height);
+        final BufferedImage monochrome = toMonochrome(resize);
+        final RGBImage rgbImage = RGBImage.fromBufferedImage(monochrome);
+        final double mean = Utils.mean(DCT.dct(Utils.toDouble(rgbImage.content())));
+        return Lists.newArrayList(toBitsChainImgContent(rgbImage, mean), monochrome);
     }
 }

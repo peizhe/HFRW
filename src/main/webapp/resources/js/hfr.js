@@ -29,45 +29,14 @@ function HFR() {
         });
 
         $("#classify-button").click(function () {
-            $.ajax({
-                type: "POST",
-                url: "./hfr/classify",
-                data: storeData(recognitionType),
-                success: function (resp) {
-                    var data = $.parseJSON(resp);
-                    var $res = $("#results");
-                    $res.find(".each").html("");
-                    if (data.status === "ok") {
-                        for (var i in data.storedImages) {
-                            $res.find(".each").append(img(data.storedImages[i], "stored-image"));
-                        }
-                        $res.show();
-                    } else {
-                        $res.hide();
-                    }
-                }
-            });
+            getImagesResult("./hfr/classify", recognitionType, "results");
         });
         $("#eigen-button").click(function () {
             if(settingsBuilder.algorithm.code != "NBC") {
-                $.ajax({
-                    type: "POST",
-                    url: "./hfr/eigenVectors",
-                    data: storeData(recognitionType),
-                    success: function (resp) {
-                        var data = $.parseJSON(resp);
-                        var $res = $("#eigenvectors");
-                        $res.find(".each").html("");
-                        if (data.status === "ok") {
-                            for (var i in data.storedImages) {
-                                $res.find(".each").append(img(data.storedImages[i], "stored-image"));
-                            }
-                            $res.show();
-                        } else {
-                            $res.hide();
-                        }
-                    }
-                });
+                getImagesResult("./hfr/eigenVectors", recognitionType, "eigenvectors");
+            }
+            if(settingsBuilder.algorithm.code == "DCT_HASH" || settingsBuilder.algorithm.code == "AHASH") {
+                getImagesResult("./hfr/hashImage", recognitionType, "hashImages");
             }
         });
         this.getAllStoredImages(recognitionType);
@@ -112,6 +81,34 @@ function HFR() {
             data[i + "Value"] = settings[i].value;
         }
         return data;
+    }
+
+    function getImagesResult(url, recognitionType, showSectionId) {
+        var $res = $("#" + showSectionId);
+        $res.find(".processingLabel").remove();
+        $res.find(".each").html("");
+        $res.append('<div class="processingLabel" style="text-align: center;"><img src="./images/globe64.gif"></div>');
+        $res.show();
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: storeData(recognitionType),
+            success: function (resp) {
+                var data = $.parseJSON(resp);
+                $res.find(".processingLabel").remove();
+                if (data.status === "ok") {
+                    for (var i in data.storedImages) {
+                        $res.find(".each").append(img(data.storedImages[i], "stored-image"));
+                    }
+                } else {
+                    $res.hide();
+                }
+            },
+            error: function() {
+                $res.hide();
+                $res.find(".processingLabel").remove();
+            }
+        });
     }
 
     function img(src, styleClass) {

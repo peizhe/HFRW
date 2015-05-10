@@ -16,4 +16,6 @@ object Utils {
   def sum(f: Array[Int], s: Array[Int]): Array[Int] = f.zip(s).map(v => v._1 + v._2)
 
   def diff(f: Array[Int], s: Array[Int]): Array[Int] = f.zip(s).map(v => v._1 - v._2)
+
+  def transpose(in: Array[Array[Int]]): Array[Array[Int]] = in.transpose
 }
